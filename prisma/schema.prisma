@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bimbingan {
+  id        String         @id
+  tanggal   DateTime
+  catatan   String
+  status    StatusValidasi
+  nim       String
+  nip       String
+  mahasiswa mahasiswa      @relation(fields: [nim], references: [nim])
+  dosen     dosen          @relation(fields: [nip], references: [nip])
+
+  @@index([id])
+}
+
+model daily_report {
+  id                String              @id
+  tanggal           DateTime
+  status            StatusValidasi
+  catatan           String?
+  latitude          Float
+  longitude         Float
+  nim               String
+  mahasiswa         mahasiswa           @relation(fields: [nim], references: [nim])
+  detail_daily_report detail_daily_report[]
+
+  @@index([id])
+}
+
+model detail_daily_report {
+  id                 Int         @id @default(autoincrement())
+  judul_kegiatan     String
+  deskripsi_kegiatan String
+  waktu              DateTime
+  id_daily_report    String
+  daily_report       daily_report @relation(fields: [id_daily_report], references: [id])
+
+  @@index([id])
+}
+
+model dokumen {
+  id             String        @id
+  nim            String
+  jenis_dokumen  JenisDokumen
+  file_path      String
+  tanggal_upload DateTime      @default(now())
+  status         DokumenStatus @default(submitted)
+  komentar       String?
+  mahasiswa      mahasiswa     @relation(fields: [nim], references: [nim])
+
+  @@index([nim])
+}
+
+model dosen {
+  nip                               String          @id
+  nama                              String
+  email                             String          @unique
+  no_hp                             String
+  id_telegram                       String          @unique
+  bimbingan                         bimbingan[]
+  jadwal                            jadwal[]
+  nilai_penguji                     nilai[]          @relation("NilaiToPenguji")
+  nilai_pembimbing                  nilai[]          @relation("NilaiToPembimbing")
+  pendaftaran_kp                    pendaftaran_kp[]
+
+  @@index([nip])
+}
+
+model instansi {
+  id                  Int                   @id @default(autoincrement())
+  nama                String
+  alamat              String
+  jenis               JenisInstansi
+  profil_singkat      String
+  status              StatusInstansi        @default(PENDING)
+  pembimbing_instansi pembimbing_instansi[]
+
+  @@index([id])
+}
+
+model jadwal {
+  id            String        @id
+  nim           String
+  nip           String
+  tanggal       DateTime
+  waktu_mulai   DateTime
+  waktu_selesai DateTime
+  ruangan_nama  String
+  status        StatusSeminar @default(pending)
+  mahasiswa     mahasiswa     @relation(fields: [nim], references: [nim])
+  dosen         dosen         @relation(fields: [nip], references: [nip])
+  ruangan       ruangan       @relation(fields: [ruangan_nama], references: [nama])
+  nilai         nilai?
+
+  @@index([nim])
+  @@index([nip])
+  @@index([ruangan_nama])
+}
+
+model log_jadwal {
+  id                String    @id
+  jadwal_seminar_id String
+  log_type          LogType
+  nip               String
+  tanggal_lama      DateTime?
+  tanggal_baru      DateTime?
+  ruangan_lama      String?
+  ruangan_baru      String?
+  keterangan        String?
+  created_at        DateTime  @default(now())
+
+  @@index([jadwal_seminar_id])
+}
+
+model mahasiswa {
+  nim           String          @id
+  nama          String
+  email         String          @unique
+  bimbingan     bimbingan[]
+  daily_report  daily_report[]
+  dokumen       dokumen[]
+  jadwal        jadwal[]
+  nilai_instansi nilai_instansi?
+  pendaftaran_kp pendaftaran_kp[]
+  nilai         nilai[]
+
+  @@index([nim])
+}
+
+model nilai {
+  id                                String      @id
+  nim                               String
+  jadwal_seminar_id                 String      @unique
+  nip_penguji                       String
+  nip_pembimbing                    String
+  nilai_pembimbing                  Float
+  nilai_penguji                     Float
+  note_pembimbing                   String?
+  note_penguji                      String?
+  jadwal                            jadwal      @relation(fields: [jadwal_seminar_id], references: [id])
+  dosen_penguji                     dosen?      @relation("NilaiToPenguji", fields: [nip_penguji], references: [nip])
+  dosen_pembimbing                  dosen?      @relation("NilaiToPembimbing", fields: [nip_pembimbing], references: [nip])
+  mahasiswa                         mahasiswa[]
+
+  @@index([jadwal_seminar_id])
+}
+
+model nilai_instansi {
+  id                     String             @id
+  tanggal                DateTime
+  nilai_angka            Float
+  nilai_huruf            String
+  nim                    String             @unique
+  id_pembimbing_instansi String
+  pembimbing_instansi    pembimbing_instansi @relation(fields: [id_pembimbing_instansi], references: [id])
+  mahasiswa              mahasiswa          @relation(fields: [nim], references: [nim])
+
+  @@index([id])
+}
+
+model pembimbing_instansi {
+  id                     String             @id
+  nama                   String
+  email                  String             @unique
+  jabatan                String
+  no_hp                  String
+  id_instansi            Int
+  nilai_instansi         nilai_instansi[]
+  instansi               instansi           @relation(fields: [id_instansi], references: [id])
+  pendaftaran_kp         pendaftaran_kp[]
+
+  @@index([id])
+}
+
+model pendaftaran_kp {
+  nim                        String
+  semester                   Int
+  tanggalTerdaftar           DateTime           @default(now())
+  tanggalMulai               DateTime?
+  tenggatWaktu               DateTime
+  gagal                      Boolean            @default(false)
+  tanggalSelesai             DateTime?
+  linkSuratPengantar         String?
+  linkSuratBalasan           String?
+  linkSuratPenunjukkanDospem String?
+  alasanLanjutKP             String?
+  linkSuratPerpanjanganKP    String?
+  id_pembimbing_instansi     String
+  nip                        String?
+  pembimbing_instansi        pembimbing_instansi @relation(fields: [id_pembimbing_instansi], references: [id])
+  mahasiswa                  mahasiswa           @relation(fields: [nim], references: [nim])
+  dosen                      dosen?              @relation(fields: [nip], references: [nip])
+
+  @@id([nim, semester])
+  @@index([nim, semester])
+}
+
+model ruangan {
+  nama   String   @id @unique
+  jadwal jadwal[]
+}
+
+enum DokumenStatus {
+  submitted
+  verified
+  rejected
+}
+
+enum JenisDokumen {
+  SURAT_KETERANGAN_SELESAI_KP
+  LAPORAN_TAMBAHAN_KP
+  ID_SURAT_UNDANGAN
+  FORM_KEHADIRAN_SEMINAR
+  SURAT_UNDANGAN_SEMINAR_HASIL
+  BERITA_ACARA_SEMINAR
+  DAFTAR_HADIR_SEMINAR
+  LEMBAR_PENGESAHAN_KP
+  REVISI_DAILY_REPORT
+  REVISI_LAPORAN_TAMBAHAN
+  SISTEM_KP_FINAL
+}
+
+enum JenisInstansi {
+  SWASTA
+  PEMERINTAHAN
+  PENDIDIKAN
+  UMKM
+}
+
+enum LogType {
+  created
+  updated
+  cancelled
+  rescheduled
+}
+
+enum StatusInstansi {
+  PENDING
+  AKTIF
+  TIDAK_AKTIF
+}
+
+enum StatusSeminar {
+  pending
+  scheduled
+  completed
+  cancelled
+}
+
+enum StatusValidasi {
+  MENUNGGU
+  VALID
+  REVISI
+}
