@@ -7,11 +7,11 @@ export default class DaftarKPRepository {
         await prisma.pendaftaran_kp.create({
             data: {
                 nim: nim,
-                semester: semester,
-                tanggalTerdaftar: new Date(),
-                tenggatWaktu: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-                gagal: false,
-                id_pembimbing_instansi: "xxx",
+                tanggal_pengajuan: new Date(),
+                id_instansi: "xxx",
+                id_tahun_ajaran: 2,
+                tujuan_surat_instansi: "xxx",
+                tanggal_mulai: "xxxxxx",
             }
         })
     }
