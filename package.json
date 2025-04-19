@@ -1,5 +1,5 @@
 {
-	"name": "hono-api-setoran-hafalan",
+	"name": "hono-api-kerja-praktik",
 	"scripts": {
 		"dev": "bun run --hot src/index.ts"
 	},
