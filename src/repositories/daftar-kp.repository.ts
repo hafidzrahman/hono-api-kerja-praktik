@@ -1,10 +1,9 @@
-import { Prisma, PrismaClient } from "../generated/prisma";
-import { DefaultArgs } from "../generated/prisma/runtime/library";
-const prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs> = new PrismaClient();
+import prisma from "../infrastructures/db.infrastructure";
+import { CreatePermohonanParamsInterface } from "../types/daftar-kp/repository.type";
 
 export default class DaftarKPRepository {
     
-    public static async create(nim: string, semester: number): Promise<void> {
+    public static async createPermohonan({nim, semester}: CreatePermohonanParamsInterface): Promise<void> {
         await prisma.pendaftaran_kp.create({
             data: {
                 nim: nim,
