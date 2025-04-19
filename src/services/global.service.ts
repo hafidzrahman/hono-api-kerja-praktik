@@ -15,7 +15,7 @@ export default class GlobalService {
     public static async health(): Promise<GlobalServiceHealthResponse> {
         return {
             'response': true,
-            'message': 'Cihuy, API Setoran Hafalan sehat-sehat saja! 😁',
+            'message': 'Cihuy, API Kerja Praktik sehat-sehat saja! 😁',
             'status': 'OK',
             'uptime': process.uptime(),
             'memoryUsage': process.memoryUsage()
