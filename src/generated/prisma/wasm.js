@@ -119,46 +119,37 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.BimbinganScalarFieldEnum = {
   id: 'id',
-  tanggal: 'tanggal',
-  catatan: 'catatan',
-  status: 'status',
+  tanggal_bimbingan: 'tanggal_bimbingan',
+  catatan_bimbingan: 'catatan_bimbingan',
   nim: 'nim',
-  nip: 'nip'
+  nip: 'nip',
+  id_pendaftaran_kp: 'id_pendaftaran_kp'
 };
 
 exports.Prisma.Daily_reportScalarFieldEnum = {
   id: 'id',
-  tanggal: 'tanggal',
+  tanggal_presensi: 'tanggal_presensi',
   status: 'status',
-  catatan: 'catatan',
+  catatan_evaluasi: 'catatan_evaluasi',
   latitude: 'latitude',
   longitude: 'longitude',
-  nim: 'nim'
+  nim: 'nim',
+  id_pendaftaran_kp: 'id_pendaftaran_kp'
 };
 
 exports.Prisma.Detail_daily_reportScalarFieldEnum = {
   id: 'id',
-  judul_kegiatan: 'judul_kegiatan',
-  deskripsi_kegiatan: 'deskripsi_kegiatan',
+  judul_agenda: 'judul_agenda',
+  deskripsi_agenda: 'deskripsi_agenda',
   waktu: 'waktu',
   id_daily_report: 'id_daily_report'
-};
-
-exports.Prisma.DokumenScalarFieldEnum = {
-  id: 'id',
-  nim: 'nim',
-  jenis_dokumen: 'jenis_dokumen',
-  file_path: 'file_path',
-  tanggal_upload: 'tanggal_upload',
-  status: 'status',
-  komentar: 'komentar'
 };
 
 exports.Prisma.DosenScalarFieldEnum = {
   nip: 'nip',
   nama: 'nama',
-  email: 'email',
   no_hp: 'no_hp',
+  email: 'email',
   id_telegram: 'id_telegram'
 };
 
@@ -166,90 +157,143 @@ exports.Prisma.InstansiScalarFieldEnum = {
   id: 'id',
   nama: 'nama',
   alamat: 'alamat',
+  longitude: 'longitude',
+  latitude: 'latitude',
   jenis: 'jenis',
   profil_singkat: 'profil_singkat',
-  status: 'status'
+  status: 'status',
+  nama_pj: 'nama_pj',
+  no_hp_pj: 'no_hp_pj',
+  nim: 'nim',
+  nip: 'nip'
 };
 
 exports.Prisma.JadwalScalarFieldEnum = {
   id: 'id',
-  nim: 'nim',
-  nip: 'nip',
   tanggal: 'tanggal',
   waktu_mulai: 'waktu_mulai',
   waktu_selesai: 'waktu_selesai',
-  ruangan_nama: 'ruangan_nama',
-  status: 'status'
+  status: 'status',
+  nim: 'nim',
+  nama_ruangan: 'nama_ruangan',
+  id_pendaftaran_kp: 'id_pendaftaran_kp'
 };
 
 exports.Prisma.Log_jadwalScalarFieldEnum = {
   id: 'id',
-  jadwal_seminar_id: 'jadwal_seminar_id',
   log_type: 'log_type',
-  nip: 'nip',
   tanggal_lama: 'tanggal_lama',
   tanggal_baru: 'tanggal_baru',
   ruangan_lama: 'ruangan_lama',
   ruangan_baru: 'ruangan_baru',
   keterangan: 'keterangan',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  id_jadwal_seminar: 'id_jadwal_seminar',
+  nip: 'nip'
 };
 
 exports.Prisma.MahasiswaScalarFieldEnum = {
   nim: 'nim',
   nama: 'nama',
+  no_hp: 'no_hp',
   email: 'email'
 };
 
 exports.Prisma.NilaiScalarFieldEnum = {
   id: 'id',
-  nim: 'nim',
-  jadwal_seminar_id: 'jadwal_seminar_id',
-  nip_penguji: 'nip_penguji',
-  nip_pembimbing: 'nip_pembimbing',
-  nilai_pembimbing: 'nilai_pembimbing',
-  nilai_penguji: 'nilai_penguji',
-  note_pembimbing: 'note_pembimbing',
-  note_penguji: 'note_penguji'
-};
-
-exports.Prisma.Nilai_instansiScalarFieldEnum = {
-  id: 'id',
   tanggal: 'tanggal',
-  nilai_angka: 'nilai_angka',
-  nilai_huruf: 'nilai_huruf',
+  nilai_penguji: 'nilai_penguji',
+  nilai_pembimbing: 'nilai_pembimbing',
+  nilai_instansi: 'nilai_instansi',
   nim: 'nim',
-  id_pembimbing_instansi: 'id_pembimbing_instansi'
+  nip: 'nip',
+  id_pembimbing_instansi: 'id_pembimbing_instansi',
+  id_jadwal_seminar: 'id_jadwal_seminar'
 };
 
 exports.Prisma.Pembimbing_instansiScalarFieldEnum = {
   id: 'id',
   nama: 'nama',
-  email: 'email',
-  jabatan: 'jabatan',
   no_hp: 'no_hp',
+  jabatan: 'jabatan',
+  email: 'email',
   id_instansi: 'id_instansi'
 };
 
 exports.Prisma.Pendaftaran_kpScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  tanggal_pengajuan: 'tanggal_pengajuan',
+  tanggal_mulai: 'tanggal_mulai',
+  tanggal_selesai: 'tanggal_selesai',
+  kelas_kp: 'kelas_kp',
+  tujuan_surat_instansi: 'tujuan_surat_instansi',
+  link_surat_pengantar: 'link_surat_pengantar',
+  link_surat_balasan: 'link_surat_balasan',
+  link_surat_penunjukan_dospem: 'link_surat_penunjukan_dospem',
+  link_surat_perpanjangan_kp: 'link_surat_perpanjangan_kp',
+  id_surat_pengajuan_dospem: 'id_surat_pengajuan_dospem',
+  email_pembimbing_instansi: 'email_pembimbing_instansi',
+  catatan_penolakan: 'catatan_penolakan',
+  level_akses: 'level_akses',
+  judul_kp: 'judul_kp',
+  alasan_lanjut_kp: 'alasan_lanjut_kp',
+  id_tahun_ajaran: 'id_tahun_ajaran',
+  id_instansi: 'id_instansi',
   nim: 'nim',
-  semester: 'semester',
-  tanggalTerdaftar: 'tanggalTerdaftar',
-  tanggalMulai: 'tanggalMulai',
-  tenggatWaktu: 'tenggatWaktu',
-  gagal: 'gagal',
-  tanggalSelesai: 'tanggalSelesai',
-  linkSuratPengantar: 'linkSuratPengantar',
-  linkSuratBalasan: 'linkSuratBalasan',
-  linkSuratPenunjukkanDospem: 'linkSuratPenunjukkanDospem',
-  alasanLanjutKP: 'alasanLanjutKP',
-  linkSuratPerpanjanganKP: 'linkSuratPerpanjanganKP',
-  id_pembimbing_instansi: 'id_pembimbing_instansi',
-  nip: 'nip'
+  nip_pembimbing: 'nip_pembimbing',
+  nip_penguji: 'nip_penguji'
 };
 
 exports.Prisma.RuanganScalarFieldEnum = {
   nama: 'nama'
+};
+
+exports.Prisma.Dokumen_seminar_kpScalarFieldEnum = {
+  id: 'id',
+  jenis_dokumen: 'jenis_dokumen',
+  link_path: 'link_path',
+  tanggal_upload: 'tanggal_upload',
+  status: 'status',
+  komentar: 'komentar',
+  nim: 'nim',
+  id_pendaftaran_kp: 'id_pendaftaran_kp'
+};
+
+exports.Prisma.Komponen_penilaian_instansiScalarFieldEnum = {
+  id: 'id',
+  deliverables: 'deliverables',
+  ketepatan_waktu: 'ketepatan_waktu',
+  kedisiplinan: 'kedisiplinan',
+  attitude: 'attitude',
+  kerjasama_tim: 'kerjasama_tim',
+  inisiatif: 'inisiatif',
+  masukan: 'masukan',
+  id_nilai: 'id_nilai'
+};
+
+exports.Prisma.Komponen_penilaian_pembimbingScalarFieldEnum = {
+  id: 'id',
+  penyelesaian_masalah: 'penyelesaian_masalah',
+  bimbingan_sikap: 'bimbingan_sikap',
+  kualitas_laporan: 'kualitas_laporan',
+  catatan: 'catatan',
+  id_nilai: 'id_nilai'
+};
+
+exports.Prisma.Komponen_penilaian_pengujiScalarFieldEnum = {
+  id: 'id',
+  penguasaan_keilmuan: 'penguasaan_keilmuan',
+  kemampuan_presentasi: 'kemampuan_presentasi',
+  kesesuaian_urgensi: 'kesesuaian_urgensi',
+  catatan: 'catatan',
+  id_nilai: 'id_nilai'
+};
+
+exports.Prisma.Tahun_ajaranScalarFieldEnum = {
+  id: 'id',
+  nama: 'nama',
+  created_at: 'created_at'
 };
 
 exports.Prisma.SortOrder = {
@@ -266,17 +310,43 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.StatusValidasi = exports.$Enums.StatusValidasi = {
-  MENUNGGU: 'MENUNGGU',
-  VALID: 'VALID',
-  REVISI: 'REVISI'
+exports.status_presensi = exports.$Enums.status_presensi = {
+  Menunggu: 'Menunggu',
+  Disetujui: 'Disetujui',
+  Revisi: 'Revisi'
 };
 
-exports.JenisDokumen = exports.$Enums.JenisDokumen = {
+exports.jenis_instansi = exports.$Enums.jenis_instansi = {
+  Swasta: 'Swasta',
+  Pemerintahan: 'Pemerintahan',
+  Pendidikan: 'Pendidikan',
+  UMKM: 'UMKM'
+};
+
+exports.status_instansi = exports.$Enums.status_instansi = {
+  Pending: 'Pending',
+  Aktif: 'Aktif',
+  Tidak_Aktif: 'Tidak_Aktif'
+};
+
+exports.status_jadwal = exports.$Enums.status_jadwal = {
+  Menunggu: 'Menunggu',
+  Selesai: 'Selesai',
+  Jadwal_Ulang: 'Jadwal_Ulang'
+};
+
+exports.status_pendaftaran = exports.$Enums.status_pendaftaran = {
+  Baru: 'Baru',
+  Lanjut: 'Lanjut',
+  Gagal: 'Gagal',
+  Ditolak: 'Ditolak'
+};
+
+exports.jenis_dokumen = exports.$Enums.jenis_dokumen = {
   SURAT_KETERANGAN_SELESAI_KP: 'SURAT_KETERANGAN_SELESAI_KP',
   LAPORAN_TAMBAHAN_KP: 'LAPORAN_TAMBAHAN_KP',
-  ID_SURAT_UNDANGAN: 'ID_SURAT_UNDANGAN',
   FORM_KEHADIRAN_SEMINAR: 'FORM_KEHADIRAN_SEMINAR',
+  ID_SURAT_UNDANGAN: 'ID_SURAT_UNDANGAN',
   SURAT_UNDANGAN_SEMINAR_HASIL: 'SURAT_UNDANGAN_SEMINAR_HASIL',
   BERITA_ACARA_SEMINAR: 'BERITA_ACARA_SEMINAR',
   DAFTAR_HADIR_SEMINAR: 'DAFTAR_HADIR_SEMINAR',
@@ -286,54 +356,30 @@ exports.JenisDokumen = exports.$Enums.JenisDokumen = {
   SISTEM_KP_FINAL: 'SISTEM_KP_FINAL'
 };
 
-exports.DokumenStatus = exports.$Enums.DokumenStatus = {
-  submitted: 'submitted',
-  verified: 'verified',
-  rejected: 'rejected'
-};
-
-exports.JenisInstansi = exports.$Enums.JenisInstansi = {
-  SWASTA: 'SWASTA',
-  PEMERINTAHAN: 'PEMERINTAHAN',
-  PENDIDIKAN: 'PENDIDIKAN',
-  UMKM: 'UMKM'
-};
-
-exports.StatusInstansi = exports.$Enums.StatusInstansi = {
-  PENDING: 'PENDING',
-  AKTIF: 'AKTIF',
-  TIDAK_AKTIF: 'TIDAK_AKTIF'
-};
-
-exports.StatusSeminar = exports.$Enums.StatusSeminar = {
-  pending: 'pending',
-  scheduled: 'scheduled',
-  completed: 'completed',
-  cancelled: 'cancelled'
-};
-
-exports.LogType = exports.$Enums.LogType = {
-  created: 'created',
-  updated: 'updated',
-  cancelled: 'cancelled',
-  rescheduled: 'rescheduled'
+exports.status_dokumen = exports.$Enums.status_dokumen = {
+  Terkirim: 'Terkirim',
+  Divalidasi: 'Divalidasi',
+  Ditolak: 'Ditolak'
 };
 
 exports.Prisma.ModelName = {
   bimbingan: 'bimbingan',
   daily_report: 'daily_report',
   detail_daily_report: 'detail_daily_report',
-  dokumen: 'dokumen',
   dosen: 'dosen',
   instansi: 'instansi',
   jadwal: 'jadwal',
   log_jadwal: 'log_jadwal',
   mahasiswa: 'mahasiswa',
   nilai: 'nilai',
-  nilai_instansi: 'nilai_instansi',
   pembimbing_instansi: 'pembimbing_instansi',
   pendaftaran_kp: 'pendaftaran_kp',
-  ruangan: 'ruangan'
+  ruangan: 'ruangan',
+  dokumen_seminar_kp: 'dokumen_seminar_kp',
+  komponen_penilaian_instansi: 'komponen_penilaian_instansi',
+  komponen_penilaian_pembimbing: 'komponen_penilaian_pembimbing',
+  komponen_penilaian_penguji: 'komponen_penilaian_penguji',
+  tahun_ajaran: 'tahun_ajaran'
 };
 
 /**
