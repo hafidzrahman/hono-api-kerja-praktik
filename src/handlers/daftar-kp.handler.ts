@@ -6,7 +6,7 @@ export default class DaftarKPHandler {
 
     public static async createPermohonan(c: Context) {
         const { email } = c.get("user");
-        const { tanggalMulaiStr, idInstansiStr, tujuanSuratInstansiStr } = await c.req.parseBody();
+        const { tanggalMulaiStr, idInstansiStr, tujuanSuratInstansiStr } = await c.req.json();
 
         if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
         if (!tanggalMulaiStr || !idInstansiStr || !tujuanSuratInstansiStr) throw new APIError("Waduh, data yang kamu ajukan belum lengkap cuy! 😭", 404);
@@ -17,7 +17,14 @@ export default class DaftarKPHandler {
 
         if (isNaN(tanggalMulai.getTime())) throw new APIError("Waduh, tanggal terdaftar harus berupa tanggal yang valid cuy! 😭", 400);
 
-        return c.json(await DaftarKPService.createPermohonan(email, tanggalMulai, idInstansi, tujuanSuratInstansi), 200);
+        return c.json(await DaftarKPService.createPermohonan(
+            {
+                email: email, 
+                tanggalMulai: tanggalMulai, 
+                idInstansi: idInstansi, 
+                tujuanSuratInstansi: tujuanSuratInstansi
+            }
+        ), 200);
     }
     
 }
