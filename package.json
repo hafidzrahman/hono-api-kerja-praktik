@@ -4,7 +4,7 @@
 		"dev": "bun run --hot src/index.ts"
 	},
 	"prisma": {
-		"seed": "ts-node prisma/seed.ts"
+		"seed": "bun run --hot prisma/seed.ts"
 	},
 	"dependencies": {
 		"@prisma/client": "6.6.0",
