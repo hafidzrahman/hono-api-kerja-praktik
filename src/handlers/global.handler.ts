@@ -25,7 +25,18 @@ export default class GlobalHandler {
         );
     }
     
-    public static async error(err: Error | HTTPResponseError | any, c: Context<BlankEnv, any, {}>) {        
+    public static async error(err: Error | HTTPResponseError | any, c: Context<BlankEnv, any, {}>) {
+        if (!err.statusCode) {
+            console.error(`🤯 [ERROR] - [${(new Date()).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })} WIB] ${err.message}`);
+            console.error(`😫 [LOG] ${err.stack}`);
+            return c.json(
+                {
+                    response: false,
+                    message: "Waduh, ada yang error nih di-server kami! 😭",
+                },
+                500
+            );
+        }
         return c.json(
             {
                 response: false,
