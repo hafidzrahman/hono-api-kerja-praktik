@@ -26,7 +26,6 @@ CREATE TABLE "bimbingan" (
     "catatan_bimbingan" VARCHAR(255),
     "nim" VARCHAR(11),
     "nip" VARCHAR(20),
-    "id_pendaftaran_kp" UUID,
 
     CONSTRAINT "bimbingan_pkey" PRIMARY KEY ("id")
 );
@@ -40,7 +39,6 @@ CREATE TABLE "daily_report" (
     "latitude" DOUBLE PRECISION,
     "longitude" DOUBLE PRECISION,
     "nim" VARCHAR(11),
-    "id_pendaftaran_kp" UUID,
 
     CONSTRAINT "daily_report_pkey" PRIMARY KEY ("id")
 );
@@ -48,9 +46,9 @@ CREATE TABLE "daily_report" (
 -- CreateTable
 CREATE TABLE "detail_daily_report" (
     "id" SERIAL NOT NULL,
+    "waktu" TIMESTAMP(6) NOT NULL,
     "judul_agenda" VARCHAR(255) NOT NULL,
     "deskripsi_agenda" VARCHAR(255) NOT NULL,
-    "waktu" TIMESTAMP(6) NOT NULL,
     "id_daily_report" UUID,
 
     CONSTRAINT "detail_daily_report_pkey" PRIMARY KEY ("id")
@@ -79,8 +77,6 @@ CREATE TABLE "instansi" (
     "status" "status_instansi" DEFAULT 'Pending',
     "nama_pj" VARCHAR(255) NOT NULL,
     "no_hp_pj" VARCHAR(14) NOT NULL,
-    "nim" VARCHAR(11),
-    "nip" VARCHAR(20),
 
     CONSTRAINT "instansi_pkey" PRIMARY KEY ("id")
 );
@@ -134,7 +130,7 @@ CREATE TABLE "nilai" (
     "nilai_instansi" DOUBLE PRECISION,
     "nim" VARCHAR(11),
     "nip" VARCHAR(20),
-    "id_pembimbing_instansi" UUID,
+    "email_pembimbing_instansi" VARCHAR(255),
     "id_jadwal_seminar" UUID,
 
     CONSTRAINT "nilai_pkey" PRIMARY KEY ("id")
@@ -142,14 +138,14 @@ CREATE TABLE "nilai" (
 
 -- CreateTable
 CREATE TABLE "pembimbing_instansi" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "email" VARCHAR(255) NOT NULL,
+    "id" VARCHAR(255) NOT NULL,
     "nama" VARCHAR(255),
     "no_hp" VARCHAR(16),
     "jabatan" VARCHAR(40),
-    "email" VARCHAR(255) NOT NULL,
     "id_instansi" UUID,
 
-    CONSTRAINT "pembimbing_instansi_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pembimbing_instansi_pkey" PRIMARY KEY ("email")
 );
 
 -- CreateTable
@@ -262,19 +258,13 @@ CREATE UNIQUE INDEX "dosen_id_telegram_key" ON "dosen"("id_telegram");
 CREATE UNIQUE INDEX "mahasiswa_email_key" ON "mahasiswa"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "pembimbing_instansi_email_key" ON "pembimbing_instansi"("email");
-
--- AddForeignKey
-ALTER TABLE "bimbingan" ADD CONSTRAINT "bimbingan_id_pendaftaran_kp_fkey" FOREIGN KEY ("id_pendaftaran_kp") REFERENCES "pendaftaran_kp"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+CREATE UNIQUE INDEX "pembimbing_instansi_id_key" ON "pembimbing_instansi"("id");
 
 -- AddForeignKey
 ALTER TABLE "bimbingan" ADD CONSTRAINT "bimbingan_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "bimbingan" ADD CONSTRAINT "bimbingan_nip_fkey" FOREIGN KEY ("nip") REFERENCES "dosen"("nip") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "daily_report" ADD CONSTRAINT "daily_report_id_pendaftaran_kp_fkey" FOREIGN KEY ("id_pendaftaran_kp") REFERENCES "pendaftaran_kp"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "daily_report" ADD CONSTRAINT "daily_report_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -292,7 +282,7 @@ ALTER TABLE "jadwal" ADD CONSTRAINT "jadwal_nama_ruangan_fkey" FOREIGN KEY ("nam
 ALTER TABLE "jadwal" ADD CONSTRAINT "jadwal_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "nilai" ADD CONSTRAINT "nilai_id_pembimbing_instansi_fkey" FOREIGN KEY ("id_pembimbing_instansi") REFERENCES "pembimbing_instansi"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "nilai" ADD CONSTRAINT "nilai_email_pembimbing_instansi_fkey" FOREIGN KEY ("email_pembimbing_instansi") REFERENCES "pembimbing_instansi"("email") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "nilai" ADD CONSTRAINT "nilai_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -311,6 +301,12 @@ ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_id_tahun_ajaran_fkey
 
 -- AddForeignKey
 ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_nip_pembimbing_fkey" FOREIGN KEY ("nip_pembimbing") REFERENCES "dosen"("nip") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_email_pembimbing_instansi_fkey" FOREIGN KEY ("email_pembimbing_instansi") REFERENCES "pembimbing_instansi"("email") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "dokumen_seminar_kp" ADD CONSTRAINT "dokumen_seminar_kp_id_pendaftaran_kp_fkey" FOREIGN KEY ("id_pendaftaran_kp") REFERENCES "pendaftaran_kp"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
