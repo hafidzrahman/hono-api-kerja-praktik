@@ -1,128 +1,123 @@
-import { jenis_dokumen, status_dokumen } from "../generated/prisma";
-import DokumenRepository from "../repositories/dokumen-seminar-kp.repository";
-import { DokumenInput, DokumenResponse, StepResponse } from "../types/dokumen-seminar-kp.type";
-import { APIError } from "../utils/api-error.util";
+import { PrismaClient, dokumen_seminar_kp, jenis_dokumen, status_dokumen } from '../generated/prisma';
+import DokumenRepository from '../repositories/dokumen-seminar-kp.repository';
+import { DokumenUploadDTO, GenerateSuratUndanganDTO, UpdateDokumenStatusDTO } from '../types/dokumen-seminar-kp.type';
+import { generateSuratUndanganId, hasValidExtension, isValidGoogleDriveLink } from '../helpers/gdrive-validation.helper';
+import { APIError } from '../utils/api-error.util';
 
 export default class DokumenSeminarKpService {
   private dokumenRepository: DokumenRepository;
 
-  constructor() {
-    this.dokumenRepository = new DokumenRepository();
+  constructor(prisma: PrismaClient) {
+    this.dokumenRepository = new DokumenRepository(prisma);
   }
 
-  async uploadDokumen(data: DokumenInput): Promise<DokumenResponse> {
-    const pendaftaranStatus = await this.dokumenRepository.getPendaftaranKPStatus(data.id_pendaftaran_kp);
-    
-    if (!pendaftaranStatus) {
-      throw new APIError("Pendaftaran KP tidak ditemukan");
+  async uploadDokumen(data: DokumenUploadDTO): Promise<dokumen_seminar_kp> {
+    // Special case for ID_SURAT_UNDANGAN
+    if (data.jenis_dokumen === 'ID_SURAT_UNDANGAN') {
+      // For ID_SURAT_UNDANGAN, we generate an ID instead of expecting a link
+      const nim = data.nim;
+      const nimPrefix = nim.substring(0, 5);
+      data.link_path = generateSuratUndanganId(nimPrefix);
+    } else {
+      // Validate Google Drive link for other document types
+      if (!isValidGoogleDriveLink(data.link_path)) {
+        throw new APIError('Link dokumen harus berupa link Google Drive yang valid');
+      }
+
+      // Validate file extension based on document type
+      if (!hasValidExtension(data.link_path, data.jenis_dokumen)) {
+        throw new APIError('Format file tidak sesuai dengan jenis dokumen');
+      }
     }
 
-    const step = pendaftaranStatus.level_akses || 0;
-    const allowedDocuments = this.getAllowedDocumentsByStep(step);
-
-    if (!allowedDocuments.includes(data.jenis_dokumen)) {
-      throw new APIError(`Dokumen ${data.jenis_dokumen} tidak diperbolehkan pada step ${step}`);
-    }
-
-    const existingDoc = await this.dokumenRepository.getDokumenByIdPendaftaranAndJenis(
+    // Check if document with same type already exists
+    const existingDokumen = await this.dokumenRepository.getDokumenByJenis(
       data.id_pendaftaran_kp,
       data.jenis_dokumen
     );
 
-    if (existingDoc) {
-      throw new APIError(`Dokumen ${data.jenis_dokumen} sudah ada`);
+    if (existingDokumen) {
+      throw new APIError(`Dokumen dengan jenis ${data.jenis_dokumen} sudah ada`);
     }
 
-    const uploadedDokumen = await this.dokumenRepository.createDokumen(data);
-    
-    await this.checkAndUpdateStep(data.id_pendaftaran_kp);
-    
-    return uploadedDokumen;
+    return this.dokumenRepository.createDokumen(data);
   }
 
-  async updateDokumenStatus(
-    id: string,
-    status: status_dokumen,
-    komentar?: string
-  ): Promise<DokumenResponse> {
-    return this.dokumenRepository.updateDokumenStatus(id, status, komentar);
+  async generateSuratUndanganId(data: GenerateSuratUndanganDTO): Promise<string> {
+    const { nim, id_pendaftaran_kp } = data;
+    const nimPrefix = nim.substring(0, 5);
+    const suratUndanganId = generateSuratUndanganId(nimPrefix);
+
+    // Save the generated ID to the database
+    await this.dokumenRepository.createDokumen({
+      jenis_dokumen: 'ID_SURAT_UNDANGAN',
+      link_path: suratUndanganId,
+      nim,
+      id_pendaftaran_kp,
+    });
+
+    return suratUndanganId;
   }
 
-  async getCurrentStep(id_pendaftaran_kp: string): Promise<StepResponse> {
-    const pendaftaranStatus = await this.dokumenRepository.getPendaftaranKPStatus(id_pendaftaran_kp);
-    
-    if (!pendaftaranStatus) {
-      throw new APIError("Pendaftaran KP tidak ditemukan");
-    }
-
-    const step = pendaftaranStatus.level_akses || 0;
-    const requiredDocuments = this.getAllowedDocumentsByStep(step);
-    const uploadedDocuments = await this.dokumenRepository.getAllDokumenByIdPendaftaran(id_pendaftaran_kp);
-    
-    const uploadedDocumentTypes = uploadedDocuments.map(doc => doc.jenis_dokumen);
-    const missingDocuments = requiredDocuments.filter(
-      doc => !uploadedDocumentTypes.includes(doc)
-    );
-
-    let nilai = undefined;
-    if (step === 5) {
-      nilai = await this.dokumenRepository.getNilaiByNim(pendaftaranStatus.nim);
-    }
-
-    return {
-      step,
-      requiredDocuments,
-      uploadedDocuments,
-      missingDocuments,
-      canProceedToNextStep: missingDocuments.length === 0,
-      nilai: step === 5 ? nilai : undefined
-    };
+  async getDokumenById(id: string): Promise<dokumen_seminar_kp | null> {
+    return this.dokumenRepository.getDokumenById(id);
   }
 
-  async checkAndUpdateStep(id_pendaftaran_kp: string): Promise<void> {
-    const currentStatus = await this.getCurrentStep(id_pendaftaran_kp);
-    
-    if (currentStatus.canProceedToNextStep) {
-      const nextStep = currentStatus.step + 1;
-      
-      if (currentStatus.step === 2) {
-        const jadwal = await this.dokumenRepository.getJadwalSeminarByIdPendaftaran(id_pendaftaran_kp);
-        if (jadwal) {
-          await this.dokumenRepository.updatePendaftaranLevelAkses(id_pendaftaran_kp, nextStep);
-        }
-      } else {
-        await this.dokumenRepository.updatePendaftaranLevelAkses(id_pendaftaran_kp, nextStep);
-      }
-    }
+  async getDokumenByPendaftaranKp(id_pendaftaran_kp: string): Promise<dokumen_seminar_kp[]> {
+    return this.dokumenRepository.getDokumenByPendaftaranKp(id_pendaftaran_kp);
   }
 
-  private getAllowedDocumentsByStep(step: number): jenis_dokumen[] {
-    switch (step) {
-      case 0:
-        return [
-          "SURAT_KETERANGAN_SELESAI_KP",
-          "FORM_KEHADIRAN_SEMINAR",
-          "LAPORAN_TAMBAHAN_KP"
-        ];
-      case 1:
-        return ["ID_SURAT_UNDANGAN"];
-      case 2:
-        return ["SURAT_UNDANGAN_SEMINAR_HASIL"];
-      case 3:
-        return [];
-      case 4:
-        return [
-          "BERITA_ACARA_SEMINAR",
-          "LEMBAR_PENGESAHAN_KP",
-          "DAFTAR_HADIR_SEMINAR",
-          "REVISI_DAILY_REPORT",
-          "REVISI_LAPORAN_TAMBAHAN",
-          "SISTEM_KP_FINAL"
-        ];
-      case 5:
-        return [];
-      default:
-        return [];
+  async getDokumenByNim(nim: string): Promise<dokumen_seminar_kp[]> {
+    return this.dokumenRepository.getDokumenByNim(nim);
+  }
+
+  async updateDokumenStatus(data: UpdateDokumenStatusDTO): Promise<dokumen_seminar_kp> {
+    const dokumen = await this.dokumenRepository.getDokumenById(data.id);
+    
+    if (!dokumen) {
+      throw new APIError('Dokumen tidak ditemukan');
     }
+
+    return this.dokumenRepository.updateDokumenStatus(data);
+  }
+
+  async deleteDokumen(id: string): Promise<dokumen_seminar_kp> {
+    const dokumen = await this.dokumenRepository.getDokumenById(id);
+    
+    if (!dokumen) {
+      throw new APIError('Dokumen tidak ditemukan');
+    }
+
+    return this.dokumenRepository.deleteDokumen(id);
+  }
+
+  async resubmitDokumen(id: string, link_path: string): Promise<dokumen_seminar_kp>{
+    const dokumen = await this.dokumenRepository.getDokumenById(id);
+
+    if (!dokumen) {
+      throw new APIError('Dokumen tidak ditemukan');
+    }
+    
+    if (dokumen.status !== 'Ditolak') {
+      throw new APIError('Hanya dokumen yang ditolak yang dapat dikirim ulang');
+    }
+  
+    // Validate Google Drive link
+    if (!isValidGoogleDriveLink(link_path)) {
+      throw new APIError('Link dokumen harus berupa link Google Drive yang valid');
+    }
+  
+    // Validate file extension based on document type
+    if (!hasValidExtension(link_path, dokumen.jenis_dokumen)) {
+      throw new APIError('Format file tidak sesuai dengan jenis dokumen');
+    }
+  
+    // Update document with new link and reset status
+    return this.dokumenRepository.updateDokumen(id, {
+      link_path,
+      status: 'Terkirim',
+      komentar: null,
+      tanggal_upload: new Date()
+    });
   }
 }
