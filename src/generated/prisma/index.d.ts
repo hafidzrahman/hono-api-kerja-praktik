@@ -108,7 +108,7 @@ export namespace $Enums {
   LAPORAN_TAMBAHAN_KP: 'LAPORAN_TAMBAHAN_KP',
   FORM_KEHADIRAN_SEMINAR: 'FORM_KEHADIRAN_SEMINAR',
   ID_SURAT_UNDANGAN: 'ID_SURAT_UNDANGAN',
-  SURAT_UNDANGAN_SEMINAR_HASIL: 'SURAT_UNDANGAN_SEMINAR_HASIL',
+  SURAT_UNDANGAN_SEMINAR_KP: 'SURAT_UNDANGAN_SEMINAR_KP',
   BERITA_ACARA_SEMINAR: 'BERITA_ACARA_SEMINAR',
   DAFTAR_HADIR_SEMINAR: 'DAFTAR_HADIR_SEMINAR',
   LEMBAR_PENGESAHAN_KP: 'LEMBAR_PENGESAHAN_KP',
@@ -12085,12 +12085,14 @@ export namespace Prisma {
     nilai_penguji: number | null
     nilai_pembimbing: number | null
     nilai_instansi: number | null
+    nilai_akhir: number | null
   }
 
   export type NilaiSumAggregateOutputType = {
     nilai_penguji: number | null
     nilai_pembimbing: number | null
     nilai_instansi: number | null
+    nilai_akhir: number | null
   }
 
   export type NilaiMinAggregateOutputType = {
@@ -12099,6 +12101,7 @@ export namespace Prisma {
     nilai_penguji: number | null
     nilai_pembimbing: number | null
     nilai_instansi: number | null
+    nilai_akhir: number | null
     nim: string | null
     nip: string | null
     id_pembimbing_instansi: string | null
@@ -12111,6 +12114,7 @@ export namespace Prisma {
     nilai_penguji: number | null
     nilai_pembimbing: number | null
     nilai_instansi: number | null
+    nilai_akhir: number | null
     nim: string | null
     nip: string | null
     id_pembimbing_instansi: string | null
@@ -12123,6 +12127,7 @@ export namespace Prisma {
     nilai_penguji: number
     nilai_pembimbing: number
     nilai_instansi: number
+    nilai_akhir: number
     nim: number
     nip: number
     id_pembimbing_instansi: number
@@ -12135,12 +12140,14 @@ export namespace Prisma {
     nilai_penguji?: true
     nilai_pembimbing?: true
     nilai_instansi?: true
+    nilai_akhir?: true
   }
 
   export type NilaiSumAggregateInputType = {
     nilai_penguji?: true
     nilai_pembimbing?: true
     nilai_instansi?: true
+    nilai_akhir?: true
   }
 
   export type NilaiMinAggregateInputType = {
@@ -12149,6 +12156,7 @@ export namespace Prisma {
     nilai_penguji?: true
     nilai_pembimbing?: true
     nilai_instansi?: true
+    nilai_akhir?: true
     nim?: true
     nip?: true
     id_pembimbing_instansi?: true
@@ -12161,6 +12169,7 @@ export namespace Prisma {
     nilai_penguji?: true
     nilai_pembimbing?: true
     nilai_instansi?: true
+    nilai_akhir?: true
     nim?: true
     nip?: true
     id_pembimbing_instansi?: true
@@ -12173,6 +12182,7 @@ export namespace Prisma {
     nilai_penguji?: true
     nilai_pembimbing?: true
     nilai_instansi?: true
+    nilai_akhir?: true
     nim?: true
     nip?: true
     id_pembimbing_instansi?: true
@@ -12272,6 +12282,7 @@ export namespace Prisma {
     nilai_penguji: number | null
     nilai_pembimbing: number | null
     nilai_instansi: number | null
+    nilai_akhir: number | null
     nim: string | null
     nip: string | null
     id_pembimbing_instansi: string | null
@@ -12303,6 +12314,7 @@ export namespace Prisma {
     nilai_penguji?: boolean
     nilai_pembimbing?: boolean
     nilai_instansi?: boolean
+    nilai_akhir?: boolean
     nim?: boolean
     nip?: boolean
     id_pembimbing_instansi?: boolean
@@ -12322,6 +12334,7 @@ export namespace Prisma {
     nilai_penguji?: boolean
     nilai_pembimbing?: boolean
     nilai_instansi?: boolean
+    nilai_akhir?: boolean
     nim?: boolean
     nip?: boolean
     id_pembimbing_instansi?: boolean
@@ -12337,6 +12350,7 @@ export namespace Prisma {
     nilai_penguji?: boolean
     nilai_pembimbing?: boolean
     nilai_instansi?: boolean
+    nilai_akhir?: boolean
     nim?: boolean
     nip?: boolean
     id_pembimbing_instansi?: boolean
@@ -12352,13 +12366,14 @@ export namespace Prisma {
     nilai_penguji?: boolean
     nilai_pembimbing?: boolean
     nilai_instansi?: boolean
+    nilai_akhir?: boolean
     nim?: boolean
     nip?: boolean
     id_pembimbing_instansi?: boolean
     id_jadwal_seminar?: boolean
   }
 
-  export type nilaiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal" | "nilai_penguji" | "nilai_pembimbing" | "nilai_instansi" | "nim" | "nip" | "id_pembimbing_instansi" | "id_jadwal_seminar", ExtArgs["result"]["nilai"]>
+  export type nilaiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal" | "nilai_penguji" | "nilai_pembimbing" | "nilai_instansi" | "nilai_akhir" | "nim" | "nip" | "id_pembimbing_instansi" | "id_jadwal_seminar", ExtArgs["result"]["nilai"]>
   export type nilaiInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     komponen_penilaian_instansi?: boolean | nilai$komponen_penilaian_instansiArgs<ExtArgs>
     komponen_penilaian_pembimbing?: boolean | nilai$komponen_penilaian_pembimbingArgs<ExtArgs>
@@ -12395,6 +12410,7 @@ export namespace Prisma {
       nilai_penguji: number | null
       nilai_pembimbing: number | null
       nilai_instansi: number | null
+      nilai_akhir: number | null
       nim: string | null
       nip: string | null
       id_pembimbing_instansi: string | null
@@ -12833,6 +12849,7 @@ export namespace Prisma {
     readonly nilai_penguji: FieldRef<"nilai", 'Float'>
     readonly nilai_pembimbing: FieldRef<"nilai", 'Float'>
     readonly nilai_instansi: FieldRef<"nilai", 'Float'>
+    readonly nilai_akhir: FieldRef<"nilai", 'Float'>
     readonly nim: FieldRef<"nilai", 'String'>
     readonly nip: FieldRef<"nilai", 'String'>
     readonly id_pembimbing_instansi: FieldRef<"nilai", 'String'>
@@ -22816,6 +22833,7 @@ export namespace Prisma {
     nilai_penguji: 'nilai_penguji',
     nilai_pembimbing: 'nilai_pembimbing',
     nilai_instansi: 'nilai_instansi',
+    nilai_akhir: 'nilai_akhir',
     nim: 'nim',
     nip: 'nip',
     id_pembimbing_instansi: 'id_pembimbing_instansi',
@@ -23703,6 +23721,7 @@ export namespace Prisma {
     nilai_penguji?: FloatNullableFilter<"nilai"> | number | null
     nilai_pembimbing?: FloatNullableFilter<"nilai"> | number | null
     nilai_instansi?: FloatNullableFilter<"nilai"> | number | null
+    nilai_akhir?: FloatNullableFilter<"nilai"> | number | null
     nim?: StringNullableFilter<"nilai"> | string | null
     nip?: StringNullableFilter<"nilai"> | string | null
     id_pembimbing_instansi?: UuidNullableFilter<"nilai"> | string | null
@@ -23721,6 +23740,7 @@ export namespace Prisma {
     nilai_penguji?: SortOrderInput | SortOrder
     nilai_pembimbing?: SortOrderInput | SortOrder
     nilai_instansi?: SortOrderInput | SortOrder
+    nilai_akhir?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
     nip?: SortOrderInput | SortOrder
     id_pembimbing_instansi?: SortOrderInput | SortOrder
@@ -23742,6 +23762,7 @@ export namespace Prisma {
     nilai_penguji?: FloatNullableFilter<"nilai"> | number | null
     nilai_pembimbing?: FloatNullableFilter<"nilai"> | number | null
     nilai_instansi?: FloatNullableFilter<"nilai"> | number | null
+    nilai_akhir?: FloatNullableFilter<"nilai"> | number | null
     nim?: StringNullableFilter<"nilai"> | string | null
     nip?: StringNullableFilter<"nilai"> | string | null
     id_pembimbing_instansi?: UuidNullableFilter<"nilai"> | string | null
@@ -23760,6 +23781,7 @@ export namespace Prisma {
     nilai_penguji?: SortOrderInput | SortOrder
     nilai_pembimbing?: SortOrderInput | SortOrder
     nilai_instansi?: SortOrderInput | SortOrder
+    nilai_akhir?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
     nip?: SortOrderInput | SortOrder
     id_pembimbing_instansi?: SortOrderInput | SortOrder
@@ -23780,6 +23802,7 @@ export namespace Prisma {
     nilai_penguji?: FloatNullableWithAggregatesFilter<"nilai"> | number | null
     nilai_pembimbing?: FloatNullableWithAggregatesFilter<"nilai"> | number | null
     nilai_instansi?: FloatNullableWithAggregatesFilter<"nilai"> | number | null
+    nilai_akhir?: FloatNullableWithAggregatesFilter<"nilai"> | number | null
     nim?: StringNullableWithAggregatesFilter<"nilai"> | string | null
     nip?: StringNullableWithAggregatesFilter<"nilai"> | string | null
     id_pembimbing_instansi?: UuidNullableWithAggregatesFilter<"nilai"> | string | null
@@ -24977,6 +25000,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingCreateNestedManyWithoutNilaiInput
@@ -24992,6 +25016,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     nip?: string | null
     id_pembimbing_instansi?: string | null
@@ -25007,6 +25032,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUpdateManyWithoutNilaiNestedInput
@@ -25022,6 +25048,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25037,6 +25064,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     nip?: string | null
     id_pembimbing_instansi?: string | null
@@ -25049,6 +25077,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -25058,6 +25087,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26427,6 +26457,7 @@ export namespace Prisma {
     nilai_penguji?: SortOrder
     nilai_pembimbing?: SortOrder
     nilai_instansi?: SortOrder
+    nilai_akhir?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
     id_pembimbing_instansi?: SortOrder
@@ -26437,6 +26468,7 @@ export namespace Prisma {
     nilai_penguji?: SortOrder
     nilai_pembimbing?: SortOrder
     nilai_instansi?: SortOrder
+    nilai_akhir?: SortOrder
   }
 
   export type nilaiMaxOrderByAggregateInput = {
@@ -26445,6 +26477,7 @@ export namespace Prisma {
     nilai_penguji?: SortOrder
     nilai_pembimbing?: SortOrder
     nilai_instansi?: SortOrder
+    nilai_akhir?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
     id_pembimbing_instansi?: SortOrder
@@ -26457,6 +26490,7 @@ export namespace Prisma {
     nilai_penguji?: SortOrder
     nilai_pembimbing?: SortOrder
     nilai_instansi?: SortOrder
+    nilai_akhir?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
     id_pembimbing_instansi?: SortOrder
@@ -26467,6 +26501,7 @@ export namespace Prisma {
     nilai_penguji?: SortOrder
     nilai_pembimbing?: SortOrder
     nilai_instansi?: SortOrder
+    nilai_akhir?: SortOrder
   }
 
   export type InstansiNullableScalarRelationFilter = {
@@ -29087,6 +29122,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingCreateNestedManyWithoutNilaiInput
@@ -29101,6 +29137,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     id_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
@@ -29172,6 +29209,7 @@ export namespace Prisma {
     nilai_penguji?: FloatNullableFilter<"nilai"> | number | null
     nilai_pembimbing?: FloatNullableFilter<"nilai"> | number | null
     nilai_instansi?: FloatNullableFilter<"nilai"> | number | null
+    nilai_akhir?: FloatNullableFilter<"nilai"> | number | null
     nim?: StringNullableFilter<"nilai"> | string | null
     nip?: StringNullableFilter<"nilai"> | string | null
     id_pembimbing_instansi?: UuidNullableFilter<"nilai"> | string | null
@@ -29692,6 +29730,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingCreateNestedManyWithoutNilaiInput
@@ -29706,6 +29745,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nip?: string | null
     id_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
@@ -30273,6 +30313,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingCreateNestedManyWithoutNilaiInput
@@ -30287,6 +30328,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     nip?: string | null
     id_jadwal_seminar?: string | null
@@ -31009,6 +31051,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingCreateNestedManyWithoutNilaiInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiCreateNestedManyWithoutNilaiInput
@@ -31023,6 +31066,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     nip?: string | null
     id_pembimbing_instansi?: string | null
@@ -31053,6 +31097,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiUpdateManyWithoutNilaiNestedInput
@@ -31067,6 +31112,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31081,6 +31127,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiCreateNestedManyWithoutNilaiInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiCreateNestedManyWithoutNilaiInput
@@ -31095,6 +31142,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     nip?: string | null
     id_pembimbing_instansi?: string | null
@@ -31125,6 +31173,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiUpdateManyWithoutNilaiNestedInput
@@ -31139,6 +31188,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31153,6 +31203,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingCreateNestedManyWithoutNilaiInput
@@ -31167,6 +31218,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     nip?: string | null
     id_pembimbing_instansi?: string | null
@@ -31197,6 +31249,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUpdateManyWithoutNilaiNestedInput
@@ -31211,6 +31264,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31342,6 +31396,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     id_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
@@ -31377,6 +31432,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUpdateManyWithoutNilaiNestedInput
@@ -31391,6 +31447,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31405,6 +31462,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31592,6 +31650,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nip?: string | null
     id_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
@@ -31743,6 +31802,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUpdateManyWithoutNilaiNestedInput
@@ -31757,6 +31817,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31771,6 +31832,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31970,6 +32032,7 @@ export namespace Prisma {
     nilai_penguji?: number | null
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
+    nilai_akhir?: number | null
     nim?: string | null
     nip?: string | null
     id_jadwal_seminar?: string | null
@@ -31981,6 +32044,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUpdateManyWithoutNilaiNestedInput
@@ -31995,6 +32059,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32009,6 +32074,7 @@ export namespace Prisma {
     nilai_penguji?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
+    nilai_akhir?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
