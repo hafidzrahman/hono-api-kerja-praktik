@@ -4,19 +4,21 @@ import AuthMiddleware from "../middlewares/auth.middleware";
 import DokumenSeminarKpHandler from "../handlers/dokumen-seminar-kp.handler";
 import JadwalSeminarKpHandler from "../handlers/jadwal-seminar-kp.handler";
 import * as nilaiSeminarKpHandler from "../handlers/nilai-seminar-kp.handler"
+import prisma from "../infrastructures/db.infrastructure";
 
 const seminarKPRoute = new Hono({ router: new RegExpRouter() });
 const dokumenSeminarKpRoute = new Hono({ router: new RegExpRouter() });
 const jadwalSeminarKpRoute = new Hono({ router: new RegExpRouter() });
 const nilaiSeminarKpRoute = new Hono({ router: new RegExpRouter() });
 
-const dokumenSeminarKpHandler = new DokumenSeminarKpHandler();
+const dokumenSeminarKpHandler = new DokumenSeminarKpHandler(prisma);
 const jadwalSeminarKpHandler = new JadwalSeminarKpHandler();
 
 // endpoint dokumen seminar kp
 dokumenSeminarKpRoute.post("/dokumen/upload", AuthMiddleware.JWTBearerTokenExtraction, dokumenSeminarKpHandler.uploadDokumen);
 dokumenSeminarKpRoute.patch("/dokumen/:id/status", AuthMiddleware.JWTBearerTokenExtraction, dokumenSeminarKpHandler.updateDokumenStatus);
-dokumenSeminarKpRoute.get("/dokumen/step/:id_pendaftaran_kp", AuthMiddleware.JWTBearerTokenExtraction, dokumenSeminarKpHandler.getCurrentStep);
+dokumenSeminarKpRoute.get("/dokumen/:nim", AuthMiddleware.JWTBearerTokenExtraction, dokumenSeminarKpHandler.getDokumenByNim);
+dokumenSeminarKpRoute.post("/dokumen/resubmit", AuthMiddleware.JWTBearerTokenExtraction, dokumenSeminarKpHandler.resubmitDokumen);
 
 // endpoint jadwal seminar kp
 jadwalSeminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.createJadwal);
