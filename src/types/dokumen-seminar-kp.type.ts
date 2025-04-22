@@ -1,6 +1,6 @@
-import { jenis_dokumen, status_dokumen } from "../generated/prisma";
+import { jenis_dokumen, status_dokumen } from '../generated/prisma';
 
-export interface DokumenInput {
+export interface DokumenUploadDTO {
   jenis_dokumen: jenis_dokumen;
   link_path: string;
   nim: string;
@@ -18,18 +18,13 @@ export interface DokumenResponse {
   id_pendaftaran_kp: string | null;
 }
 
-export interface PendaftaranKPStatus {
-  id: string;
-  status: string;
-  level_akses: number;
+export interface GenerateSuratUndanganDTO {
+  id_pendaftaran_kp: string;
   nim: string;
 }
 
-export interface StepResponse {
-  step: number;
-  requiredDocuments: jenis_dokumen[];
-  uploadedDocuments: DokumenResponse[];
-  missingDocuments: jenis_dokumen[];
-  canProceedToNextStep: boolean;
-  nilai?: any;
+export interface UpdateDokumenStatusDTO {
+  id: string;
+  status: status_dokumen;
+  komentar?: string;
 }
