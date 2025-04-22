@@ -11,13 +11,11 @@ import {
 import * as nilaiRepository from '../repositories/nilai-seminar-kp.repository';
 
 import {
-  KomponenPenilaianInstansi,
-  KomponenPenilaianPembimbing,
-  KomponenPenilaianPenguji,
   CreateNilaiInstansiRequest,
   CreateNilaiPembimbingRequest,
   CreateNilaiPengujiRequest
 } from '../types/nilai-seminar-kp.type';
+import { APIError } from '../utils/api-error.util';
 
 export const createNilaiInstansi = async (request: CreateNilaiInstansiRequest) => {
   try {
@@ -62,8 +60,7 @@ export const createNilaiInstansi = async (request: CreateNilaiInstansiRequest) =
     // Ambil data akhir setelah semua update
     return await nilaiRepository.getNilaiById(nilai.id);
   } catch (error) {
-    console.error('Error in createNilaiInstansi service:', error);
-    throw error;
+    throw new APIError('Gagal membuat nilai instansi', 500);
   }
 };
 
@@ -110,8 +107,7 @@ export const createNilaiPembimbing = async (request: CreateNilaiPembimbingReques
     // Ambil data akhir setelah semua update
     return await nilaiRepository.getNilaiById(nilai.id);
   } catch (error) {
-    console.error('Error in createNilaiPembimbing service:', error);
-    throw error;
+    throw new APIError('Gagal membuat nilai pembimbing', 500);
   }
 };
 
@@ -158,8 +154,7 @@ export const createNilaiPenguji = async (request: CreateNilaiPengujiRequest) => 
     // Ambil data akhir setelah semua update
     return await nilaiRepository.getNilaiById(nilai.id);
   } catch (error) {
-    console.error('Error in createNilaiPenguji service:', error);
-    throw error;
+    throw new APIError('Gagal membuat nilai penguji', 500);
   }
 };
 
@@ -167,8 +162,7 @@ export const getNilaiMahasiswa = async (nim: string) => {
   try {
     return await nilaiRepository.getNilaiByNim(nim);
   } catch (error) {
-    console.error('Error in getNilaiMahasiswa service:', error);
-    throw error;
+    throw new APIError('Gagal mendapatkan nilai mahasiswa', 500);
   }
 };
 
@@ -176,7 +170,6 @@ export const getAllNilai = async () => {
   try {
     return await nilaiRepository.getAllNilai();
   } catch (error) {
-    console.error('Error in getAllNilai service:', error);
-    throw error;
+    throw new APIError('Gagal mendapatkan semua nilai', 500);
   }
 };
