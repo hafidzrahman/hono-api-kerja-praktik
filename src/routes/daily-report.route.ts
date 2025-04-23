@@ -7,17 +7,20 @@ const dailyReportRoute = new Hono({ router: new RegExpRouter() });
 
 dailyReportRoute.use(AuthMiddleware.JWTBearerTokenExtraction);
 
+// for Mahasiswa
 dailyReportRoute.get("/check-access", DailyReportHandler.checkAccessLevel);
-dailyReportRoute.get("/", DailyReportHandler.getDailyReport);
-dailyReportRoute.post("/", DailyReportHandler.createDailyReport);
-dailyReportRoute.post("/detail", DailyReportHandler.createDetailDailyReport);
-dailyReportRoute.put("/detail", DailyReportHandler.updateDetailDailyReport);
-dailyReportRoute.get("/nilai", DailyReportHandler.getNilaiForMahasiswa);
+dailyReportRoute.get("/mahasiswa", DailyReportHandler.getDailyReport);
+dailyReportRoute.post("/mahasiswa", DailyReportHandler.createDailyReport);
+dailyReportRoute.post("/mahasiswa/detail", DailyReportHandler.createDetailDailyReport);
+dailyReportRoute.put("/mahasiswa/detail", DailyReportHandler.updateDetailDailyReport);
+dailyReportRoute.get("/mahasiswa/nilai", DailyReportHandler.getNilai);
 
-dailyReportRoute.put("/", DailyReportHandler.evaluateDailyReport);
-dailyReportRoute.get("/mahasiswa-instansi", DailyReportHandler.getMahasiswaAndDailyReportForPembimbing);
-dailyReportRoute.post("/nilai", DailyReportHandler.createNilaiForMahasiswa);
+// for Pembimbing Instansi
+dailyReportRoute.get("/pembimbing-instansi", DailyReportHandler.getMahasiswaForPembimbingInstansi);
+dailyReportRoute.put("/mahasiswa", DailyReportHandler.evaluateDailyReport);
+dailyReportRoute.post("/mahasiswa/nilai", DailyReportHandler.createNilai);
 
-dailyReportRoute.get("/mahasiswa-bimbingan", DailyReportHandler.getMahasiswaAndDailyReportForDosen);
+// for Dosen Pembimbing
+dailyReportRoute.get("/dosen-pembimbing", DailyReportHandler.getMahasiswaForDosenPembimbing);
 
 export default dailyReportRoute;

@@ -155,7 +155,7 @@ model pendaftaran_kp {
   id_surat_pengajuan_dospem    String?              @db.VarChar(25)
   email_pembimbing_instansi    String?              @db.VarChar(255)
   catatan_penolakan            String?              @db.VarChar(255)
-  level_akses                  Int?                 @default(0)
+  level_akses                  Int                  @default(0)
   judul_kp                     String?              @db.VarChar(255)
   alasan_lanjut_kp             String?              @db.VarChar(255)
   id_tahun_ajaran              Int?

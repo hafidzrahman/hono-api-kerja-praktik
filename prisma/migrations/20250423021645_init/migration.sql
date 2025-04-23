@@ -164,7 +164,7 @@ CREATE TABLE "pendaftaran_kp" (
     "id_surat_pengajuan_dospem" VARCHAR(25),
     "email_pembimbing_instansi" VARCHAR(255),
     "catatan_penolakan" VARCHAR(255),
-    "level_akses" INTEGER DEFAULT 0,
+    "level_akses" INTEGER NOT NULL DEFAULT 0,
     "judul_kp" VARCHAR(255),
     "alasan_lanjut_kp" VARCHAR(255),
     "id_tahun_ajaran" INTEGER,

@@ -8,16 +8,14 @@ export default class DailyReportHandler {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const hasAccess = await DailyReportService.checkAccessLevel(email);
-    return c.json(hasAccess, 200);
+    return c.json(await DailyReportService.checkAccessLevel(email));
   }
 
   public static async getDailyReport(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const dailyReport = await DailyReportService.getDailyReport(email);
-    return c.json(dailyReport, 200);
+    return c.json(await DailyReportService.getDailyReport(email));
   }
 
   public static async createDailyReport(c: Context) {
@@ -35,27 +33,19 @@ export default class DailyReportHandler {
       throw new APIError("Kamu sudah presensi untuk hari ini! 😡", 400);
     }
 
-    // Ambil koordinat instansi mahasiswa
-    const instansiLocation = await DailyReportService.getInstansiLocation(
-      email
-    );
-    if (!instansiLocation) {
-      throw new APIError("Lokasi instansi tidak ditemukan! 😭", 404);
-    }
+    const instansi = await DailyReportService.getInstansiLocation(email);
 
-    if (
-      instansiLocation.latitude == null ||
-      instansiLocation.longitude == null
-    ) {
-      throw new APIError("Koordinat lokasi instansi tidak valid! 😭", 400);
+    if (instansi.latitude == null || instansi.longitude == null) {
+      throw new APIError("Koordinat lokasi instansi tidak ada! 😭", 400);
     }
 
     const distance = haversineDistance(
       latitude,
       longitude,
-      instansiLocation.latitude,
-      instansiLocation.longitude
+      instansi.latitude,
+      instansi.longitude
     );
+
     if (distance > 100) {
       throw new APIError(
         `Kamu berada di luar radius 100 meter dari lokasi instansi! 😡 (Jarak: ${distance.toFixed(
@@ -65,95 +55,95 @@ export default class DailyReportHandler {
       );
     }
 
-    const dailyReport = await DailyReportService.createDailyReport(
-      email,
-      latitude,
-      longitude
+    return c.json(
+      await DailyReportService.createDailyReport(email, latitude, longitude),
+      201
     );
-
-    return c.json(dailyReport, 201);
   }
 
   public static async createDetailDailyReport(c: Context) {
     const { email } = c.get("user");
-    const { idDailyReport, judulAgenda, deskripsiAgenda } = await c.req.json();
-
-    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
-
-    if (!idDailyReport || !judulAgenda || !deskripsiAgenda) {
-      throw new APIError("Data detail daily report tidak lengkap! 😭", 400);
-    }
-
-    const detailDailyReport = await DailyReportService.createDetailDailyReport(
-      idDailyReport,
-      judulAgenda,
-      deskripsiAgenda
-    );
-
-    return c.json(detailDailyReport, 201);
-  }
-
-  public static async evaluateDailyReport(c: Context) {
-    const { idDailyReport, catatanEvaluasi, status } = await c.req.json();
-
-    if (!idDailyReport || !catatanEvaluasi || !status) {
-      throw new APIError("Data evaluasi daily report tidak lengkap! 😭", 400);
-    }
-
-    const evaluateDailyReport = await DailyReportService.evaluateDailyReport(
-      idDailyReport,
-      catatanEvaluasi,
-      status
-    );
-
-    return c.json(evaluateDailyReport, 200);
-  }
-
-  public static async updateDetailDailyReport(c: Context) {
-    const { email } = c.get("user");
-    const { idDetailDailyReport, judulAgenda, deskripsiAgenda } =
+    const { id_daily_report, judul_agenda, deskripsi_agenda } =
       await c.req.json();
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    if (!idDetailDailyReport || !judulAgenda || !deskripsiAgenda) {
+    if (!id_daily_report || !judul_agenda || !deskripsi_agenda) {
       throw new APIError("Data detail daily report tidak lengkap! 😭", 400);
     }
 
-    const updateDetailDailyReport =
+    return c.json(
+      await DailyReportService.createDetailDailyReport(
+        id_daily_report,
+        judul_agenda,
+        deskripsi_agenda
+      ),
+      201
+    );
+  }
+
+  public static async updateDetailDailyReport(c: Context) {
+    const { email } = c.get("user");
+    const { id_detail_daily_report, judul_agenda, deskripsi_agenda } =
+      await c.req.json();
+
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    if (!id_detail_daily_report || !judul_agenda || !deskripsi_agenda) {
+      throw new APIError("Data detail daily report tidak lengkap! 😭", 400);
+    }
+
+    return c.json(
       await DailyReportService.updateDetailDailyReport(
-        email,
-        idDetailDailyReport,
-        judulAgenda,
-        deskripsiAgenda
-      );
-
-    return c.json(updateDetailDailyReport, 200);
+        id_detail_daily_report,
+        judul_agenda,
+        deskripsi_agenda
+      ),
+      200
+    );
   }
 
-  public static async getMahasiswaAndDailyReportForPembimbing(c: Context) {
+  public static async evaluateDailyReport(c: Context) {
+    const { email } = c.get("user");
+    const { id_daily_report, catatan_evaluasi, status } = await c.req.json();
+
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    if (!id_daily_report || !catatan_evaluasi || !status) {
+      throw new APIError("Data evaluasi daily report tidak lengkap! 😭", 400);
+    }
+
+    return c.json(
+      await DailyReportService.evaluateDailyReport(
+        id_daily_report,
+        catatan_evaluasi,
+        status
+      ),
+      200
+    );
+  }
+
+  public static async getMahasiswaForPembimbingInstansi(c: Context) {
     const { email } = c.get("user");
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const mahasiswaAndDailyReport =
-      await DailyReportService.getMahasiswaAndDailyReportForPembimbing(email);
-
-    return c.json(mahasiswaAndDailyReport, 200);
+    return c.json(
+      await DailyReportService.getMahasiswaForPembimbingInstansi(email)
+    );
   }
 
-  public static async getMahasiswaAndDailyReportForDosen(c: Context) {
+  public static async getMahasiswaForDosenPembimbing(c: Context) {
     const { email } = c.get("user");
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const mahasiswaAndDailyReport =
-      await DailyReportService.getMahasiswaAndDailyReportForDosen(email);
-
-    return c.json(mahasiswaAndDailyReport, 200);
+    return c.json(
+      await DailyReportService.getMahasiswaForDosenPembimbing(email)
+    );
   }
 
-  public static async createNilaiForMahasiswa(c: Context) {
+  public static async createNilai(c: Context) {
     const { email } = c.get("user");
     const {
       nim,
@@ -185,10 +175,8 @@ export default class DailyReportHandler {
       throw new APIError("Data penilaian tidak lengkap! 😭", 400);
     }
 
-    const result = await DailyReportService.createNilaiForMahasiswa(
-      email,
-      nim,
-      {
+    return c.json(
+      await DailyReportService.createNilai(email, nim, {
         deliverables,
         ketepatanWaktu,
         kedisiplinan,
@@ -196,20 +184,17 @@ export default class DailyReportHandler {
         kerjasamaTim,
         inisiatif,
         masukan,
-      }
+      }),
+      201
     );
-
-    return c.json(result, 201);
   }
 
-  public static async getNilaiForMahasiswa(c: Context) {
+  public static async getNilai(c: Context) {
     const { email } = c.get("user");
 
     if (!email)
       throw new APIError("Waduh, email mahasiswa kosong cuy! 😭", 404);
 
-    const nilai = await DailyReportService.getNilaiForMahasiswa(email);
-
-    return c.json(nilai, 200);
+    return c.json(await DailyReportService.getNilai(email));
   }
 }

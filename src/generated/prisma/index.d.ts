@@ -14736,7 +14736,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem: string | null
     email_pembimbing_instansi: string | null
     catatan_penolakan: string | null
-    level_akses: number | null
+    level_akses: number
     judul_kp: string | null
     alasan_lanjut_kp: string | null
     id_tahun_ajaran: number | null
@@ -14935,7 +14935,7 @@ export namespace Prisma {
       id_surat_pengajuan_dospem: string | null
       email_pembimbing_instansi: string | null
       catatan_penolakan: string | null
-      level_akses: number | null
+      level_akses: number
       judul_kp: string | null
       alasan_lanjut_kp: string | null
       id_tahun_ajaran: number | null
@@ -23791,7 +23791,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
     email_pembimbing_instansi?: StringNullableFilter<"pendaftaran_kp"> | string | null
     catatan_penolakan?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableFilter<"pendaftaran_kp"> | number | null
+    level_akses?: IntFilter<"pendaftaran_kp"> | number
     judul_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     alasan_lanjut_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     id_tahun_ajaran?: IntNullableFilter<"pendaftaran_kp"> | number | null
@@ -23823,7 +23823,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: SortOrderInput | SortOrder
     email_pembimbing_instansi?: SortOrderInput | SortOrder
     catatan_penolakan?: SortOrderInput | SortOrder
-    level_akses?: SortOrderInput | SortOrder
+    level_akses?: SortOrder
     judul_kp?: SortOrderInput | SortOrder
     alasan_lanjut_kp?: SortOrderInput | SortOrder
     id_tahun_ajaran?: SortOrderInput | SortOrder
@@ -23858,7 +23858,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
     email_pembimbing_instansi?: StringNullableFilter<"pendaftaran_kp"> | string | null
     catatan_penolakan?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableFilter<"pendaftaran_kp"> | number | null
+    level_akses?: IntFilter<"pendaftaran_kp"> | number
     judul_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     alasan_lanjut_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     id_tahun_ajaran?: IntNullableFilter<"pendaftaran_kp"> | number | null
@@ -23890,7 +23890,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: SortOrderInput | SortOrder
     email_pembimbing_instansi?: SortOrderInput | SortOrder
     catatan_penolakan?: SortOrderInput | SortOrder
-    level_akses?: SortOrderInput | SortOrder
+    level_akses?: SortOrder
     judul_kp?: SortOrderInput | SortOrder
     alasan_lanjut_kp?: SortOrderInput | SortOrder
     id_tahun_ajaran?: SortOrderInput | SortOrder
@@ -23923,7 +23923,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     email_pembimbing_instansi?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     catatan_penolakan?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableWithAggregatesFilter<"pendaftaran_kp"> | number | null
+    level_akses?: IntWithAggregatesFilter<"pendaftaran_kp"> | number
     judul_kp?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     alasan_lanjut_kp?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     id_tahun_ajaran?: IntNullableWithAggregatesFilter<"pendaftaran_kp"> | number | null
@@ -25050,7 +25050,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -25078,7 +25078,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -25104,7 +25104,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25132,7 +25132,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -25159,7 +25159,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -25183,7 +25183,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25204,7 +25204,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -28759,7 +28759,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -28786,7 +28786,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -28899,7 +28899,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
     email_pembimbing_instansi?: StringNullableFilter<"pendaftaran_kp"> | string | null
     catatan_penolakan?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableFilter<"pendaftaran_kp"> | number | null
+    level_akses?: IntFilter<"pendaftaran_kp"> | number
     judul_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     alasan_lanjut_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     id_tahun_ajaran?: IntNullableFilter<"pendaftaran_kp"> | number | null
@@ -28953,7 +28953,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -28980,7 +28980,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -29059,7 +29059,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -29086,7 +29086,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -29169,7 +29169,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29196,7 +29196,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -29427,7 +29427,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -29454,7 +29454,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -30011,7 +30011,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -30037,7 +30037,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -30601,7 +30601,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -30628,7 +30628,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -30698,7 +30698,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30725,7 +30725,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31001,7 +31001,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     nip_penguji?: string | null
@@ -31028,7 +31028,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_instansi?: string | null
@@ -31125,7 +31125,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -31208,7 +31208,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31235,7 +31235,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31261,7 +31261,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31293,7 +31293,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -31344,7 +31344,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31371,7 +31371,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31397,7 +31397,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31468,7 +31468,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -31640,7 +31640,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31667,7 +31667,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31693,7 +31693,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31835,7 +31835,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -31898,7 +31898,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31924,7 +31924,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31950,7 +31950,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -32095,7 +32095,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_instansi?: string | null
@@ -32118,7 +32118,7 @@ export namespace Prisma {
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32145,7 +32145,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32171,7 +32171,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
