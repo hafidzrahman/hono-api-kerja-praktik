@@ -1,116 +1,68 @@
 import prisma from "../infrastructures/db.infrastructure";
 
 export default class BimbinganKPRepository {
-  public static async validateDosenForMahasiswa(
-    emailDosen: string,
-    nim: string
-  ): Promise<boolean> {
-    const result = await prisma.pendaftaran_kp.findFirst({
-      where: {
-        mahasiswa: {
-          nim: nim,
-        },
-        dosen_pembimbing: {
-          bimbingan: {
-            some: {
-              dosen_pembimbing: {
-                email: emailDosen,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return !!result; // Return true jika dosen adalah pembimbing mahasiswa
-  }
-
   public static async createBimbingan(
     nim: string,
-    emailDosen: string,
-    catatanBimbingan: string
+    nip: string,
+    catatan_bimbingan: string
   ) {
     return prisma.bimbingan.create({
       data: {
         nim: nim,
-        nip: emailDosen, // Asumsikan email dosen digunakan sebagai NIP
-        catatan_bimbingan: catatanBimbingan,
-        tanggal_bimbingan: new Date(), // Default ke tanggal saat ini
+        nip: nip,
+        catatan_bimbingan: catatan_bimbingan,
+        tanggal_bimbingan: new Date(),
       },
     });
   }
 
-  public static async findBimbinganByMahasiswa(emailMahasiswa: string) {
+  public static async getBimbingan(nim: string) {
     return prisma.bimbingan.findMany({
       where: {
-        mahasiswa: {
-          email: emailMahasiswa,
-        },
+        nim: nim,
       },
       select: {
         id: true,
         tanggal_bimbingan: true,
         catatan_bimbingan: true,
-        dosen_pembimbing: {
-          select: {
-            nama: true,
-            email: true,
-          },
-        },
       },
       orderBy: {
-        tanggal_bimbingan: "desc", // Urutkan berdasarkan tanggal terbaru
+        tanggal_bimbingan: "desc",
       },
     });
-  }
-
-  public static async validateBimbinganOwnership(
-    emailDosen: string,
-    idBimbingan: string
-  ): Promise<boolean> {
-    const result = await prisma.bimbingan.findFirst({
-      where: {
-        id: idBimbingan,
-        nip: emailDosen, // Asumsikan email dosen digunakan sebagai NIP
-      },
-    });
-
-    return !!result; // Return true jika bimbingan dimiliki oleh dosen
   }
 
   public static async updateBimbingan(
-    idBimbingan: string,
-    catatanBimbingan: string
+    id_bimbingan: string,
+    catatan_bimbingan: string
   ) {
     return prisma.bimbingan.update({
       where: {
-        id: idBimbingan,
+        id: id_bimbingan,
       },
       data: {
-        catatan_bimbingan: catatanBimbingan,
+        catatan_bimbingan: catatan_bimbingan,
       },
     });
   }
 
-  public static async findMahasiswaAndBimbingan(emailDosen: string) {
-    return prisma.mahasiswa.findMany({
+  public static async getMahasiswa(nip: string) {
+    return prisma.pendaftaran_kp.findMany({
       where: {
-        bimbingan: {
-          some: {
-            dosen_pembimbing: {
-              email: emailDosen,
-            },
-          },
-        },
+        nip_pembimbing: nip,
       },
       select: {
-        nama: true,
-        nim: true,
-        bimbingan: {
+        mahasiswa: {
           select: {
-            id: true,
-            tanggal_bimbingan: true,
-            catatan_bimbingan: true,
+            nim: true,
+            nama: true,
+            bimbingan: {
+              select: {
+                id: true,
+                catatan_bimbingan: true,
+                tanggal_bimbingan: true,
+              },
+            },
           },
         },
       },

@@ -291,15 +291,15 @@ export default class DailyReportRepository {
   }
 
   public static async createNilai(
-    emailPembimbing: string,
+    email: string,
     nim: string,
-    nilaiInstansi: number,
-    komponenPenilaian: {
+    nilai_instansi: number,
+    komponen_penilaian: {
       deliverables: number;
-      ketepatanWaktu: number;
+      ketepatan_waktu: number;
       kedisiplinan: number;
       attitude: number;
-      kerjasamaTim: number;
+      kerjasama_tim: number;
       inisiatif: number;
       masukan: string;
     }
@@ -307,29 +307,27 @@ export default class DailyReportRepository {
     return prisma.nilai.create({
       data: {
         nim: nim,
-        nilai_instansi: nilaiInstansi,
-        email_pembimbing_instansi: emailPembimbing, // Pastikan kolom ini sesuai dengan relasi
+        nilai_instansi: nilai_instansi,
+        email_pembimbing_instansi: email,
         komponen_penilaian_instansi: {
           create: {
-            deliverables: komponenPenilaian.deliverables,
-            ketepatan_waktu: komponenPenilaian.ketepatanWaktu,
-            kedisiplinan: komponenPenilaian.kedisiplinan,
-            attitude: komponenPenilaian.attitude,
-            kerjasama_tim: komponenPenilaian.kerjasamaTim,
-            inisiatif: komponenPenilaian.inisiatif,
-            masukan: komponenPenilaian.masukan,
+            deliverables: komponen_penilaian.deliverables,
+            ketepatan_waktu: komponen_penilaian.ketepatan_waktu,
+            kedisiplinan: komponen_penilaian.kedisiplinan,
+            attitude: komponen_penilaian.attitude,
+            kerjasama_tim: komponen_penilaian.kerjasama_tim,
+            inisiatif: komponen_penilaian.inisiatif,
+            masukan: komponen_penilaian.masukan,
           },
         },
       },
     });
   }
 
-  public static async getNilai(email: string) {
+  public static async getNilai(nim: string) {
     return prisma.nilai.findFirst({
       where: {
-        mahasiswa: {
-          email: email,
-        },
+        nim: nim,
       },
       select: {
         nilai_instansi: true,

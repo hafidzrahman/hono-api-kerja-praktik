@@ -7,10 +7,12 @@ const bimbinganKPRoute = new Hono({ router: new RegExpRouter() });
 
 bimbinganKPRoute.use(AuthMiddleware.JWTBearerTokenExtraction);
 
-bimbinganKPRoute.get("/", BimbinganKPHandler.getBimbinganByMahasiswa);
+//for Mahasiswa
+bimbinganKPRoute.get("/mahasiswa", BimbinganKPHandler.getBimbingan);
 
-bimbinganKPRoute.post("/", BimbinganKPHandler.createBimbingan);
-bimbinganKPRoute.put("/", BimbinganKPHandler.updateBimbingan);
-bimbinganKPRoute.get("/mahasiswa", BimbinganKPHandler.getMahasiswaAndBimbingan);
+// for Dosen Pembimbing
+bimbinganKPRoute.post("/mahasiswa", BimbinganKPHandler.createBimbingan);
+bimbinganKPRoute.put("/mahasiswa", BimbinganKPHandler.updateBimbingan);
+bimbinganKPRoute.get("/dosen-pembimbing/mahasiswa", BimbinganKPHandler.getMahasiswa);
 
 export default bimbinganKPRoute;

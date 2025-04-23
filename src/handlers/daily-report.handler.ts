@@ -148,27 +148,23 @@ export default class DailyReportHandler {
     const {
       nim,
       deliverables,
-      ketepatanWaktu,
+      ketepatan_waktu,
       kedisiplinan,
       attitude,
-      kerjasamaTim,
+      kerjasama_tim,
       inisiatif,
       masukan,
     } = await c.req.json();
 
-    if (!email)
-      throw new APIError(
-        "Waduh, email pembimbing instansi kosong cuy! 😭",
-        404
-      );
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     if (
       !nim ||
       deliverables == null ||
-      ketepatanWaktu == null ||
+      ketepatan_waktu == null ||
       kedisiplinan == null ||
       attitude == null ||
-      kerjasamaTim == null ||
+      kerjasama_tim == null ||
       inisiatif == null ||
       !masukan
     ) {
@@ -178,10 +174,10 @@ export default class DailyReportHandler {
     return c.json(
       await DailyReportService.createNilai(email, nim, {
         deliverables,
-        ketepatanWaktu,
+        ketepatan_waktu,
         kedisiplinan,
         attitude,
-        kerjasamaTim,
+        kerjasama_tim,
         inisiatif,
         masukan,
       }),
@@ -192,8 +188,7 @@ export default class DailyReportHandler {
   public static async getNilai(c: Context) {
     const { email } = c.get("user");
 
-    if (!email)
-      throw new APIError("Waduh, email mahasiswa kosong cuy! 😭", 404);
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     return c.json(await DailyReportService.getNilai(email));
   }

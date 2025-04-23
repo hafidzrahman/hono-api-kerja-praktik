@@ -198,19 +198,18 @@ export default class DailyReportService {
   }
 
   public static async createNilai(
-    emailPembimbing: string,
+    email: string,
     nim: string,
-    komponenPenilaian: {
+    komponen_penilaian: {
       deliverables: number;
-      ketepatanWaktu: number;
+      ketepatan_waktu: number;
       kedisiplinan: number;
       attitude: number;
-      kerjasamaTim: number;
+      kerjasama_tim: number;
       inisiatif: number;
       masukan: string;
     }
   ) {
-    // Validasi apakah mahasiswa memiliki lebih dari 22 daily report
     const dailyReportCount = await DailyReportRepository.countDailyReport(nim);
     if (dailyReportCount <= 22) {
       throw new APIError(
@@ -218,21 +217,20 @@ export default class DailyReportService {
         400
       );
     }
-    // Hitung nilai akhir berdasarkan bobot
-    const nilaiAkhir =
-      komponenPenilaian.deliverables * 0.15 +
-      komponenPenilaian.ketepatanWaktu * 0.1 +
-      komponenPenilaian.kedisiplinan * 0.15 +
-      komponenPenilaian.attitude * 0.15 +
-      komponenPenilaian.kerjasamaTim * 0.25 +
-      komponenPenilaian.inisiatif * 0.2;
 
-    // Simpan nilai ke database
+    const nilai_akhir =
+      komponen_penilaian.deliverables * 0.15 +
+      komponen_penilaian.ketepatan_waktu * 0.1 +
+      komponen_penilaian.kedisiplinan * 0.15 +
+      komponen_penilaian.attitude * 0.15 +
+      komponen_penilaian.kerjasama_tim * 0.25 +
+      komponen_penilaian.inisiatif * 0.2;
+
     const result = await DailyReportRepository.createNilai(
-      emailPembimbing,
+      email,
       nim,
-      nilaiAkhir,
-      komponenPenilaian
+      nilai_akhir,
+      komponen_penilaian
     );
 
     return {
@@ -243,10 +241,11 @@ export default class DailyReportService {
   }
 
   public static async getNilai(email: string) {
-    const nilai = await DailyReportRepository.getNilai(email);
+    const { nim } = await DailyReportRepository.getNIM(email);
+    const nilai = await DailyReportRepository.getNilai(nim);
 
     if (!nilai) {
-      throw new APIError("Nilai belum tersedia untuk mahasiswa ini! 😭", 404);
+      throw new APIError("Nilai belum diberikan pembimbing instansi! 😭", 404);
     }
 
     return {

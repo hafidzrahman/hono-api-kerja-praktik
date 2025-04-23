@@ -5,59 +5,49 @@ import { APIError } from "../utils/api-error.util";
 export default class BimbinganKPHandler {
   public static async createBimbingan(c: Context) {
     const { email } = c.get("user");
-    const { nim, catatanBimbingan } = await c.req.json();
+    const { catatan_bimbingan, nim } = await c.req.json();
 
-    if (!email) throw new APIError("Waduh, email dosen kosong cuy! 😭", 404);
-    if (!nim || !catatanBimbingan) {
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    if (!catatan_bimbingan || !nim) {
       throw new APIError("Data bimbingan tidak lengkap! 😭", 400);
     }
 
-    const result = await BimbinganKPService.createBimbingan(
-      email,
-      nim,
-      catatanBimbingan
+    return c.json(
+      await BimbinganKPService.createBimbingan(email, catatan_bimbingan, nim),
+      201
     );
-
-    return c.json(result, 201);
   }
 
-  public static async getBimbinganByMahasiswa(c: Context) {
+  public static async getBimbingan(c: Context) {
     const { email } = c.get("user");
 
-    if (!email)
-      throw new APIError("Waduh, email mahasiswa kosong cuy! 😭", 404);
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const bimbingan = await BimbinganKPService.getBimbinganByMahasiswa(email);
-
-    return c.json(bimbingan, 200);
+    return c.json(await BimbinganKPService.getBimbingan(email));
   }
 
   public static async updateBimbingan(c: Context) {
     const { email } = c.get("user");
-    const { idBimbingan, catatanBimbingan } = await c.req.json();
+    const { id_bimbingan, catatan_bimbingan } = await c.req.json();
 
-    if (!email) throw new APIError("Waduh, email dosen kosong cuy! 😭", 404);
-    if (!idBimbingan || !catatanBimbingan) {
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    if (!id_bimbingan || !catatan_bimbingan) {
       throw new APIError("Data bimbingan tidak lengkap! 😭", 400);
     }
 
-    const result = await BimbinganKPService.updateBimbingan(
-      email,
-      idBimbingan,
-      catatanBimbingan
+    return c.json(
+      await BimbinganKPService.updateBimbingan(id_bimbingan, catatan_bimbingan),
+      200
     );
-
-    return c.json(result, 200);
   }
 
-  public static async getMahasiswaAndBimbingan(c: Context) {
+  public static async getMahasiswa(c: Context) {
     const { email } = c.get("user");
 
-    if (!email) throw new APIError("Waduh, email dosen kosong cuy! 😭", 404);
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const mahasiswaAndBimbingan =
-      await BimbinganKPService.getMahasiswaAndBimbingan(email);
-
-    return c.json(mahasiswaAndBimbingan, 200);
+    return c.json(await BimbinganKPService.getMahasiswa(email));
   }
 }
