@@ -1,72 +1,59 @@
-import { PrismaClient, dokumen_seminar_kp, jenis_dokumen, status_dokumen } from '../generated/prisma';
-import { DokumenUploadDTO, UpdateDokumenStatusDTO } from '../types/dokumen-seminar-kp.type';
+import { PrismaClient, jenis_dokumen } from "../generated/prisma";
+import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput } from "../types/seminar-kp/dokumen-seminar-kp.type";
 
-export default class DokumenRepository {
+export default class DokumenSeminarKpRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async createDokumen(data: DokumenUploadDTO): Promise<dokumen_seminar_kp> {
-    return this.prisma.dokumen_seminar_kp.create({
+  async createDokumen(jenis_dokumen: jenis_dokumen, input: CreateDokumenSeminarKPInput) {
+    return await this.prisma.dokumen_seminar_kp.create({
       data: {
-        jenis_dokumen: data.jenis_dokumen,
-        link_path: data.link_path,
-        nim: data.nim,
-        id_pendaftaran_kp: data.id_pendaftaran_kp,
-        status: 'Terkirim',
+        jenis_dokumen: jenis_dokumen,
+        link_path: input.link_path,
+        nim: input.nim,
+        id_pendaftaran_kp: input.id_pendaftaran_kp,
         tanggal_upload: new Date(),
+        status: "Terkirim",
       },
     });
   }
 
-  async getDokumenById(id: string): Promise<dokumen_seminar_kp | null> {
-    return this.prisma.dokumen_seminar_kp.findUnique({
-      where: { id },
-    });
-  }
-
-  async getDokumenByPendaftaranKp(id_pendaftaran_kp: string): Promise<dokumen_seminar_kp[]> {
-    return this.prisma.dokumen_seminar_kp.findMany({
-      where: { id_pendaftaran_kp },
-    });
-  }
-
-  async getDokumenByNim(nim: string): Promise<dokumen_seminar_kp[]> {
-    return this.prisma.dokumen_seminar_kp.findMany({
-      where: { nim },
-    });
-  }
-
-  async getDokumenByJenis(
-    id_pendaftaran_kp: string,
-    jenis_dokumen: jenis_dokumen
-  ): Promise<dokumen_seminar_kp | null> {
-    return this.prisma.dokumen_seminar_kp.findFirst({
+  async getDokumenById(id: string) {
+    return await this.prisma.dokumen_seminar_kp.findUnique({
       where: {
+        id,
+      },
+    });
+  }
+
+  async getDokumenByJenisAndNim(jenis_dokumen: jenis_dokumen, nim: string) {
+    return await this.prisma.dokumen_seminar_kp.findFirst({
+      where: {
+        jenis_dokumen: jenis_dokumen,
+        nim,
+      },
+    });
+  }
+
+  async getDokumenByJenisAndPendaftaranId(jenis_dokumen: jenis_dokumen, id_pendaftaran_kp: string) {
+    return await this.prisma.dokumen_seminar_kp.findFirst({
+      where: {
+        jenis_dokumen: jenis_dokumen,
         id_pendaftaran_kp,
-        jenis_dokumen,
       },
     });
   }
 
-  async updateDokumenStatus({ id, status, komentar }: UpdateDokumenStatusDTO): Promise<dokumen_seminar_kp> {
-    return this.prisma.dokumen_seminar_kp.update({
+  async updateDokumen(id: string, data: UpdateDokumenSeminarKPInput) {
+    return await this.prisma.dokumen_seminar_kp.update({
       where: { id },
-      data: {
-        status,
-        komentar,
-      },
+      data,
     });
   }
 
-  async deleteDokumen(id: string): Promise<dokumen_seminar_kp> {
+  async deleteDokumen(id: string) {
     return this.prisma.dokumen_seminar_kp.delete({
       where: { id },
     });
   }
 
-  async updateDokumen(id: string, data:any): Promise<dokumen_seminar_kp> {
-    return this.prisma.dokumen_seminar_kp.update({
-      where: { id },
-      data,
-    });
-  }
 }
