@@ -1,25 +1,17 @@
-import { PrismaClient } from '../generated/prisma';
-import { 
-  KomponenPenilaianInstansi, 
-  KomponenPenilaianPembimbing, 
-  KomponenPenilaianPenguji 
-} from '../types/nilai-seminar-kp.type';
+import { PrismaClient } from "../generated/prisma";
+import { KomponenPenilaianInstansi, KomponenPenilaianPembimbing, KomponenPenilaianPenguji } from "../types/seminar-kp/nilai-seminar-kp.type";
 
 const prisma = new PrismaClient();
 
-export const createOrUpdateNilai = async (
-  nim: string,
-  nip?: string,
-  id_pembimbing_instansi?: string
-) => {
+export const createOrUpdateNilai = async (nim: string, nip?: string, id_pembimbing_instansi?: string) => {
   try {
     // Cek apakah nilai untuk mahasiswa sudah ada
     const existingNilai = await prisma.nilai.findFirst({
       where: {
         nim,
         ...(nip ? { nip } : {}),
-        ...(id_pembimbing_instansi ? { id_pembimbing_instansi } : {})
-      }
+        ...(id_pembimbing_instansi ? { id_pembimbing_instansi } : {}),
+      },
     });
 
     if (existingNilai) {
@@ -31,191 +23,161 @@ export const createOrUpdateNilai = async (
       data: {
         nim,
         ...(nip ? { nip } : {}),
-        ...(id_pembimbing_instansi ? { id_pembimbing_instansi } : {})
-      }
+        ...(id_pembimbing_instansi ? { id_pembimbing_instansi } : {}),
+      },
     });
   } catch (error) {
-    console.error('Error in createOrUpdateNilai:', error);
+    console.error("Error in createOrUpdateNilai:", error);
     throw error;
   }
 };
 
-export const updateNilaiInstansi = async (
-  idNilai: string,
-  nilai_instansi: number
-) => {
+export const updateNilaiInstansi = async (idNilai: string, nilai_instansi: number) => {
   try {
     return await prisma.nilai.update({
       where: { id: idNilai },
-      data: { nilai_instansi }
+      data: { nilai_instansi },
     });
   } catch (error) {
-    console.error('Error in updateNilaiInstansi:', error);
+    console.error("Error in updateNilaiInstansi:", error);
     throw error;
   }
 };
 
-export const updateNilaiPembimbing = async (
-  idNilai: string,
-  nilai_pembimbing: number
-) => {
+export const updateNilaiPembimbing = async (idNilai: string, nilai_pembimbing: number) => {
   try {
     return await prisma.nilai.update({
       where: { id: idNilai },
-      data: { nilai_pembimbing }
+      data: { nilai_pembimbing },
     });
   } catch (error) {
-    console.error('Error in updateNilaiPembimbing:', error);
+    console.error("Error in updateNilaiPembimbing:", error);
     throw error;
   }
 };
 
-export const updateNilaiPenguji = async (
-  idNilai: string,
-  nilai_penguji: number
-) => {
+export const updateNilaiPenguji = async (idNilai: string, nilai_penguji: number) => {
   try {
     return await prisma.nilai.update({
       where: { id: idNilai },
-      data: { nilai_penguji }
+      data: { nilai_penguji },
     });
   } catch (error) {
-    console.error('Error in updateNilaiPenguji:', error);
+    console.error("Error in updateNilaiPenguji:", error);
     throw error;
   }
 };
 
-export const updateNilaiAkhir = async (
-  idNilai: string,
-  nilai_akhir: number | null
-) => {
+export const updateNilaiAkhir = async (idNilai: string, nilai_akhir: number | null) => {
   try {
     return await prisma.nilai.update({
       where: { id: idNilai },
-      data: { nilai_akhir }
+      data: { nilai_akhir },
     });
   } catch (error) {
-    console.error('Error in updateNilaiAkhir:', error);
+    console.error("Error in updateNilaiAkhir:", error);
     throw error;
   }
 };
 
-export const createKomponenPenilaianInstansi = async (
-  idNilai: string,
-  komponenPenilaian: KomponenPenilaianInstansi
-) => {
+export const createKomponenPenilaianInstansi = async (idNilai: string, komponenPenilaian: KomponenPenilaianInstansi) => {
   try {
     const { masukan, ...nilaiKomponen } = komponenPenilaian;
-    
+
     return await prisma.komponen_penilaian_instansi.create({
       data: {
         ...nilaiKomponen,
         masukan: masukan || null,
-        id_nilai: idNilai
-      }
+        id_nilai: idNilai,
+      },
     });
   } catch (error) {
-    console.error('Error in createKomponenPenilaianInstansi:', error);
+    console.error("Error in createKomponenPenilaianInstansi:", error);
     throw error;
   }
 };
 
-export const updateKomponenPenilaianInstansi = async (
-  idKomponen: string,
-  komponenPenilaian: KomponenPenilaianInstansi
-) => {
+export const updateKomponenPenilaianInstansi = async (idKomponen: string, komponenPenilaian: KomponenPenilaianInstansi) => {
   try {
     const { masukan, ...nilaiKomponen } = komponenPenilaian;
-    
+
     return await prisma.komponen_penilaian_instansi.update({
       where: { id: idKomponen },
       data: {
         ...nilaiKomponen,
-        masukan: masukan || null
-      }
+        masukan: masukan || null,
+      },
     });
   } catch (error) {
-    console.error('Error in updateKomponenPenilaianInstansi:', error);
+    console.error("Error in updateKomponenPenilaianInstansi:", error);
     throw error;
   }
 };
 
-export const createKomponenPenilaianPembimbing = async (
-  idNilai: string,
-  komponenPenilaian: KomponenPenilaianPembimbing
-) => {
+export const createKomponenPenilaianPembimbing = async (idNilai: string, komponenPenilaian: KomponenPenilaianPembimbing) => {
   try {
     const { catatan, ...nilaiKomponen } = komponenPenilaian;
-    
+
     return await prisma.komponen_penilaian_pembimbing.create({
       data: {
         ...nilaiKomponen,
         catatan: catatan || null,
-        id_nilai: idNilai
-      }
+        id_nilai: idNilai,
+      },
     });
   } catch (error) {
-    console.error('Error in createKomponenPenilaianPembimbing:', error);
+    console.error("Error in createKomponenPenilaianPembimbing:", error);
     throw error;
   }
 };
 
-export const updateKomponenPenilaianPembimbing = async (
-  idKomponen: string,
-  komponenPenilaian: KomponenPenilaianPembimbing
-) => {
+export const updateKomponenPenilaianPembimbing = async (idKomponen: string, komponenPenilaian: KomponenPenilaianPembimbing) => {
   try {
     const { catatan, ...nilaiKomponen } = komponenPenilaian;
-    
+
     return await prisma.komponen_penilaian_pembimbing.update({
       where: { id: idKomponen },
       data: {
         ...nilaiKomponen,
-        catatan: catatan || null
-      }
+        catatan: catatan || null,
+      },
     });
   } catch (error) {
-    console.error('Error in updateKomponenPenilaianPembimbing:', error);
+    console.error("Error in updateKomponenPenilaianPembimbing:", error);
     throw error;
   }
 };
 
-export const createKomponenPenilaianPenguji = async (
-  idNilai: string,
-  komponenPenilaian: KomponenPenilaianPenguji
-) => {
+export const createKomponenPenilaianPenguji = async (idNilai: string, komponenPenilaian: KomponenPenilaianPenguji) => {
   try {
     const { catatan, ...nilaiKomponen } = komponenPenilaian;
-    
+
     return await prisma.komponen_penilaian_penguji.create({
       data: {
         ...nilaiKomponen,
         catatan: catatan || null,
-        id_nilai: idNilai
-      }
+        id_nilai: idNilai,
+      },
     });
   } catch (error) {
-    console.error('Error in createKomponenPenilaianPenguji:', error);
+    console.error("Error in createKomponenPenilaianPenguji:", error);
     throw error;
   }
 };
 
-export const updateKomponenPenilaianPenguji = async (
-  idKomponen: string,
-  komponenPenilaian: KomponenPenilaianPenguji
-) => {
+export const updateKomponenPenilaianPenguji = async (idKomponen: string, komponenPenilaian: KomponenPenilaianPenguji) => {
   try {
     const { catatan, ...nilaiKomponen } = komponenPenilaian;
-    
+
     return await prisma.komponen_penilaian_penguji.update({
       where: { id: idKomponen },
       data: {
         ...nilaiKomponen,
-        catatan: catatan || null
-      }
+        catatan: catatan || null,
+      },
     });
   } catch (error) {
-    console.error('Error in updateKomponenPenilaianPenguji:', error);
+    console.error("Error in updateKomponenPenilaianPenguji:", error);
     throw error;
   }
 };
@@ -231,13 +193,13 @@ export const getNilaiById = async (id: string) => {
         mahasiswa: {
           select: {
             nim: true,
-            nama: true
-          }
-        }
-      }
+            nama: true,
+          },
+        },
+      },
     });
   } catch (error) {
-    console.error('Error in getNilaiById:', error);
+    console.error("Error in getNilaiById:", error);
     throw error;
   }
 };
@@ -253,13 +215,13 @@ export const getNilaiByNim = async (nim: string) => {
         mahasiswa: {
           select: {
             nim: true,
-            nama: true
-          }
-        }
-      }
+            nama: true,
+          },
+        },
+      },
     });
   } catch (error) {
-    console.error('Error in getNilaiByNim:', error);
+    console.error("Error in getNilaiByNim:", error);
     throw error;
   }
 };
@@ -267,10 +229,10 @@ export const getNilaiByNim = async (nim: string) => {
 export const getExistingKomponenPenilaianInstansi = async (idNilai: string) => {
   try {
     return await prisma.komponen_penilaian_instansi.findFirst({
-      where: { id_nilai: idNilai }
+      where: { id_nilai: idNilai },
     });
   } catch (error) {
-    console.error('Error in getExistingKomponenPenilaianInstansi:', error);
+    console.error("Error in getExistingKomponenPenilaianInstansi:", error);
     throw error;
   }
 };
@@ -278,10 +240,10 @@ export const getExistingKomponenPenilaianInstansi = async (idNilai: string) => {
 export const getExistingKomponenPenilaianPembimbing = async (idNilai: string) => {
   try {
     return await prisma.komponen_penilaian_pembimbing.findFirst({
-      where: { id_nilai: idNilai }
+      where: { id_nilai: idNilai },
     });
   } catch (error) {
-    console.error('Error in getExistingKomponenPenilaianPembimbing:', error);
+    console.error("Error in getExistingKomponenPenilaianPembimbing:", error);
     throw error;
   }
 };
@@ -289,10 +251,10 @@ export const getExistingKomponenPenilaianPembimbing = async (idNilai: string) =>
 export const getExistingKomponenPenilaianPenguji = async (idNilai: string) => {
   try {
     return await prisma.komponen_penilaian_penguji.findFirst({
-      where: { id_nilai: idNilai }
+      where: { id_nilai: idNilai },
     });
   } catch (error) {
-    console.error('Error in getExistingKomponenPenilaianPenguji:', error);
+    console.error("Error in getExistingKomponenPenilaianPenguji:", error);
     throw error;
   }
 };
@@ -304,14 +266,14 @@ export const getAllNilai = async () => {
         mahasiswa: {
           select: {
             nim: true,
-            nama: true
-          }
+            nama: true,
+          },
         },
         dosen: {
           select: {
             nip: true,
-            nama: true
-          }
+            nama: true,
+          },
         },
         pembimbing_instansi: {
           select: {
@@ -319,15 +281,15 @@ export const getAllNilai = async () => {
             nama: true,
             instansi: {
               select: {
-                nama: true
-              }
-            }
-          }
-        }
-      }
+                nama: true,
+              },
+            },
+          },
+        },
+      },
     });
   } catch (error) {
-    console.error('Error in getAllNilai:', error);
+    console.error("Error in getAllNilai:", error);
     throw error;
   }
 };
