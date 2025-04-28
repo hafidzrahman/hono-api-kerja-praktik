@@ -1,21 +1,9 @@
-import {
-  hitungNilaiInstansi,
-  hitungNilaiPembimbing,
-  hitungNilaiPenguji,
-  hitungNilaiAkhir,
-  validateKomponenPenilaianInstansi,
-  validateKomponenPenilaianPembimbing,
-  validateKomponenPenilaianPenguji
-} from '../helpers/nilai.helper';
+import { hitungNilaiInstansi, hitungNilaiPembimbing, hitungNilaiPenguji, hitungNilaiAkhir, validateKomponenPenilaianInstansi, validateKomponenPenilaianPembimbing, validateKomponenPenilaianPenguji } from "../helpers/nilai.helper";
 
-import * as nilaiRepository from '../repositories/nilai-seminar-kp.repository';
+import * as nilaiRepository from "../repositories/nilai-seminar-kp.repository";
 
-import {
-  CreateNilaiInstansiRequest,
-  CreateNilaiPembimbingRequest,
-  CreateNilaiPengujiRequest
-} from '../types/nilai-seminar-kp.type';
-import { APIError } from '../utils/api-error.util';
+import { CreateNilaiInstansiRequest, CreateNilaiPembimbingRequest, CreateNilaiPengujiRequest } from "../types/seminar-kp/nilai-seminar-kp.type";
+import { APIError } from "../utils/api-error.util";
 
 export const createNilaiInstansi = async (request: CreateNilaiInstansiRequest) => {
   try {
@@ -23,7 +11,7 @@ export const createNilaiInstansi = async (request: CreateNilaiInstansiRequest) =
 
     // Validasi komponen penilaian
     if (!validateKomponenPenilaianInstansi(komponenPenilaian)) {
-      throw new Error('Nilai komponen harus dalam rentang 0-100');
+      throw new Error("Nilai komponen harus dalam rentang 0-100");
     }
 
     // Hitung nilai instansi
@@ -47,20 +35,16 @@ export const createNilaiInstansi = async (request: CreateNilaiInstansiRequest) =
 
     // Ambil data nilai terbaru
     const updatedNilai = await nilaiRepository.getNilaiById(nilai.id);
-    
+
     // Hitung dan update nilai akhir
-    const nilaiAkhir = hitungNilaiAkhir(
-      updatedNilai?.nilai_pembimbing ?? undefined,
-      updatedNilai?.nilai_penguji ?? undefined,
-      nilaiInstansi
-    );
-    
+    const nilaiAkhir = hitungNilaiAkhir(updatedNilai?.nilai_pembimbing ?? undefined, updatedNilai?.nilai_penguji ?? undefined, nilaiInstansi);
+
     await nilaiRepository.updateNilaiAkhir(nilai.id, nilaiAkhir);
 
     // Ambil data akhir setelah semua update
     return await nilaiRepository.getNilaiById(nilai.id);
   } catch (error) {
-    throw new APIError('Gagal membuat nilai instansi', 500);
+    throw new APIError("Gagal membuat nilai instansi", 500);
   }
 };
 
@@ -70,7 +54,7 @@ export const createNilaiPembimbing = async (request: CreateNilaiPembimbingReques
 
     // Validasi komponen penilaian
     if (!validateKomponenPenilaianPembimbing(komponenPenilaian)) {
-      throw new Error('Nilai komponen harus dalam rentang 0-100');
+      throw new Error("Nilai komponen harus dalam rentang 0-100");
     }
 
     // Hitung nilai pembimbing
@@ -94,20 +78,16 @@ export const createNilaiPembimbing = async (request: CreateNilaiPembimbingReques
 
     // Ambil data nilai terbaru
     const updatedNilai = await nilaiRepository.getNilaiById(nilai.id);
-    
+
     // Hitung dan update nilai akhir
-    const nilaiAkhir = hitungNilaiAkhir(
-      nilaiPembimbing,
-      updatedNilai?.nilai_penguji ?? undefined,
-      updatedNilai?.nilai_instansi ?? undefined
-    );
-    
+    const nilaiAkhir = hitungNilaiAkhir(nilaiPembimbing, updatedNilai?.nilai_penguji ?? undefined, updatedNilai?.nilai_instansi ?? undefined);
+
     await nilaiRepository.updateNilaiAkhir(nilai.id, nilaiAkhir);
 
     // Ambil data akhir setelah semua update
     return await nilaiRepository.getNilaiById(nilai.id);
   } catch (error) {
-    throw new APIError('Gagal membuat nilai pembimbing', 500);
+    throw new APIError("Gagal membuat nilai pembimbing", 500);
   }
 };
 
@@ -117,7 +97,7 @@ export const createNilaiPenguji = async (request: CreateNilaiPengujiRequest) => 
 
     // Validasi komponen penilaian
     if (!validateKomponenPenilaianPenguji(komponenPenilaian)) {
-      throw new Error('Nilai komponen harus dalam rentang 0-100');
+      throw new Error("Nilai komponen harus dalam rentang 0-100");
     }
 
     // Hitung nilai penguji
@@ -141,20 +121,16 @@ export const createNilaiPenguji = async (request: CreateNilaiPengujiRequest) => 
 
     // Ambil data nilai terbaru
     const updatedNilai = await nilaiRepository.getNilaiById(nilai.id);
-    
+
     // Hitung dan update nilai akhir
-    const nilaiAkhir = hitungNilaiAkhir(
-      updatedNilai?.nilai_pembimbing ?? undefined,
-      nilaiPenguji,
-      updatedNilai?.nilai_instansi ?? undefined
-    );
-    
+    const nilaiAkhir = hitungNilaiAkhir(updatedNilai?.nilai_pembimbing ?? undefined, nilaiPenguji, updatedNilai?.nilai_instansi ?? undefined);
+
     await nilaiRepository.updateNilaiAkhir(nilai.id, nilaiAkhir);
 
     // Ambil data akhir setelah semua update
     return await nilaiRepository.getNilaiById(nilai.id);
   } catch (error) {
-    throw new APIError('Gagal membuat nilai penguji', 500);
+    throw new APIError("Gagal membuat nilai penguji", 500);
   }
 };
 
@@ -162,7 +138,7 @@ export const getNilaiMahasiswa = async (nim: string) => {
   try {
     return await nilaiRepository.getNilaiByNim(nim);
   } catch (error) {
-    throw new APIError('Gagal mendapatkan nilai mahasiswa', 500);
+    throw new APIError("Gagal mendapatkan nilai mahasiswa", 500);
   }
 };
 
@@ -170,6 +146,6 @@ export const getAllNilai = async () => {
   try {
     return await nilaiRepository.getAllNilai();
   } catch (error) {
-    throw new APIError('Gagal mendapatkan semua nilai', 500);
+    throw new APIError("Gagal mendapatkan semua nilai", 500);
   }
 };
