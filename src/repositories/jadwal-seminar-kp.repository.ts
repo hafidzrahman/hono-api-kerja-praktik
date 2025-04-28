@@ -1,5 +1,5 @@
-import { PrismaClient, jadwal, log_jadwal } from '../generated/prisma';
-import { CreateJadwalDto, UpdateJadwalDto, JadwalFilter, JadwalLogDto } from '../types/jadwal-seminar-kp.type';
+import { PrismaClient, jadwal, log_jadwal } from "../generated/prisma";
+import { CreateJadwalDto, UpdateJadwalDto, JadwalFilter, JadwalLogDto } from "../types/seminar-kp/jadwal-seminar-kp.type";
 
 export default class JadwalRepository {
   private prisma: PrismaClient;
@@ -16,10 +16,10 @@ export default class JadwalRepository {
         mahasiswa: true,
         pendaftaran_kp: {
           include: {
-            mahasiswa: true
-          }
-        }
-      }
+            mahasiswa: true,
+          },
+        },
+      },
     });
   }
 
@@ -31,10 +31,10 @@ export default class JadwalRepository {
         mahasiswa: true,
         pendaftaran_kp: {
           include: {
-            mahasiswa: true
-          }
-        }
-      }
+            mahasiswa: true,
+          },
+        },
+      },
     });
   }
 
@@ -46,13 +46,13 @@ export default class JadwalRepository {
         mahasiswa: true,
         pendaftaran_kp: {
           include: {
-            mahasiswa: true
-          }
-        }
+            mahasiswa: true,
+          },
+        },
       },
       orderBy: {
-        tanggal: 'asc'
-      }
+        tanggal: "asc",
+      },
     });
   }
 
@@ -65,77 +65,66 @@ export default class JadwalRepository {
         mahasiswa: true,
         pendaftaran_kp: {
           include: {
-            mahasiswa: true
-          }
-        }
-      }
+            mahasiswa: true,
+          },
+        },
+      },
     });
   }
 
   async delete(id: string): Promise<jadwal> {
     return this.prisma.jadwal.delete({
-      where: { id }
+      where: { id },
     });
   }
 
-  async findConflictingSchedules(
-    tanggal: Date,
-    waktu_mulai: Date,
-    waktu_selesai: Date,
-    ruangan: string,
-    excludeJadwalId?: string
-  ): Promise<jadwal[]> {
+  async findConflictingSchedules(tanggal: Date, waktu_mulai: Date, waktu_selesai: Date, ruangan: string, excludeJadwalId?: string): Promise<jadwal[]> {
     return this.prisma.jadwal.findMany({
       where: {
         tanggal,
         nama_ruangan: ruangan,
         waktu_mulai: {
-          lt: waktu_selesai
+          lt: waktu_selesai,
         },
         waktu_selesai: {
-          gt: waktu_mulai
+          gt: waktu_mulai,
         },
-        ...(excludeJadwalId ? { id: { not: excludeJadwalId } } : {})
+        ...(excludeJadwalId ? { id: { not: excludeJadwalId } } : {}),
       },
       include: {
         ruangan: true,
         mahasiswa: true,
-        pendaftaran_kp: true
-      }
+        pendaftaran_kp: true,
+      },
     });
   }
 
-  async findDosenConflicts(
-    tanggal: Date,
-    waktu_mulai: Date,
-    waktu_selesai: Date,
-    excludeJadwalId?: string
-  ): Promise<any[]> {
+  async findDosenConflicts(tanggal: Date, waktu_mulai: Date, waktu_selesai: Date, excludeJadwalId?: string): Promise<any[]> {
     // Find conflicts where dosen is assigned as either pembimbing or penguji
     return this.prisma.jadwal.findMany({
       where: {
         tanggal,
         waktu_mulai: {
-          lt: waktu_selesai
+          lt: waktu_selesai,
         },
         waktu_selesai: {
-          gt: waktu_mulai
+          gt: waktu_mulai,
         },
-        ...(excludeJadwalId ? { id: { not: excludeJadwalId } } : {})
+        ...(excludeJadwalId ? { id: { not: excludeJadwalId } } : {}),
       },
       include: {
         pendaftaran_kp: {
           include: {
-            mahasiswa: true
-          }
-        }
-      }
+            mahasiswa: true,
+          },
+        },
+      },
     });
   }
 
   async createLogJadwal(logData: JadwalLogDto): Promise<log_jadwal> {
     return this.prisma.log_jadwal.create({
-      data: logData
+      data: logData,
     });
   }
 }
