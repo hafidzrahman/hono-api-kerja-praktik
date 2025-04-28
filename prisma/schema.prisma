@@ -114,6 +114,7 @@ model nilai {
   nilai_penguji                 Float?
   nilai_pembimbing              Float?
   nilai_instansi                Float?
+  nilai_akhir                   Float?
   nim                           String?                         @db.VarChar(11)
   nip                           String?                         @db.VarChar(20)
   email_pembimbing_instansi     String?                         @db.VarChar(255)
@@ -236,7 +237,7 @@ enum jenis_dokumen {
   LAPORAN_TAMBAHAN_KP
   FORM_KEHADIRAN_SEMINAR
   ID_SURAT_UNDANGAN
-  SURAT_UNDANGAN_SEMINAR_HASIL
+  SURAT_UNDANGAN_SEMINAR_KP
   BERITA_ACARA_SEMINAR
   DAFTAR_HADIR_SEMINAR
   LEMBAR_PENGESAHAN_KP
