@@ -122,8 +122,7 @@ exports.Prisma.BimbinganScalarFieldEnum = {
   tanggal_bimbingan: 'tanggal_bimbingan',
   catatan_bimbingan: 'catatan_bimbingan',
   nim: 'nim',
-  nip: 'nip',
-  id_pendaftaran_kp: 'id_pendaftaran_kp'
+  nip: 'nip'
 };
 
 exports.Prisma.Daily_reportScalarFieldEnum = {
@@ -133,15 +132,14 @@ exports.Prisma.Daily_reportScalarFieldEnum = {
   catatan_evaluasi: 'catatan_evaluasi',
   latitude: 'latitude',
   longitude: 'longitude',
-  nim: 'nim',
-  id_pendaftaran_kp: 'id_pendaftaran_kp'
+  nim: 'nim'
 };
 
 exports.Prisma.Detail_daily_reportScalarFieldEnum = {
   id: 'id',
+  waktu: 'waktu',
   judul_agenda: 'judul_agenda',
   deskripsi_agenda: 'deskripsi_agenda',
-  waktu: 'waktu',
   id_daily_report: 'id_daily_report'
 };
 
@@ -163,9 +161,7 @@ exports.Prisma.InstansiScalarFieldEnum = {
   profil_singkat: 'profil_singkat',
   status: 'status',
   nama_pj: 'nama_pj',
-  no_hp_pj: 'no_hp_pj',
-  nim: 'nim',
-  nip: 'nip'
+  no_hp_pj: 'no_hp_pj'
 };
 
 exports.Prisma.JadwalScalarFieldEnum = {
@@ -207,16 +203,16 @@ exports.Prisma.NilaiScalarFieldEnum = {
   nilai_instansi: 'nilai_instansi',
   nim: 'nim',
   nip: 'nip',
-  id_pembimbing_instansi: 'id_pembimbing_instansi',
+  email_pembimbing_instansi: 'email_pembimbing_instansi',
   id_jadwal_seminar: 'id_jadwal_seminar'
 };
 
 exports.Prisma.Pembimbing_instansiScalarFieldEnum = {
+  email: 'email',
   id: 'id',
   nama: 'nama',
   no_hp: 'no_hp',
   jabatan: 'jabatan',
-  email: 'email',
   id_instansi: 'id_instansi'
 };
 

@@ -2464,11 +2464,13 @@ export namespace Prisma {
   export type DosenCountOutputType = {
     bimbingan: number
     nilai: number
+    pendaftaran_kp: number
   }
 
   export type DosenCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bimbingan?: boolean | DosenCountOutputTypeCountBimbinganArgs
     nilai?: boolean | DosenCountOutputTypeCountNilaiArgs
+    pendaftaran_kp?: boolean | DosenCountOutputTypeCountPendaftaran_kpArgs
   }
 
   // Custom InputTypes
@@ -2494,6 +2496,13 @@ export namespace Prisma {
    */
   export type DosenCountOutputTypeCountNilaiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: nilaiWhereInput
+  }
+
+  /**
+   * DosenCountOutputType without action
+   */
+  export type DosenCountOutputTypeCountPendaftaran_kpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: pendaftaran_kpWhereInput
   }
 
 
@@ -2668,10 +2677,12 @@ export namespace Prisma {
 
   export type Pembimbing_instansiCountOutputType = {
     nilai: number
+    pendaftaran_kp: number
   }
 
   export type Pembimbing_instansiCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     nilai?: boolean | Pembimbing_instansiCountOutputTypeCountNilaiArgs
+    pendaftaran_kp?: boolean | Pembimbing_instansiCountOutputTypeCountPendaftaran_kpArgs
   }
 
   // Custom InputTypes
@@ -2692,21 +2703,24 @@ export namespace Prisma {
     where?: nilaiWhereInput
   }
 
+  /**
+   * Pembimbing_instansiCountOutputType without action
+   */
+  export type Pembimbing_instansiCountOutputTypeCountPendaftaran_kpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: pendaftaran_kpWhereInput
+  }
+
 
   /**
    * Count Type Pendaftaran_kpCountOutputType
    */
 
   export type Pendaftaran_kpCountOutputType = {
-    bimbingan: number
-    daily_report: number
     dokumen_seminar_kp: number
     jadwal: number
   }
 
   export type Pendaftaran_kpCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    bimbingan?: boolean | Pendaftaran_kpCountOutputTypeCountBimbinganArgs
-    daily_report?: boolean | Pendaftaran_kpCountOutputTypeCountDaily_reportArgs
     dokumen_seminar_kp?: boolean | Pendaftaran_kpCountOutputTypeCountDokumen_seminar_kpArgs
     jadwal?: boolean | Pendaftaran_kpCountOutputTypeCountJadwalArgs
   }
@@ -2720,20 +2734,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the Pendaftaran_kpCountOutputType
      */
     select?: Pendaftaran_kpCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * Pendaftaran_kpCountOutputType without action
-   */
-  export type Pendaftaran_kpCountOutputTypeCountBimbinganArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: bimbinganWhereInput
-  }
-
-  /**
-   * Pendaftaran_kpCountOutputType without action
-   */
-  export type Pendaftaran_kpCountOutputTypeCountDaily_reportArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: daily_reportWhereInput
   }
 
   /**
@@ -2833,7 +2833,6 @@ export namespace Prisma {
     catatan_bimbingan: string | null
     nim: string | null
     nip: string | null
-    id_pendaftaran_kp: string | null
   }
 
   export type BimbinganMaxAggregateOutputType = {
@@ -2842,7 +2841,6 @@ export namespace Prisma {
     catatan_bimbingan: string | null
     nim: string | null
     nip: string | null
-    id_pendaftaran_kp: string | null
   }
 
   export type BimbinganCountAggregateOutputType = {
@@ -2851,7 +2849,6 @@ export namespace Prisma {
     catatan_bimbingan: number
     nim: number
     nip: number
-    id_pendaftaran_kp: number
     _all: number
   }
 
@@ -2862,7 +2859,6 @@ export namespace Prisma {
     catatan_bimbingan?: true
     nim?: true
     nip?: true
-    id_pendaftaran_kp?: true
   }
 
   export type BimbinganMaxAggregateInputType = {
@@ -2871,7 +2867,6 @@ export namespace Prisma {
     catatan_bimbingan?: true
     nim?: true
     nip?: true
-    id_pendaftaran_kp?: true
   }
 
   export type BimbinganCountAggregateInputType = {
@@ -2880,7 +2875,6 @@ export namespace Prisma {
     catatan_bimbingan?: true
     nim?: true
     nip?: true
-    id_pendaftaran_kp?: true
     _all?: true
   }
 
@@ -2962,7 +2956,6 @@ export namespace Prisma {
     catatan_bimbingan: string | null
     nim: string | null
     nip: string | null
-    id_pendaftaran_kp: string | null
     _count: BimbinganCountAggregateOutputType | null
     _min: BimbinganMinAggregateOutputType | null
     _max: BimbinganMaxAggregateOutputType | null
@@ -2988,10 +2981,8 @@ export namespace Prisma {
     catatan_bimbingan?: boolean
     nim?: boolean
     nip?: boolean
-    id_pendaftaran_kp?: boolean
-    pendaftaran_kp?: boolean | bimbingan$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | bimbingan$mahasiswaArgs<ExtArgs>
-    dosen?: boolean | bimbingan$dosenArgs<ExtArgs>
+    dosen_pembimbing?: boolean | bimbingan$dosen_pembimbingArgs<ExtArgs>
   }, ExtArgs["result"]["bimbingan"]>
 
   export type bimbinganSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3000,10 +2991,8 @@ export namespace Prisma {
     catatan_bimbingan?: boolean
     nim?: boolean
     nip?: boolean
-    id_pendaftaran_kp?: boolean
-    pendaftaran_kp?: boolean | bimbingan$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | bimbingan$mahasiswaArgs<ExtArgs>
-    dosen?: boolean | bimbingan$dosenArgs<ExtArgs>
+    dosen_pembimbing?: boolean | bimbingan$dosen_pembimbingArgs<ExtArgs>
   }, ExtArgs["result"]["bimbingan"]>
 
   export type bimbinganSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3012,10 +3001,8 @@ export namespace Prisma {
     catatan_bimbingan?: boolean
     nim?: boolean
     nip?: boolean
-    id_pendaftaran_kp?: boolean
-    pendaftaran_kp?: boolean | bimbingan$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | bimbingan$mahasiswaArgs<ExtArgs>
-    dosen?: boolean | bimbingan$dosenArgs<ExtArgs>
+    dosen_pembimbing?: boolean | bimbingan$dosen_pembimbingArgs<ExtArgs>
   }, ExtArgs["result"]["bimbingan"]>
 
   export type bimbinganSelectScalar = {
@@ -3024,32 +3011,27 @@ export namespace Prisma {
     catatan_bimbingan?: boolean
     nim?: boolean
     nip?: boolean
-    id_pendaftaran_kp?: boolean
   }
 
-  export type bimbinganOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal_bimbingan" | "catatan_bimbingan" | "nim" | "nip" | "id_pendaftaran_kp", ExtArgs["result"]["bimbingan"]>
+  export type bimbinganOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal_bimbingan" | "catatan_bimbingan" | "nim" | "nip", ExtArgs["result"]["bimbingan"]>
   export type bimbinganInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    pendaftaran_kp?: boolean | bimbingan$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | bimbingan$mahasiswaArgs<ExtArgs>
-    dosen?: boolean | bimbingan$dosenArgs<ExtArgs>
+    dosen_pembimbing?: boolean | bimbingan$dosen_pembimbingArgs<ExtArgs>
   }
   export type bimbinganIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    pendaftaran_kp?: boolean | bimbingan$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | bimbingan$mahasiswaArgs<ExtArgs>
-    dosen?: boolean | bimbingan$dosenArgs<ExtArgs>
+    dosen_pembimbing?: boolean | bimbingan$dosen_pembimbingArgs<ExtArgs>
   }
   export type bimbinganIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    pendaftaran_kp?: boolean | bimbingan$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | bimbingan$mahasiswaArgs<ExtArgs>
-    dosen?: boolean | bimbingan$dosenArgs<ExtArgs>
+    dosen_pembimbing?: boolean | bimbingan$dosen_pembimbingArgs<ExtArgs>
   }
 
   export type $bimbinganPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "bimbingan"
     objects: {
-      pendaftaran_kp: Prisma.$pendaftaran_kpPayload<ExtArgs> | null
       mahasiswa: Prisma.$mahasiswaPayload<ExtArgs> | null
-      dosen: Prisma.$dosenPayload<ExtArgs> | null
+      dosen_pembimbing: Prisma.$dosenPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3057,7 +3039,6 @@ export namespace Prisma {
       catatan_bimbingan: string | null
       nim: string | null
       nip: string | null
-      id_pendaftaran_kp: string | null
     }, ExtArgs["result"]["bimbingan"]>
     composites: {}
   }
@@ -3452,9 +3433,8 @@ export namespace Prisma {
    */
   export interface Prisma__bimbinganClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    pendaftaran_kp<T extends bimbingan$pendaftaran_kpArgs<ExtArgs> = {}>(args?: Subset<T, bimbingan$pendaftaran_kpArgs<ExtArgs>>): Prisma__pendaftaran_kpClient<$Result.GetResult<Prisma.$pendaftaran_kpPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     mahasiswa<T extends bimbingan$mahasiswaArgs<ExtArgs> = {}>(args?: Subset<T, bimbingan$mahasiswaArgs<ExtArgs>>): Prisma__mahasiswaClient<$Result.GetResult<Prisma.$mahasiswaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    dosen<T extends bimbingan$dosenArgs<ExtArgs> = {}>(args?: Subset<T, bimbingan$dosenArgs<ExtArgs>>): Prisma__dosenClient<$Result.GetResult<Prisma.$dosenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    dosen_pembimbing<T extends bimbingan$dosen_pembimbingArgs<ExtArgs> = {}>(args?: Subset<T, bimbingan$dosen_pembimbingArgs<ExtArgs>>): Prisma__dosenClient<$Result.GetResult<Prisma.$dosenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3489,7 +3469,6 @@ export namespace Prisma {
     readonly catatan_bimbingan: FieldRef<"bimbingan", 'String'>
     readonly nim: FieldRef<"bimbingan", 'String'>
     readonly nip: FieldRef<"bimbingan", 'String'>
-    readonly id_pendaftaran_kp: FieldRef<"bimbingan", 'String'>
   }
     
 
@@ -3886,25 +3865,6 @@ export namespace Prisma {
   }
 
   /**
-   * bimbingan.pendaftaran_kp
-   */
-  export type bimbingan$pendaftaran_kpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the pendaftaran_kp
-     */
-    select?: pendaftaran_kpSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the pendaftaran_kp
-     */
-    omit?: pendaftaran_kpOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: pendaftaran_kpInclude<ExtArgs> | null
-    where?: pendaftaran_kpWhereInput
-  }
-
-  /**
    * bimbingan.mahasiswa
    */
   export type bimbingan$mahasiswaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3924,9 +3884,9 @@ export namespace Prisma {
   }
 
   /**
-   * bimbingan.dosen
+   * bimbingan.dosen_pembimbing
    */
-  export type bimbingan$dosenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type bimbingan$dosen_pembimbingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the dosen
      */
@@ -3991,7 +3951,6 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     nim: string | null
-    id_pendaftaran_kp: string | null
   }
 
   export type Daily_reportMaxAggregateOutputType = {
@@ -4002,7 +3961,6 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     nim: string | null
-    id_pendaftaran_kp: string | null
   }
 
   export type Daily_reportCountAggregateOutputType = {
@@ -4013,7 +3971,6 @@ export namespace Prisma {
     latitude: number
     longitude: number
     nim: number
-    id_pendaftaran_kp: number
     _all: number
   }
 
@@ -4036,7 +3993,6 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     nim?: true
-    id_pendaftaran_kp?: true
   }
 
   export type Daily_reportMaxAggregateInputType = {
@@ -4047,7 +4003,6 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     nim?: true
-    id_pendaftaran_kp?: true
   }
 
   export type Daily_reportCountAggregateInputType = {
@@ -4058,7 +4013,6 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     nim?: true
-    id_pendaftaran_kp?: true
     _all?: true
   }
 
@@ -4156,7 +4110,6 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     nim: string | null
-    id_pendaftaran_kp: string | null
     _count: Daily_reportCountAggregateOutputType | null
     _avg: Daily_reportAvgAggregateOutputType | null
     _sum: Daily_reportSumAggregateOutputType | null
@@ -4186,10 +4139,8 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     nim?: boolean
-    id_pendaftaran_kp?: boolean
-    pendaftaran_kp?: boolean | daily_report$pendaftaran_kpArgs<ExtArgs>
-    mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
     detail_daily_report?: boolean | daily_report$detail_daily_reportArgs<ExtArgs>
+    mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
     _count?: boolean | Daily_reportCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["daily_report"]>
 
@@ -4201,8 +4152,6 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     nim?: boolean
-    id_pendaftaran_kp?: boolean
-    pendaftaran_kp?: boolean | daily_report$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
   }, ExtArgs["result"]["daily_report"]>
 
@@ -4214,8 +4163,6 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     nim?: boolean
-    id_pendaftaran_kp?: boolean
-    pendaftaran_kp?: boolean | daily_report$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
   }, ExtArgs["result"]["daily_report"]>
 
@@ -4227,31 +4174,26 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     nim?: boolean
-    id_pendaftaran_kp?: boolean
   }
 
-  export type daily_reportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal_presensi" | "status" | "catatan_evaluasi" | "latitude" | "longitude" | "nim" | "id_pendaftaran_kp", ExtArgs["result"]["daily_report"]>
+  export type daily_reportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal_presensi" | "status" | "catatan_evaluasi" | "latitude" | "longitude" | "nim", ExtArgs["result"]["daily_report"]>
   export type daily_reportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    pendaftaran_kp?: boolean | daily_report$pendaftaran_kpArgs<ExtArgs>
-    mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
     detail_daily_report?: boolean | daily_report$detail_daily_reportArgs<ExtArgs>
+    mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
     _count?: boolean | Daily_reportCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type daily_reportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    pendaftaran_kp?: boolean | daily_report$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
   }
   export type daily_reportIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    pendaftaran_kp?: boolean | daily_report$pendaftaran_kpArgs<ExtArgs>
     mahasiswa?: boolean | daily_report$mahasiswaArgs<ExtArgs>
   }
 
   export type $daily_reportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "daily_report"
     objects: {
-      pendaftaran_kp: Prisma.$pendaftaran_kpPayload<ExtArgs> | null
-      mahasiswa: Prisma.$mahasiswaPayload<ExtArgs> | null
       detail_daily_report: Prisma.$detail_daily_reportPayload<ExtArgs>[]
+      mahasiswa: Prisma.$mahasiswaPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4261,7 +4203,6 @@ export namespace Prisma {
       latitude: number | null
       longitude: number | null
       nim: string | null
-      id_pendaftaran_kp: string | null
     }, ExtArgs["result"]["daily_report"]>
     composites: {}
   }
@@ -4656,9 +4597,8 @@ export namespace Prisma {
    */
   export interface Prisma__daily_reportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    pendaftaran_kp<T extends daily_report$pendaftaran_kpArgs<ExtArgs> = {}>(args?: Subset<T, daily_report$pendaftaran_kpArgs<ExtArgs>>): Prisma__pendaftaran_kpClient<$Result.GetResult<Prisma.$pendaftaran_kpPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    mahasiswa<T extends daily_report$mahasiswaArgs<ExtArgs> = {}>(args?: Subset<T, daily_report$mahasiswaArgs<ExtArgs>>): Prisma__mahasiswaClient<$Result.GetResult<Prisma.$mahasiswaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     detail_daily_report<T extends daily_report$detail_daily_reportArgs<ExtArgs> = {}>(args?: Subset<T, daily_report$detail_daily_reportArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$detail_daily_reportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    mahasiswa<T extends daily_report$mahasiswaArgs<ExtArgs> = {}>(args?: Subset<T, daily_report$mahasiswaArgs<ExtArgs>>): Prisma__mahasiswaClient<$Result.GetResult<Prisma.$mahasiswaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4695,7 +4635,6 @@ export namespace Prisma {
     readonly latitude: FieldRef<"daily_report", 'Float'>
     readonly longitude: FieldRef<"daily_report", 'Float'>
     readonly nim: FieldRef<"daily_report", 'String'>
-    readonly id_pendaftaran_kp: FieldRef<"daily_report", 'String'>
   }
     
 
@@ -5092,44 +5031,6 @@ export namespace Prisma {
   }
 
   /**
-   * daily_report.pendaftaran_kp
-   */
-  export type daily_report$pendaftaran_kpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the pendaftaran_kp
-     */
-    select?: pendaftaran_kpSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the pendaftaran_kp
-     */
-    omit?: pendaftaran_kpOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: pendaftaran_kpInclude<ExtArgs> | null
-    where?: pendaftaran_kpWhereInput
-  }
-
-  /**
-   * daily_report.mahasiswa
-   */
-  export type daily_report$mahasiswaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the mahasiswa
-     */
-    select?: mahasiswaSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the mahasiswa
-     */
-    omit?: mahasiswaOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: mahasiswaInclude<ExtArgs> | null
-    where?: mahasiswaWhereInput
-  }
-
-  /**
    * daily_report.detail_daily_report
    */
   export type daily_report$detail_daily_reportArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5151,6 +5052,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Detail_daily_reportScalarFieldEnum | Detail_daily_reportScalarFieldEnum[]
+  }
+
+  /**
+   * daily_report.mahasiswa
+   */
+  export type daily_report$mahasiswaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the mahasiswa
+     */
+    select?: mahasiswaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the mahasiswa
+     */
+    omit?: mahasiswaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: mahasiswaInclude<ExtArgs> | null
+    where?: mahasiswaWhereInput
   }
 
   /**
@@ -5194,25 +5114,25 @@ export namespace Prisma {
 
   export type Detail_daily_reportMinAggregateOutputType = {
     id: number | null
+    waktu: Date | null
     judul_agenda: string | null
     deskripsi_agenda: string | null
-    waktu: Date | null
     id_daily_report: string | null
   }
 
   export type Detail_daily_reportMaxAggregateOutputType = {
     id: number | null
+    waktu: Date | null
     judul_agenda: string | null
     deskripsi_agenda: string | null
-    waktu: Date | null
     id_daily_report: string | null
   }
 
   export type Detail_daily_reportCountAggregateOutputType = {
     id: number
+    waktu: number
     judul_agenda: number
     deskripsi_agenda: number
-    waktu: number
     id_daily_report: number
     _all: number
   }
@@ -5228,25 +5148,25 @@ export namespace Prisma {
 
   export type Detail_daily_reportMinAggregateInputType = {
     id?: true
+    waktu?: true
     judul_agenda?: true
     deskripsi_agenda?: true
-    waktu?: true
     id_daily_report?: true
   }
 
   export type Detail_daily_reportMaxAggregateInputType = {
     id?: true
+    waktu?: true
     judul_agenda?: true
     deskripsi_agenda?: true
-    waktu?: true
     id_daily_report?: true
   }
 
   export type Detail_daily_reportCountAggregateInputType = {
     id?: true
+    waktu?: true
     judul_agenda?: true
     deskripsi_agenda?: true
-    waktu?: true
     id_daily_report?: true
     _all?: true
   }
@@ -5339,9 +5259,9 @@ export namespace Prisma {
 
   export type Detail_daily_reportGroupByOutputType = {
     id: number
+    waktu: Date
     judul_agenda: string
     deskripsi_agenda: string
-    waktu: Date
     id_daily_report: string | null
     _count: Detail_daily_reportCountAggregateOutputType | null
     _avg: Detail_daily_reportAvgAggregateOutputType | null
@@ -5366,40 +5286,40 @@ export namespace Prisma {
 
   export type detail_daily_reportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    waktu?: boolean
     judul_agenda?: boolean
     deskripsi_agenda?: boolean
-    waktu?: boolean
     id_daily_report?: boolean
     daily_report?: boolean | detail_daily_report$daily_reportArgs<ExtArgs>
   }, ExtArgs["result"]["detail_daily_report"]>
 
   export type detail_daily_reportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    waktu?: boolean
     judul_agenda?: boolean
     deskripsi_agenda?: boolean
-    waktu?: boolean
     id_daily_report?: boolean
     daily_report?: boolean | detail_daily_report$daily_reportArgs<ExtArgs>
   }, ExtArgs["result"]["detail_daily_report"]>
 
   export type detail_daily_reportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    waktu?: boolean
     judul_agenda?: boolean
     deskripsi_agenda?: boolean
-    waktu?: boolean
     id_daily_report?: boolean
     daily_report?: boolean | detail_daily_report$daily_reportArgs<ExtArgs>
   }, ExtArgs["result"]["detail_daily_report"]>
 
   export type detail_daily_reportSelectScalar = {
     id?: boolean
+    waktu?: boolean
     judul_agenda?: boolean
     deskripsi_agenda?: boolean
-    waktu?: boolean
     id_daily_report?: boolean
   }
 
-  export type detail_daily_reportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "judul_agenda" | "deskripsi_agenda" | "waktu" | "id_daily_report", ExtArgs["result"]["detail_daily_report"]>
+  export type detail_daily_reportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "waktu" | "judul_agenda" | "deskripsi_agenda" | "id_daily_report", ExtArgs["result"]["detail_daily_report"]>
   export type detail_daily_reportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     daily_report?: boolean | detail_daily_report$daily_reportArgs<ExtArgs>
   }
@@ -5417,9 +5337,9 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
+      waktu: Date
       judul_agenda: string
       deskripsi_agenda: string
-      waktu: Date
       id_daily_report: string | null
     }, ExtArgs["result"]["detail_daily_report"]>
     composites: {}
@@ -5846,9 +5766,9 @@ export namespace Prisma {
    */
   interface detail_daily_reportFieldRefs {
     readonly id: FieldRef<"detail_daily_report", 'Int'>
+    readonly waktu: FieldRef<"detail_daily_report", 'DateTime'>
     readonly judul_agenda: FieldRef<"detail_daily_report", 'String'>
     readonly deskripsi_agenda: FieldRef<"detail_daily_report", 'String'>
-    readonly waktu: FieldRef<"detail_daily_report", 'DateTime'>
     readonly id_daily_report: FieldRef<"detail_daily_report", 'String'>
   }
     
@@ -6449,6 +6369,7 @@ export namespace Prisma {
     id_telegram?: boolean
     bimbingan?: boolean | dosen$bimbinganArgs<ExtArgs>
     nilai?: boolean | dosen$nilaiArgs<ExtArgs>
+    pendaftaran_kp?: boolean | dosen$pendaftaran_kpArgs<ExtArgs>
     _count?: boolean | DosenCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["dosen"]>
 
@@ -6480,6 +6401,7 @@ export namespace Prisma {
   export type dosenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bimbingan?: boolean | dosen$bimbinganArgs<ExtArgs>
     nilai?: boolean | dosen$nilaiArgs<ExtArgs>
+    pendaftaran_kp?: boolean | dosen$pendaftaran_kpArgs<ExtArgs>
     _count?: boolean | DosenCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type dosenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6490,6 +6412,7 @@ export namespace Prisma {
     objects: {
       bimbingan: Prisma.$bimbinganPayload<ExtArgs>[]
       nilai: Prisma.$nilaiPayload<ExtArgs>[]
+      pendaftaran_kp: Prisma.$pendaftaran_kpPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       nip: string
@@ -6893,6 +6816,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     bimbingan<T extends dosen$bimbinganArgs<ExtArgs> = {}>(args?: Subset<T, dosen$bimbinganArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bimbinganPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     nilai<T extends dosen$nilaiArgs<ExtArgs> = {}>(args?: Subset<T, dosen$nilaiArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$nilaiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pendaftaran_kp<T extends dosen$pendaftaran_kpArgs<ExtArgs> = {}>(args?: Subset<T, dosen$pendaftaran_kpArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$pendaftaran_kpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7363,6 +7287,30 @@ export namespace Prisma {
   }
 
   /**
+   * dosen.pendaftaran_kp
+   */
+  export type dosen$pendaftaran_kpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the pendaftaran_kp
+     */
+    select?: pendaftaran_kpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the pendaftaran_kp
+     */
+    omit?: pendaftaran_kpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: pendaftaran_kpInclude<ExtArgs> | null
+    where?: pendaftaran_kpWhereInput
+    orderBy?: pendaftaran_kpOrderByWithRelationInput | pendaftaran_kpOrderByWithRelationInput[]
+    cursor?: pendaftaran_kpWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Pendaftaran_kpScalarFieldEnum | Pendaftaran_kpScalarFieldEnum[]
+  }
+
+  /**
    * dosen without action
    */
   export type dosenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7414,8 +7362,6 @@ export namespace Prisma {
     status: $Enums.status_instansi | null
     nama_pj: string | null
     no_hp_pj: string | null
-    nim: string | null
-    nip: string | null
   }
 
   export type InstansiMaxAggregateOutputType = {
@@ -7429,8 +7375,6 @@ export namespace Prisma {
     status: $Enums.status_instansi | null
     nama_pj: string | null
     no_hp_pj: string | null
-    nim: string | null
-    nip: string | null
   }
 
   export type InstansiCountAggregateOutputType = {
@@ -7444,8 +7388,6 @@ export namespace Prisma {
     status: number
     nama_pj: number
     no_hp_pj: number
-    nim: number
-    nip: number
     _all: number
   }
 
@@ -7471,8 +7413,6 @@ export namespace Prisma {
     status?: true
     nama_pj?: true
     no_hp_pj?: true
-    nim?: true
-    nip?: true
   }
 
   export type InstansiMaxAggregateInputType = {
@@ -7486,8 +7426,6 @@ export namespace Prisma {
     status?: true
     nama_pj?: true
     no_hp_pj?: true
-    nim?: true
-    nip?: true
   }
 
   export type InstansiCountAggregateInputType = {
@@ -7501,8 +7439,6 @@ export namespace Prisma {
     status?: true
     nama_pj?: true
     no_hp_pj?: true
-    nim?: true
-    nip?: true
     _all?: true
   }
 
@@ -7603,8 +7539,6 @@ export namespace Prisma {
     status: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim: string | null
-    nip: string | null
     _count: InstansiCountAggregateOutputType | null
     _avg: InstansiAvgAggregateOutputType | null
     _sum: InstansiSumAggregateOutputType | null
@@ -7637,8 +7571,6 @@ export namespace Prisma {
     status?: boolean
     nama_pj?: boolean
     no_hp_pj?: boolean
-    nim?: boolean
-    nip?: boolean
     pembimbing_instansi?: boolean | instansi$pembimbing_instansiArgs<ExtArgs>
     pendaftaran_kp?: boolean | instansi$pendaftaran_kpArgs<ExtArgs>
     _count?: boolean | InstansiCountOutputTypeDefaultArgs<ExtArgs>
@@ -7655,8 +7587,6 @@ export namespace Prisma {
     status?: boolean
     nama_pj?: boolean
     no_hp_pj?: boolean
-    nim?: boolean
-    nip?: boolean
   }, ExtArgs["result"]["instansi"]>
 
   export type instansiSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7670,8 +7600,6 @@ export namespace Prisma {
     status?: boolean
     nama_pj?: boolean
     no_hp_pj?: boolean
-    nim?: boolean
-    nip?: boolean
   }, ExtArgs["result"]["instansi"]>
 
   export type instansiSelectScalar = {
@@ -7685,11 +7613,9 @@ export namespace Prisma {
     status?: boolean
     nama_pj?: boolean
     no_hp_pj?: boolean
-    nim?: boolean
-    nip?: boolean
   }
 
-  export type instansiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nama" | "alamat" | "longitude" | "latitude" | "jenis" | "profil_singkat" | "status" | "nama_pj" | "no_hp_pj" | "nim" | "nip", ExtArgs["result"]["instansi"]>
+  export type instansiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nama" | "alamat" | "longitude" | "latitude" | "jenis" | "profil_singkat" | "status" | "nama_pj" | "no_hp_pj", ExtArgs["result"]["instansi"]>
   export type instansiInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pembimbing_instansi?: boolean | instansi$pembimbing_instansiArgs<ExtArgs>
     pendaftaran_kp?: boolean | instansi$pendaftaran_kpArgs<ExtArgs>
@@ -7715,8 +7641,6 @@ export namespace Prisma {
       status: $Enums.status_instansi | null
       nama_pj: string
       no_hp_pj: string
-      nim: string | null
-      nip: string | null
     }, ExtArgs["result"]["instansi"]>
     composites: {}
   }
@@ -8152,8 +8076,6 @@ export namespace Prisma {
     readonly status: FieldRef<"instansi", 'status_instansi'>
     readonly nama_pj: FieldRef<"instansi", 'String'>
     readonly no_hp_pj: FieldRef<"instansi", 'String'>
-    readonly nim: FieldRef<"instansi", 'String'>
-    readonly nip: FieldRef<"instansi", 'String'>
   }
     
 
@@ -12101,7 +12023,7 @@ export namespace Prisma {
     nilai_instansi: number | null
     nim: string | null
     nip: string | null
-    id_pembimbing_instansi: string | null
+    email_pembimbing_instansi: string | null
     id_jadwal_seminar: string | null
   }
 
@@ -12113,7 +12035,7 @@ export namespace Prisma {
     nilai_instansi: number | null
     nim: string | null
     nip: string | null
-    id_pembimbing_instansi: string | null
+    email_pembimbing_instansi: string | null
     id_jadwal_seminar: string | null
   }
 
@@ -12125,7 +12047,7 @@ export namespace Prisma {
     nilai_instansi: number
     nim: number
     nip: number
-    id_pembimbing_instansi: number
+    email_pembimbing_instansi: number
     id_jadwal_seminar: number
     _all: number
   }
@@ -12151,7 +12073,7 @@ export namespace Prisma {
     nilai_instansi?: true
     nim?: true
     nip?: true
-    id_pembimbing_instansi?: true
+    email_pembimbing_instansi?: true
     id_jadwal_seminar?: true
   }
 
@@ -12163,7 +12085,7 @@ export namespace Prisma {
     nilai_instansi?: true
     nim?: true
     nip?: true
-    id_pembimbing_instansi?: true
+    email_pembimbing_instansi?: true
     id_jadwal_seminar?: true
   }
 
@@ -12175,7 +12097,7 @@ export namespace Prisma {
     nilai_instansi?: true
     nim?: true
     nip?: true
-    id_pembimbing_instansi?: true
+    email_pembimbing_instansi?: true
     id_jadwal_seminar?: true
     _all?: true
   }
@@ -12274,7 +12196,7 @@ export namespace Prisma {
     nilai_instansi: number | null
     nim: string | null
     nip: string | null
-    id_pembimbing_instansi: string | null
+    email_pembimbing_instansi: string | null
     id_jadwal_seminar: string | null
     _count: NilaiCountAggregateOutputType | null
     _avg: NilaiAvgAggregateOutputType | null
@@ -12305,7 +12227,7 @@ export namespace Prisma {
     nilai_instansi?: boolean
     nim?: boolean
     nip?: boolean
-    id_pembimbing_instansi?: boolean
+    email_pembimbing_instansi?: boolean
     id_jadwal_seminar?: boolean
     komponen_penilaian_instansi?: boolean | nilai$komponen_penilaian_instansiArgs<ExtArgs>
     komponen_penilaian_pembimbing?: boolean | nilai$komponen_penilaian_pembimbingArgs<ExtArgs>
@@ -12324,7 +12246,7 @@ export namespace Prisma {
     nilai_instansi?: boolean
     nim?: boolean
     nip?: boolean
-    id_pembimbing_instansi?: boolean
+    email_pembimbing_instansi?: boolean
     id_jadwal_seminar?: boolean
     pembimbing_instansi?: boolean | nilai$pembimbing_instansiArgs<ExtArgs>
     mahasiswa?: boolean | nilai$mahasiswaArgs<ExtArgs>
@@ -12339,7 +12261,7 @@ export namespace Prisma {
     nilai_instansi?: boolean
     nim?: boolean
     nip?: boolean
-    id_pembimbing_instansi?: boolean
+    email_pembimbing_instansi?: boolean
     id_jadwal_seminar?: boolean
     pembimbing_instansi?: boolean | nilai$pembimbing_instansiArgs<ExtArgs>
     mahasiswa?: boolean | nilai$mahasiswaArgs<ExtArgs>
@@ -12354,11 +12276,11 @@ export namespace Prisma {
     nilai_instansi?: boolean
     nim?: boolean
     nip?: boolean
-    id_pembimbing_instansi?: boolean
+    email_pembimbing_instansi?: boolean
     id_jadwal_seminar?: boolean
   }
 
-  export type nilaiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal" | "nilai_penguji" | "nilai_pembimbing" | "nilai_instansi" | "nim" | "nip" | "id_pembimbing_instansi" | "id_jadwal_seminar", ExtArgs["result"]["nilai"]>
+  export type nilaiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tanggal" | "nilai_penguji" | "nilai_pembimbing" | "nilai_instansi" | "nim" | "nip" | "email_pembimbing_instansi" | "id_jadwal_seminar", ExtArgs["result"]["nilai"]>
   export type nilaiInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     komponen_penilaian_instansi?: boolean | nilai$komponen_penilaian_instansiArgs<ExtArgs>
     komponen_penilaian_pembimbing?: boolean | nilai$komponen_penilaian_pembimbingArgs<ExtArgs>
@@ -12397,7 +12319,7 @@ export namespace Prisma {
       nilai_instansi: number | null
       nim: string | null
       nip: string | null
-      id_pembimbing_instansi: string | null
+      email_pembimbing_instansi: string | null
       id_jadwal_seminar: string | null
     }, ExtArgs["result"]["nilai"]>
     composites: {}
@@ -12835,7 +12757,7 @@ export namespace Prisma {
     readonly nilai_instansi: FieldRef<"nilai", 'Float'>
     readonly nim: FieldRef<"nilai", 'String'>
     readonly nip: FieldRef<"nilai", 'String'>
-    readonly id_pembimbing_instansi: FieldRef<"nilai", 'String'>
+    readonly email_pembimbing_instansi: FieldRef<"nilai", 'String'>
     readonly id_jadwal_seminar: FieldRef<"nilai", 'String'>
   }
     
@@ -13391,58 +13313,58 @@ export namespace Prisma {
   }
 
   export type Pembimbing_instansiMinAggregateOutputType = {
+    email: string | null
     id: string | null
     nama: string | null
     no_hp: string | null
     jabatan: string | null
-    email: string | null
     id_instansi: string | null
   }
 
   export type Pembimbing_instansiMaxAggregateOutputType = {
+    email: string | null
     id: string | null
     nama: string | null
     no_hp: string | null
     jabatan: string | null
-    email: string | null
     id_instansi: string | null
   }
 
   export type Pembimbing_instansiCountAggregateOutputType = {
+    email: number
     id: number
     nama: number
     no_hp: number
     jabatan: number
-    email: number
     id_instansi: number
     _all: number
   }
 
 
   export type Pembimbing_instansiMinAggregateInputType = {
+    email?: true
     id?: true
     nama?: true
     no_hp?: true
     jabatan?: true
-    email?: true
     id_instansi?: true
   }
 
   export type Pembimbing_instansiMaxAggregateInputType = {
+    email?: true
     id?: true
     nama?: true
     no_hp?: true
     jabatan?: true
-    email?: true
     id_instansi?: true
   }
 
   export type Pembimbing_instansiCountAggregateInputType = {
+    email?: true
     id?: true
     nama?: true
     no_hp?: true
     jabatan?: true
-    email?: true
     id_instansi?: true
     _all?: true
   }
@@ -13520,11 +13442,11 @@ export namespace Prisma {
   }
 
   export type Pembimbing_instansiGroupByOutputType = {
+    email: string
     id: string
     nama: string | null
     no_hp: string | null
     jabatan: string | null
-    email: string
     id_instansi: string | null
     _count: Pembimbing_instansiCountAggregateOutputType | null
     _min: Pembimbing_instansiMinAggregateOutputType | null
@@ -13546,49 +13468,51 @@ export namespace Prisma {
 
 
   export type pembimbing_instansiSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    email?: boolean
     id?: boolean
     nama?: boolean
     no_hp?: boolean
     jabatan?: boolean
-    email?: boolean
     id_instansi?: boolean
     nilai?: boolean | pembimbing_instansi$nilaiArgs<ExtArgs>
+    pendaftaran_kp?: boolean | pembimbing_instansi$pendaftaran_kpArgs<ExtArgs>
     instansi?: boolean | pembimbing_instansi$instansiArgs<ExtArgs>
     _count?: boolean | Pembimbing_instansiCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pembimbing_instansi"]>
 
   export type pembimbing_instansiSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    email?: boolean
     id?: boolean
     nama?: boolean
     no_hp?: boolean
     jabatan?: boolean
-    email?: boolean
     id_instansi?: boolean
     instansi?: boolean | pembimbing_instansi$instansiArgs<ExtArgs>
   }, ExtArgs["result"]["pembimbing_instansi"]>
 
   export type pembimbing_instansiSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    email?: boolean
     id?: boolean
     nama?: boolean
     no_hp?: boolean
     jabatan?: boolean
-    email?: boolean
     id_instansi?: boolean
     instansi?: boolean | pembimbing_instansi$instansiArgs<ExtArgs>
   }, ExtArgs["result"]["pembimbing_instansi"]>
 
   export type pembimbing_instansiSelectScalar = {
+    email?: boolean
     id?: boolean
     nama?: boolean
     no_hp?: boolean
     jabatan?: boolean
-    email?: boolean
     id_instansi?: boolean
   }
 
-  export type pembimbing_instansiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nama" | "no_hp" | "jabatan" | "email" | "id_instansi", ExtArgs["result"]["pembimbing_instansi"]>
+  export type pembimbing_instansiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"email" | "id" | "nama" | "no_hp" | "jabatan" | "id_instansi", ExtArgs["result"]["pembimbing_instansi"]>
   export type pembimbing_instansiInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     nilai?: boolean | pembimbing_instansi$nilaiArgs<ExtArgs>
+    pendaftaran_kp?: boolean | pembimbing_instansi$pendaftaran_kpArgs<ExtArgs>
     instansi?: boolean | pembimbing_instansi$instansiArgs<ExtArgs>
     _count?: boolean | Pembimbing_instansiCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -13603,14 +13527,15 @@ export namespace Prisma {
     name: "pembimbing_instansi"
     objects: {
       nilai: Prisma.$nilaiPayload<ExtArgs>[]
+      pendaftaran_kp: Prisma.$pendaftaran_kpPayload<ExtArgs>[]
       instansi: Prisma.$instansiPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
+      email: string
       id: string
       nama: string | null
       no_hp: string | null
       jabatan: string | null
-      email: string
       id_instansi: string | null
     }, ExtArgs["result"]["pembimbing_instansi"]>
     composites: {}
@@ -13695,8 +13620,8 @@ export namespace Prisma {
      * // Get first 10 Pembimbing_instansis
      * const pembimbing_instansis = await prisma.pembimbing_instansi.findMany({ take: 10 })
      * 
-     * // Only select the `id`
-     * const pembimbing_instansiWithIdOnly = await prisma.pembimbing_instansi.findMany({ select: { id: true } })
+     * // Only select the `email`
+     * const pembimbing_instansiWithEmailOnly = await prisma.pembimbing_instansi.findMany({ select: { email: true } })
      * 
      */
     findMany<T extends pembimbing_instansiFindManyArgs>(args?: SelectSubset<T, pembimbing_instansiFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$pembimbing_instansiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -13740,9 +13665,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many Pembimbing_instansis and only return the `id`
-     * const pembimbing_instansiWithIdOnly = await prisma.pembimbing_instansi.createManyAndReturn({
-     *   select: { id: true },
+     * // Create many Pembimbing_instansis and only return the `email`
+     * const pembimbing_instansiWithEmailOnly = await prisma.pembimbing_instansi.createManyAndReturn({
+     *   select: { email: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -13831,9 +13756,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more Pembimbing_instansis and only return the `id`
-     * const pembimbing_instansiWithIdOnly = await prisma.pembimbing_instansi.updateManyAndReturn({
-     *   select: { id: true },
+     * // Update zero or more Pembimbing_instansis and only return the `email`
+     * const pembimbing_instansiWithEmailOnly = await prisma.pembimbing_instansi.updateManyAndReturn({
+     *   select: { email: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -14007,6 +13932,7 @@ export namespace Prisma {
   export interface Prisma__pembimbing_instansiClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     nilai<T extends pembimbing_instansi$nilaiArgs<ExtArgs> = {}>(args?: Subset<T, pembimbing_instansi$nilaiArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$nilaiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pendaftaran_kp<T extends pembimbing_instansi$pendaftaran_kpArgs<ExtArgs> = {}>(args?: Subset<T, pembimbing_instansi$pendaftaran_kpArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$pendaftaran_kpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     instansi<T extends pembimbing_instansi$instansiArgs<ExtArgs> = {}>(args?: Subset<T, pembimbing_instansi$instansiArgs<ExtArgs>>): Prisma__instansiClient<$Result.GetResult<Prisma.$instansiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -14037,11 +13963,11 @@ export namespace Prisma {
    * Fields of the pembimbing_instansi model
    */
   interface pembimbing_instansiFieldRefs {
+    readonly email: FieldRef<"pembimbing_instansi", 'String'>
     readonly id: FieldRef<"pembimbing_instansi", 'String'>
     readonly nama: FieldRef<"pembimbing_instansi", 'String'>
     readonly no_hp: FieldRef<"pembimbing_instansi", 'String'>
     readonly jabatan: FieldRef<"pembimbing_instansi", 'String'>
-    readonly email: FieldRef<"pembimbing_instansi", 'String'>
     readonly id_instansi: FieldRef<"pembimbing_instansi", 'String'>
   }
     
@@ -14463,6 +14389,30 @@ export namespace Prisma {
   }
 
   /**
+   * pembimbing_instansi.pendaftaran_kp
+   */
+  export type pembimbing_instansi$pendaftaran_kpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the pendaftaran_kp
+     */
+    select?: pendaftaran_kpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the pendaftaran_kp
+     */
+    omit?: pendaftaran_kpOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: pendaftaran_kpInclude<ExtArgs> | null
+    where?: pendaftaran_kpWhereInput
+    orderBy?: pendaftaran_kpOrderByWithRelationInput | pendaftaran_kpOrderByWithRelationInput[]
+    cursor?: pendaftaran_kpWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Pendaftaran_kpScalarFieldEnum | Pendaftaran_kpScalarFieldEnum[]
+  }
+
+  /**
    * pembimbing_instansi.instansi
    */
   export type pembimbing_instansi$instansiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14786,7 +14736,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem: string | null
     email_pembimbing_instansi: string | null
     catatan_penolakan: string | null
-    level_akses: number | null
+    level_akses: number
     judul_kp: string | null
     alasan_lanjut_kp: string | null
     id_tahun_ajaran: number | null
@@ -14838,13 +14788,13 @@ export namespace Prisma {
     nim?: boolean
     nip_pembimbing?: boolean
     nip_penguji?: boolean
-    bimbingan?: boolean | pendaftaran_kp$bimbinganArgs<ExtArgs>
-    daily_report?: boolean | pendaftaran_kp$daily_reportArgs<ExtArgs>
     dokumen_seminar_kp?: boolean | pendaftaran_kp$dokumen_seminar_kpArgs<ExtArgs>
     jadwal?: boolean | pendaftaran_kp$jadwalArgs<ExtArgs>
     instansi?: boolean | pendaftaran_kp$instansiArgs<ExtArgs>
     tahun_ajaran?: boolean | pendaftaran_kp$tahun_ajaranArgs<ExtArgs>
     mahasiswa?: boolean | pendaftaran_kp$mahasiswaArgs<ExtArgs>
+    dosen_pembimbing?: boolean | pendaftaran_kp$dosen_pembimbingArgs<ExtArgs>
+    pembimbing_instansi?: boolean | pendaftaran_kp$pembimbing_instansiArgs<ExtArgs>
     _count?: boolean | Pendaftaran_kpCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pendaftaran_kp"]>
 
@@ -14874,6 +14824,8 @@ export namespace Prisma {
     instansi?: boolean | pendaftaran_kp$instansiArgs<ExtArgs>
     tahun_ajaran?: boolean | pendaftaran_kp$tahun_ajaranArgs<ExtArgs>
     mahasiswa?: boolean | pendaftaran_kp$mahasiswaArgs<ExtArgs>
+    dosen_pembimbing?: boolean | pendaftaran_kp$dosen_pembimbingArgs<ExtArgs>
+    pembimbing_instansi?: boolean | pendaftaran_kp$pembimbing_instansiArgs<ExtArgs>
   }, ExtArgs["result"]["pendaftaran_kp"]>
 
   export type pendaftaran_kpSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14902,6 +14854,8 @@ export namespace Prisma {
     instansi?: boolean | pendaftaran_kp$instansiArgs<ExtArgs>
     tahun_ajaran?: boolean | pendaftaran_kp$tahun_ajaranArgs<ExtArgs>
     mahasiswa?: boolean | pendaftaran_kp$mahasiswaArgs<ExtArgs>
+    dosen_pembimbing?: boolean | pendaftaran_kp$dosen_pembimbingArgs<ExtArgs>
+    pembimbing_instansi?: boolean | pendaftaran_kp$pembimbing_instansiArgs<ExtArgs>
   }, ExtArgs["result"]["pendaftaran_kp"]>
 
   export type pendaftaran_kpSelectScalar = {
@@ -14931,36 +14885,40 @@ export namespace Prisma {
 
   export type pendaftaran_kpOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "tanggal_pengajuan" | "tanggal_mulai" | "tanggal_selesai" | "kelas_kp" | "tujuan_surat_instansi" | "link_surat_pengantar" | "link_surat_balasan" | "link_surat_penunjukan_dospem" | "link_surat_perpanjangan_kp" | "id_surat_pengajuan_dospem" | "email_pembimbing_instansi" | "catatan_penolakan" | "level_akses" | "judul_kp" | "alasan_lanjut_kp" | "id_tahun_ajaran" | "id_instansi" | "nim" | "nip_pembimbing" | "nip_penguji", ExtArgs["result"]["pendaftaran_kp"]>
   export type pendaftaran_kpInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    bimbingan?: boolean | pendaftaran_kp$bimbinganArgs<ExtArgs>
-    daily_report?: boolean | pendaftaran_kp$daily_reportArgs<ExtArgs>
     dokumen_seminar_kp?: boolean | pendaftaran_kp$dokumen_seminar_kpArgs<ExtArgs>
     jadwal?: boolean | pendaftaran_kp$jadwalArgs<ExtArgs>
     instansi?: boolean | pendaftaran_kp$instansiArgs<ExtArgs>
     tahun_ajaran?: boolean | pendaftaran_kp$tahun_ajaranArgs<ExtArgs>
     mahasiswa?: boolean | pendaftaran_kp$mahasiswaArgs<ExtArgs>
+    dosen_pembimbing?: boolean | pendaftaran_kp$dosen_pembimbingArgs<ExtArgs>
+    pembimbing_instansi?: boolean | pendaftaran_kp$pembimbing_instansiArgs<ExtArgs>
     _count?: boolean | Pendaftaran_kpCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type pendaftaran_kpIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     instansi?: boolean | pendaftaran_kp$instansiArgs<ExtArgs>
     tahun_ajaran?: boolean | pendaftaran_kp$tahun_ajaranArgs<ExtArgs>
     mahasiswa?: boolean | pendaftaran_kp$mahasiswaArgs<ExtArgs>
+    dosen_pembimbing?: boolean | pendaftaran_kp$dosen_pembimbingArgs<ExtArgs>
+    pembimbing_instansi?: boolean | pendaftaran_kp$pembimbing_instansiArgs<ExtArgs>
   }
   export type pendaftaran_kpIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     instansi?: boolean | pendaftaran_kp$instansiArgs<ExtArgs>
     tahun_ajaran?: boolean | pendaftaran_kp$tahun_ajaranArgs<ExtArgs>
     mahasiswa?: boolean | pendaftaran_kp$mahasiswaArgs<ExtArgs>
+    dosen_pembimbing?: boolean | pendaftaran_kp$dosen_pembimbingArgs<ExtArgs>
+    pembimbing_instansi?: boolean | pendaftaran_kp$pembimbing_instansiArgs<ExtArgs>
   }
 
   export type $pendaftaran_kpPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "pendaftaran_kp"
     objects: {
-      bimbingan: Prisma.$bimbinganPayload<ExtArgs>[]
-      daily_report: Prisma.$daily_reportPayload<ExtArgs>[]
       dokumen_seminar_kp: Prisma.$dokumen_seminar_kpPayload<ExtArgs>[]
       jadwal: Prisma.$jadwalPayload<ExtArgs>[]
       instansi: Prisma.$instansiPayload<ExtArgs> | null
       tahun_ajaran: Prisma.$tahun_ajaranPayload<ExtArgs> | null
       mahasiswa: Prisma.$mahasiswaPayload<ExtArgs> | null
+      dosen_pembimbing: Prisma.$dosenPayload<ExtArgs> | null
+      pembimbing_instansi: Prisma.$pembimbing_instansiPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -14977,7 +14935,7 @@ export namespace Prisma {
       id_surat_pengajuan_dospem: string | null
       email_pembimbing_instansi: string | null
       catatan_penolakan: string | null
-      level_akses: number | null
+      level_akses: number
       judul_kp: string | null
       alasan_lanjut_kp: string | null
       id_tahun_ajaran: number | null
@@ -15379,13 +15337,13 @@ export namespace Prisma {
    */
   export interface Prisma__pendaftaran_kpClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    bimbingan<T extends pendaftaran_kp$bimbinganArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$bimbinganArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$bimbinganPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    daily_report<T extends pendaftaran_kp$daily_reportArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$daily_reportArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$daily_reportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     dokumen_seminar_kp<T extends pendaftaran_kp$dokumen_seminar_kpArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$dokumen_seminar_kpArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$dokumen_seminar_kpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     jadwal<T extends pendaftaran_kp$jadwalArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$jadwalArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$jadwalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     instansi<T extends pendaftaran_kp$instansiArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$instansiArgs<ExtArgs>>): Prisma__instansiClient<$Result.GetResult<Prisma.$instansiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     tahun_ajaran<T extends pendaftaran_kp$tahun_ajaranArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$tahun_ajaranArgs<ExtArgs>>): Prisma__tahun_ajaranClient<$Result.GetResult<Prisma.$tahun_ajaranPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     mahasiswa<T extends pendaftaran_kp$mahasiswaArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$mahasiswaArgs<ExtArgs>>): Prisma__mahasiswaClient<$Result.GetResult<Prisma.$mahasiswaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    dosen_pembimbing<T extends pendaftaran_kp$dosen_pembimbingArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$dosen_pembimbingArgs<ExtArgs>>): Prisma__dosenClient<$Result.GetResult<Prisma.$dosenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    pembimbing_instansi<T extends pendaftaran_kp$pembimbing_instansiArgs<ExtArgs> = {}>(args?: Subset<T, pendaftaran_kp$pembimbing_instansiArgs<ExtArgs>>): Prisma__pembimbing_instansiClient<$Result.GetResult<Prisma.$pembimbing_instansiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15833,54 +15791,6 @@ export namespace Prisma {
   }
 
   /**
-   * pendaftaran_kp.bimbingan
-   */
-  export type pendaftaran_kp$bimbinganArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the bimbingan
-     */
-    select?: bimbinganSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the bimbingan
-     */
-    omit?: bimbinganOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: bimbinganInclude<ExtArgs> | null
-    where?: bimbinganWhereInput
-    orderBy?: bimbinganOrderByWithRelationInput | bimbinganOrderByWithRelationInput[]
-    cursor?: bimbinganWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: BimbinganScalarFieldEnum | BimbinganScalarFieldEnum[]
-  }
-
-  /**
-   * pendaftaran_kp.daily_report
-   */
-  export type pendaftaran_kp$daily_reportArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the daily_report
-     */
-    select?: daily_reportSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the daily_report
-     */
-    omit?: daily_reportOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: daily_reportInclude<ExtArgs> | null
-    where?: daily_reportWhereInput
-    orderBy?: daily_reportOrderByWithRelationInput | daily_reportOrderByWithRelationInput[]
-    cursor?: daily_reportWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Daily_reportScalarFieldEnum | Daily_reportScalarFieldEnum[]
-  }
-
-  /**
    * pendaftaran_kp.dokumen_seminar_kp
    */
   export type pendaftaran_kp$dokumen_seminar_kpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15983,6 +15893,44 @@ export namespace Prisma {
      */
     include?: mahasiswaInclude<ExtArgs> | null
     where?: mahasiswaWhereInput
+  }
+
+  /**
+   * pendaftaran_kp.dosen_pembimbing
+   */
+  export type pendaftaran_kp$dosen_pembimbingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the dosen
+     */
+    select?: dosenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the dosen
+     */
+    omit?: dosenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: dosenInclude<ExtArgs> | null
+    where?: dosenWhereInput
+  }
+
+  /**
+   * pendaftaran_kp.pembimbing_instansi
+   */
+  export type pendaftaran_kp$pembimbing_instansiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the pembimbing_instansi
+     */
+    select?: pembimbing_instansiSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the pembimbing_instansi
+     */
+    omit?: pembimbing_instansiOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: pembimbing_instansiInclude<ExtArgs> | null
+    where?: pembimbing_instansiWhereInput
   }
 
   /**
@@ -22709,8 +22657,7 @@ export namespace Prisma {
     tanggal_bimbingan: 'tanggal_bimbingan',
     catatan_bimbingan: 'catatan_bimbingan',
     nim: 'nim',
-    nip: 'nip',
-    id_pendaftaran_kp: 'id_pendaftaran_kp'
+    nip: 'nip'
   };
 
   export type BimbinganScalarFieldEnum = (typeof BimbinganScalarFieldEnum)[keyof typeof BimbinganScalarFieldEnum]
@@ -22723,8 +22670,7 @@ export namespace Prisma {
     catatan_evaluasi: 'catatan_evaluasi',
     latitude: 'latitude',
     longitude: 'longitude',
-    nim: 'nim',
-    id_pendaftaran_kp: 'id_pendaftaran_kp'
+    nim: 'nim'
   };
 
   export type Daily_reportScalarFieldEnum = (typeof Daily_reportScalarFieldEnum)[keyof typeof Daily_reportScalarFieldEnum]
@@ -22732,9 +22678,9 @@ export namespace Prisma {
 
   export const Detail_daily_reportScalarFieldEnum: {
     id: 'id',
+    waktu: 'waktu',
     judul_agenda: 'judul_agenda',
     deskripsi_agenda: 'deskripsi_agenda',
-    waktu: 'waktu',
     id_daily_report: 'id_daily_report'
   };
 
@@ -22762,9 +22708,7 @@ export namespace Prisma {
     profil_singkat: 'profil_singkat',
     status: 'status',
     nama_pj: 'nama_pj',
-    no_hp_pj: 'no_hp_pj',
-    nim: 'nim',
-    nip: 'nip'
+    no_hp_pj: 'no_hp_pj'
   };
 
   export type InstansiScalarFieldEnum = (typeof InstansiScalarFieldEnum)[keyof typeof InstansiScalarFieldEnum]
@@ -22818,7 +22762,7 @@ export namespace Prisma {
     nilai_instansi: 'nilai_instansi',
     nim: 'nim',
     nip: 'nip',
-    id_pembimbing_instansi: 'id_pembimbing_instansi',
+    email_pembimbing_instansi: 'email_pembimbing_instansi',
     id_jadwal_seminar: 'id_jadwal_seminar'
   };
 
@@ -22826,11 +22770,11 @@ export namespace Prisma {
 
 
   export const Pembimbing_instansiScalarFieldEnum: {
+    email: 'email',
     id: 'id',
     nama: 'nama',
     no_hp: 'no_hp',
     jabatan: 'jabatan',
-    email: 'email',
     id_instansi: 'id_instansi'
   };
 
@@ -23129,10 +23073,8 @@ export namespace Prisma {
     catatan_bimbingan?: StringNullableFilter<"bimbingan"> | string | null
     nim?: StringNullableFilter<"bimbingan"> | string | null
     nip?: StringNullableFilter<"bimbingan"> | string | null
-    id_pendaftaran_kp?: UuidNullableFilter<"bimbingan"> | string | null
-    pendaftaran_kp?: XOR<Pendaftaran_kpNullableScalarRelationFilter, pendaftaran_kpWhereInput> | null
     mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
-    dosen?: XOR<DosenNullableScalarRelationFilter, dosenWhereInput> | null
+    dosen_pembimbing?: XOR<DosenNullableScalarRelationFilter, dosenWhereInput> | null
   }
 
   export type bimbinganOrderByWithRelationInput = {
@@ -23141,10 +23083,8 @@ export namespace Prisma {
     catatan_bimbingan?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
     nip?: SortOrderInput | SortOrder
-    id_pendaftaran_kp?: SortOrderInput | SortOrder
-    pendaftaran_kp?: pendaftaran_kpOrderByWithRelationInput
     mahasiswa?: mahasiswaOrderByWithRelationInput
-    dosen?: dosenOrderByWithRelationInput
+    dosen_pembimbing?: dosenOrderByWithRelationInput
   }
 
   export type bimbinganWhereUniqueInput = Prisma.AtLeast<{
@@ -23156,10 +23096,8 @@ export namespace Prisma {
     catatan_bimbingan?: StringNullableFilter<"bimbingan"> | string | null
     nim?: StringNullableFilter<"bimbingan"> | string | null
     nip?: StringNullableFilter<"bimbingan"> | string | null
-    id_pendaftaran_kp?: UuidNullableFilter<"bimbingan"> | string | null
-    pendaftaran_kp?: XOR<Pendaftaran_kpNullableScalarRelationFilter, pendaftaran_kpWhereInput> | null
     mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
-    dosen?: XOR<DosenNullableScalarRelationFilter, dosenWhereInput> | null
+    dosen_pembimbing?: XOR<DosenNullableScalarRelationFilter, dosenWhereInput> | null
   }, "id">
 
   export type bimbinganOrderByWithAggregationInput = {
@@ -23168,7 +23106,6 @@ export namespace Prisma {
     catatan_bimbingan?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
     nip?: SortOrderInput | SortOrder
-    id_pendaftaran_kp?: SortOrderInput | SortOrder
     _count?: bimbinganCountOrderByAggregateInput
     _max?: bimbinganMaxOrderByAggregateInput
     _min?: bimbinganMinOrderByAggregateInput
@@ -23183,7 +23120,6 @@ export namespace Prisma {
     catatan_bimbingan?: StringNullableWithAggregatesFilter<"bimbingan"> | string | null
     nim?: StringNullableWithAggregatesFilter<"bimbingan"> | string | null
     nip?: StringNullableWithAggregatesFilter<"bimbingan"> | string | null
-    id_pendaftaran_kp?: UuidNullableWithAggregatesFilter<"bimbingan"> | string | null
   }
 
   export type daily_reportWhereInput = {
@@ -23197,10 +23133,8 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"daily_report"> | number | null
     longitude?: FloatNullableFilter<"daily_report"> | number | null
     nim?: StringNullableFilter<"daily_report"> | string | null
-    id_pendaftaran_kp?: UuidNullableFilter<"daily_report"> | string | null
-    pendaftaran_kp?: XOR<Pendaftaran_kpNullableScalarRelationFilter, pendaftaran_kpWhereInput> | null
-    mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
     detail_daily_report?: Detail_daily_reportListRelationFilter
+    mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
   }
 
   export type daily_reportOrderByWithRelationInput = {
@@ -23211,10 +23145,8 @@ export namespace Prisma {
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
-    id_pendaftaran_kp?: SortOrderInput | SortOrder
-    pendaftaran_kp?: pendaftaran_kpOrderByWithRelationInput
-    mahasiswa?: mahasiswaOrderByWithRelationInput
     detail_daily_report?: detail_daily_reportOrderByRelationAggregateInput
+    mahasiswa?: mahasiswaOrderByWithRelationInput
   }
 
   export type daily_reportWhereUniqueInput = Prisma.AtLeast<{
@@ -23228,10 +23160,8 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"daily_report"> | number | null
     longitude?: FloatNullableFilter<"daily_report"> | number | null
     nim?: StringNullableFilter<"daily_report"> | string | null
-    id_pendaftaran_kp?: UuidNullableFilter<"daily_report"> | string | null
-    pendaftaran_kp?: XOR<Pendaftaran_kpNullableScalarRelationFilter, pendaftaran_kpWhereInput> | null
-    mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
     detail_daily_report?: Detail_daily_reportListRelationFilter
+    mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
   }, "id">
 
   export type daily_reportOrderByWithAggregationInput = {
@@ -23242,7 +23172,6 @@ export namespace Prisma {
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
-    id_pendaftaran_kp?: SortOrderInput | SortOrder
     _count?: daily_reportCountOrderByAggregateInput
     _avg?: daily_reportAvgOrderByAggregateInput
     _max?: daily_reportMaxOrderByAggregateInput
@@ -23261,7 +23190,6 @@ export namespace Prisma {
     latitude?: FloatNullableWithAggregatesFilter<"daily_report"> | number | null
     longitude?: FloatNullableWithAggregatesFilter<"daily_report"> | number | null
     nim?: StringNullableWithAggregatesFilter<"daily_report"> | string | null
-    id_pendaftaran_kp?: UuidNullableWithAggregatesFilter<"daily_report"> | string | null
   }
 
   export type detail_daily_reportWhereInput = {
@@ -23269,18 +23197,18 @@ export namespace Prisma {
     OR?: detail_daily_reportWhereInput[]
     NOT?: detail_daily_reportWhereInput | detail_daily_reportWhereInput[]
     id?: IntFilter<"detail_daily_report"> | number
+    waktu?: DateTimeFilter<"detail_daily_report"> | Date | string
     judul_agenda?: StringFilter<"detail_daily_report"> | string
     deskripsi_agenda?: StringFilter<"detail_daily_report"> | string
-    waktu?: DateTimeFilter<"detail_daily_report"> | Date | string
     id_daily_report?: UuidNullableFilter<"detail_daily_report"> | string | null
     daily_report?: XOR<Daily_reportNullableScalarRelationFilter, daily_reportWhereInput> | null
   }
 
   export type detail_daily_reportOrderByWithRelationInput = {
     id?: SortOrder
+    waktu?: SortOrder
     judul_agenda?: SortOrder
     deskripsi_agenda?: SortOrder
-    waktu?: SortOrder
     id_daily_report?: SortOrderInput | SortOrder
     daily_report?: daily_reportOrderByWithRelationInput
   }
@@ -23290,18 +23218,18 @@ export namespace Prisma {
     AND?: detail_daily_reportWhereInput | detail_daily_reportWhereInput[]
     OR?: detail_daily_reportWhereInput[]
     NOT?: detail_daily_reportWhereInput | detail_daily_reportWhereInput[]
+    waktu?: DateTimeFilter<"detail_daily_report"> | Date | string
     judul_agenda?: StringFilter<"detail_daily_report"> | string
     deskripsi_agenda?: StringFilter<"detail_daily_report"> | string
-    waktu?: DateTimeFilter<"detail_daily_report"> | Date | string
     id_daily_report?: UuidNullableFilter<"detail_daily_report"> | string | null
     daily_report?: XOR<Daily_reportNullableScalarRelationFilter, daily_reportWhereInput> | null
   }, "id">
 
   export type detail_daily_reportOrderByWithAggregationInput = {
     id?: SortOrder
+    waktu?: SortOrder
     judul_agenda?: SortOrder
     deskripsi_agenda?: SortOrder
-    waktu?: SortOrder
     id_daily_report?: SortOrderInput | SortOrder
     _count?: detail_daily_reportCountOrderByAggregateInput
     _avg?: detail_daily_reportAvgOrderByAggregateInput
@@ -23315,9 +23243,9 @@ export namespace Prisma {
     OR?: detail_daily_reportScalarWhereWithAggregatesInput[]
     NOT?: detail_daily_reportScalarWhereWithAggregatesInput | detail_daily_reportScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"detail_daily_report"> | number
+    waktu?: DateTimeWithAggregatesFilter<"detail_daily_report"> | Date | string
     judul_agenda?: StringWithAggregatesFilter<"detail_daily_report"> | string
     deskripsi_agenda?: StringWithAggregatesFilter<"detail_daily_report"> | string
-    waktu?: DateTimeWithAggregatesFilter<"detail_daily_report"> | Date | string
     id_daily_report?: UuidNullableWithAggregatesFilter<"detail_daily_report"> | string | null
   }
 
@@ -23332,6 +23260,7 @@ export namespace Prisma {
     id_telegram?: StringNullableFilter<"dosen"> | string | null
     bimbingan?: BimbinganListRelationFilter
     nilai?: NilaiListRelationFilter
+    pendaftaran_kp?: Pendaftaran_kpListRelationFilter
   }
 
   export type dosenOrderByWithRelationInput = {
@@ -23342,6 +23271,7 @@ export namespace Prisma {
     id_telegram?: SortOrderInput | SortOrder
     bimbingan?: bimbinganOrderByRelationAggregateInput
     nilai?: nilaiOrderByRelationAggregateInput
+    pendaftaran_kp?: pendaftaran_kpOrderByRelationAggregateInput
   }
 
   export type dosenWhereUniqueInput = Prisma.AtLeast<{
@@ -23355,6 +23285,7 @@ export namespace Prisma {
     nama?: StringFilter<"dosen"> | string
     bimbingan?: BimbinganListRelationFilter
     nilai?: NilaiListRelationFilter
+    pendaftaran_kp?: Pendaftaran_kpListRelationFilter
   }, "nip" | "no_hp" | "email" | "id_telegram">
 
   export type dosenOrderByWithAggregationInput = {
@@ -23393,8 +23324,6 @@ export namespace Prisma {
     status?: Enumstatus_instansiNullableFilter<"instansi"> | $Enums.status_instansi | null
     nama_pj?: StringFilter<"instansi"> | string
     no_hp_pj?: StringFilter<"instansi"> | string
-    nim?: StringNullableFilter<"instansi"> | string | null
-    nip?: StringNullableFilter<"instansi"> | string | null
     pembimbing_instansi?: Pembimbing_instansiListRelationFilter
     pendaftaran_kp?: Pendaftaran_kpListRelationFilter
   }
@@ -23410,8 +23339,6 @@ export namespace Prisma {
     status?: SortOrderInput | SortOrder
     nama_pj?: SortOrder
     no_hp_pj?: SortOrder
-    nim?: SortOrderInput | SortOrder
-    nip?: SortOrderInput | SortOrder
     pembimbing_instansi?: pembimbing_instansiOrderByRelationAggregateInput
     pendaftaran_kp?: pendaftaran_kpOrderByRelationAggregateInput
   }
@@ -23430,8 +23357,6 @@ export namespace Prisma {
     status?: Enumstatus_instansiNullableFilter<"instansi"> | $Enums.status_instansi | null
     nama_pj?: StringFilter<"instansi"> | string
     no_hp_pj?: StringFilter<"instansi"> | string
-    nim?: StringNullableFilter<"instansi"> | string | null
-    nip?: StringNullableFilter<"instansi"> | string | null
     pembimbing_instansi?: Pembimbing_instansiListRelationFilter
     pendaftaran_kp?: Pendaftaran_kpListRelationFilter
   }, "id">
@@ -23447,8 +23372,6 @@ export namespace Prisma {
     status?: SortOrderInput | SortOrder
     nama_pj?: SortOrder
     no_hp_pj?: SortOrder
-    nim?: SortOrderInput | SortOrder
-    nip?: SortOrderInput | SortOrder
     _count?: instansiCountOrderByAggregateInput
     _avg?: instansiAvgOrderByAggregateInput
     _max?: instansiMaxOrderByAggregateInput
@@ -23470,8 +23393,6 @@ export namespace Prisma {
     status?: Enumstatus_instansiNullableWithAggregatesFilter<"instansi"> | $Enums.status_instansi | null
     nama_pj?: StringWithAggregatesFilter<"instansi"> | string
     no_hp_pj?: StringWithAggregatesFilter<"instansi"> | string
-    nim?: StringNullableWithAggregatesFilter<"instansi"> | string | null
-    nip?: StringNullableWithAggregatesFilter<"instansi"> | string | null
   }
 
   export type jadwalWhereInput = {
@@ -23705,7 +23626,7 @@ export namespace Prisma {
     nilai_instansi?: FloatNullableFilter<"nilai"> | number | null
     nim?: StringNullableFilter<"nilai"> | string | null
     nip?: StringNullableFilter<"nilai"> | string | null
-    id_pembimbing_instansi?: UuidNullableFilter<"nilai"> | string | null
+    email_pembimbing_instansi?: StringNullableFilter<"nilai"> | string | null
     id_jadwal_seminar?: UuidNullableFilter<"nilai"> | string | null
     komponen_penilaian_instansi?: Komponen_penilaian_instansiListRelationFilter
     komponen_penilaian_pembimbing?: Komponen_penilaian_pembimbingListRelationFilter
@@ -23723,7 +23644,7 @@ export namespace Prisma {
     nilai_instansi?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
     nip?: SortOrderInput | SortOrder
-    id_pembimbing_instansi?: SortOrderInput | SortOrder
+    email_pembimbing_instansi?: SortOrderInput | SortOrder
     id_jadwal_seminar?: SortOrderInput | SortOrder
     komponen_penilaian_instansi?: komponen_penilaian_instansiOrderByRelationAggregateInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingOrderByRelationAggregateInput
@@ -23744,7 +23665,7 @@ export namespace Prisma {
     nilai_instansi?: FloatNullableFilter<"nilai"> | number | null
     nim?: StringNullableFilter<"nilai"> | string | null
     nip?: StringNullableFilter<"nilai"> | string | null
-    id_pembimbing_instansi?: UuidNullableFilter<"nilai"> | string | null
+    email_pembimbing_instansi?: StringNullableFilter<"nilai"> | string | null
     id_jadwal_seminar?: UuidNullableFilter<"nilai"> | string | null
     komponen_penilaian_instansi?: Komponen_penilaian_instansiListRelationFilter
     komponen_penilaian_pembimbing?: Komponen_penilaian_pembimbingListRelationFilter
@@ -23762,7 +23683,7 @@ export namespace Prisma {
     nilai_instansi?: SortOrderInput | SortOrder
     nim?: SortOrderInput | SortOrder
     nip?: SortOrderInput | SortOrder
-    id_pembimbing_instansi?: SortOrderInput | SortOrder
+    email_pembimbing_instansi?: SortOrderInput | SortOrder
     id_jadwal_seminar?: SortOrderInput | SortOrder
     _count?: nilaiCountOrderByAggregateInput
     _avg?: nilaiAvgOrderByAggregateInput
@@ -23782,7 +23703,7 @@ export namespace Prisma {
     nilai_instansi?: FloatNullableWithAggregatesFilter<"nilai"> | number | null
     nim?: StringNullableWithAggregatesFilter<"nilai"> | string | null
     nip?: StringNullableWithAggregatesFilter<"nilai"> | string | null
-    id_pembimbing_instansi?: UuidNullableWithAggregatesFilter<"nilai"> | string | null
+    email_pembimbing_instansi?: StringNullableWithAggregatesFilter<"nilai"> | string | null
     id_jadwal_seminar?: UuidNullableWithAggregatesFilter<"nilai"> | string | null
   }
 
@@ -23790,30 +23711,32 @@ export namespace Prisma {
     AND?: pembimbing_instansiWhereInput | pembimbing_instansiWhereInput[]
     OR?: pembimbing_instansiWhereInput[]
     NOT?: pembimbing_instansiWhereInput | pembimbing_instansiWhereInput[]
-    id?: UuidFilter<"pembimbing_instansi"> | string
+    email?: StringFilter<"pembimbing_instansi"> | string
+    id?: StringFilter<"pembimbing_instansi"> | string
     nama?: StringNullableFilter<"pembimbing_instansi"> | string | null
     no_hp?: StringNullableFilter<"pembimbing_instansi"> | string | null
     jabatan?: StringNullableFilter<"pembimbing_instansi"> | string | null
-    email?: StringFilter<"pembimbing_instansi"> | string
     id_instansi?: UuidNullableFilter<"pembimbing_instansi"> | string | null
     nilai?: NilaiListRelationFilter
+    pendaftaran_kp?: Pendaftaran_kpListRelationFilter
     instansi?: XOR<InstansiNullableScalarRelationFilter, instansiWhereInput> | null
   }
 
   export type pembimbing_instansiOrderByWithRelationInput = {
+    email?: SortOrder
     id?: SortOrder
     nama?: SortOrderInput | SortOrder
     no_hp?: SortOrderInput | SortOrder
     jabatan?: SortOrderInput | SortOrder
-    email?: SortOrder
     id_instansi?: SortOrderInput | SortOrder
     nilai?: nilaiOrderByRelationAggregateInput
+    pendaftaran_kp?: pendaftaran_kpOrderByRelationAggregateInput
     instansi?: instansiOrderByWithRelationInput
   }
 
   export type pembimbing_instansiWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
     email?: string
+    id?: string
     AND?: pembimbing_instansiWhereInput | pembimbing_instansiWhereInput[]
     OR?: pembimbing_instansiWhereInput[]
     NOT?: pembimbing_instansiWhereInput | pembimbing_instansiWhereInput[]
@@ -23822,15 +23745,16 @@ export namespace Prisma {
     jabatan?: StringNullableFilter<"pembimbing_instansi"> | string | null
     id_instansi?: UuidNullableFilter<"pembimbing_instansi"> | string | null
     nilai?: NilaiListRelationFilter
+    pendaftaran_kp?: Pendaftaran_kpListRelationFilter
     instansi?: XOR<InstansiNullableScalarRelationFilter, instansiWhereInput> | null
-  }, "id" | "email">
+  }, "email" | "id">
 
   export type pembimbing_instansiOrderByWithAggregationInput = {
+    email?: SortOrder
     id?: SortOrder
     nama?: SortOrderInput | SortOrder
     no_hp?: SortOrderInput | SortOrder
     jabatan?: SortOrderInput | SortOrder
-    email?: SortOrder
     id_instansi?: SortOrderInput | SortOrder
     _count?: pembimbing_instansiCountOrderByAggregateInput
     _max?: pembimbing_instansiMaxOrderByAggregateInput
@@ -23841,11 +23765,11 @@ export namespace Prisma {
     AND?: pembimbing_instansiScalarWhereWithAggregatesInput | pembimbing_instansiScalarWhereWithAggregatesInput[]
     OR?: pembimbing_instansiScalarWhereWithAggregatesInput[]
     NOT?: pembimbing_instansiScalarWhereWithAggregatesInput | pembimbing_instansiScalarWhereWithAggregatesInput[]
-    id?: UuidWithAggregatesFilter<"pembimbing_instansi"> | string
+    email?: StringWithAggregatesFilter<"pembimbing_instansi"> | string
+    id?: StringWithAggregatesFilter<"pembimbing_instansi"> | string
     nama?: StringNullableWithAggregatesFilter<"pembimbing_instansi"> | string | null
     no_hp?: StringNullableWithAggregatesFilter<"pembimbing_instansi"> | string | null
     jabatan?: StringNullableWithAggregatesFilter<"pembimbing_instansi"> | string | null
-    email?: StringWithAggregatesFilter<"pembimbing_instansi"> | string
     id_instansi?: UuidNullableWithAggregatesFilter<"pembimbing_instansi"> | string | null
   }
 
@@ -23867,7 +23791,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
     email_pembimbing_instansi?: StringNullableFilter<"pendaftaran_kp"> | string | null
     catatan_penolakan?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableFilter<"pendaftaran_kp"> | number | null
+    level_akses?: IntFilter<"pendaftaran_kp"> | number
     judul_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     alasan_lanjut_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     id_tahun_ajaran?: IntNullableFilter<"pendaftaran_kp"> | number | null
@@ -23875,13 +23799,13 @@ export namespace Prisma {
     nim?: StringNullableFilter<"pendaftaran_kp"> | string | null
     nip_pembimbing?: StringNullableFilter<"pendaftaran_kp"> | string | null
     nip_penguji?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    bimbingan?: BimbinganListRelationFilter
-    daily_report?: Daily_reportListRelationFilter
     dokumen_seminar_kp?: Dokumen_seminar_kpListRelationFilter
     jadwal?: JadwalListRelationFilter
     instansi?: XOR<InstansiNullableScalarRelationFilter, instansiWhereInput> | null
     tahun_ajaran?: XOR<Tahun_ajaranNullableScalarRelationFilter, tahun_ajaranWhereInput> | null
     mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
+    dosen_pembimbing?: XOR<DosenNullableScalarRelationFilter, dosenWhereInput> | null
+    pembimbing_instansi?: XOR<Pembimbing_instansiNullableScalarRelationFilter, pembimbing_instansiWhereInput> | null
   }
 
   export type pendaftaran_kpOrderByWithRelationInput = {
@@ -23899,7 +23823,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: SortOrderInput | SortOrder
     email_pembimbing_instansi?: SortOrderInput | SortOrder
     catatan_penolakan?: SortOrderInput | SortOrder
-    level_akses?: SortOrderInput | SortOrder
+    level_akses?: SortOrder
     judul_kp?: SortOrderInput | SortOrder
     alasan_lanjut_kp?: SortOrderInput | SortOrder
     id_tahun_ajaran?: SortOrderInput | SortOrder
@@ -23907,13 +23831,13 @@ export namespace Prisma {
     nim?: SortOrderInput | SortOrder
     nip_pembimbing?: SortOrderInput | SortOrder
     nip_penguji?: SortOrderInput | SortOrder
-    bimbingan?: bimbinganOrderByRelationAggregateInput
-    daily_report?: daily_reportOrderByRelationAggregateInput
     dokumen_seminar_kp?: dokumen_seminar_kpOrderByRelationAggregateInput
     jadwal?: jadwalOrderByRelationAggregateInput
     instansi?: instansiOrderByWithRelationInput
     tahun_ajaran?: tahun_ajaranOrderByWithRelationInput
     mahasiswa?: mahasiswaOrderByWithRelationInput
+    dosen_pembimbing?: dosenOrderByWithRelationInput
+    pembimbing_instansi?: pembimbing_instansiOrderByWithRelationInput
   }
 
   export type pendaftaran_kpWhereUniqueInput = Prisma.AtLeast<{
@@ -23934,7 +23858,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
     email_pembimbing_instansi?: StringNullableFilter<"pendaftaran_kp"> | string | null
     catatan_penolakan?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableFilter<"pendaftaran_kp"> | number | null
+    level_akses?: IntFilter<"pendaftaran_kp"> | number
     judul_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     alasan_lanjut_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
     id_tahun_ajaran?: IntNullableFilter<"pendaftaran_kp"> | number | null
@@ -23942,13 +23866,13 @@ export namespace Prisma {
     nim?: StringNullableFilter<"pendaftaran_kp"> | string | null
     nip_pembimbing?: StringNullableFilter<"pendaftaran_kp"> | string | null
     nip_penguji?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    bimbingan?: BimbinganListRelationFilter
-    daily_report?: Daily_reportListRelationFilter
     dokumen_seminar_kp?: Dokumen_seminar_kpListRelationFilter
     jadwal?: JadwalListRelationFilter
     instansi?: XOR<InstansiNullableScalarRelationFilter, instansiWhereInput> | null
     tahun_ajaran?: XOR<Tahun_ajaranNullableScalarRelationFilter, tahun_ajaranWhereInput> | null
     mahasiswa?: XOR<MahasiswaNullableScalarRelationFilter, mahasiswaWhereInput> | null
+    dosen_pembimbing?: XOR<DosenNullableScalarRelationFilter, dosenWhereInput> | null
+    pembimbing_instansi?: XOR<Pembimbing_instansiNullableScalarRelationFilter, pembimbing_instansiWhereInput> | null
   }, "id">
 
   export type pendaftaran_kpOrderByWithAggregationInput = {
@@ -23966,7 +23890,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: SortOrderInput | SortOrder
     email_pembimbing_instansi?: SortOrderInput | SortOrder
     catatan_penolakan?: SortOrderInput | SortOrder
-    level_akses?: SortOrderInput | SortOrder
+    level_akses?: SortOrder
     judul_kp?: SortOrderInput | SortOrder
     alasan_lanjut_kp?: SortOrderInput | SortOrder
     id_tahun_ajaran?: SortOrderInput | SortOrder
@@ -23999,7 +23923,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     email_pembimbing_instansi?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     catatan_penolakan?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableWithAggregatesFilter<"pendaftaran_kp"> | number | null
+    level_akses?: IntWithAggregatesFilter<"pendaftaran_kp"> | number
     judul_kp?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     alasan_lanjut_kp?: StringNullableWithAggregatesFilter<"pendaftaran_kp"> | string | null
     id_tahun_ajaran?: IntNullableWithAggregatesFilter<"pendaftaran_kp"> | number | null
@@ -24369,9 +24293,8 @@ export namespace Prisma {
     id?: string
     tanggal_bimbingan?: Date | string | null
     catatan_bimbingan?: string | null
-    pendaftaran_kp?: pendaftaran_kpCreateNestedOneWithoutBimbinganInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutBimbinganInput
-    dosen?: dosenCreateNestedOneWithoutBimbinganInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutBimbinganInput
   }
 
   export type bimbinganUncheckedCreateInput = {
@@ -24380,16 +24303,14 @@ export namespace Prisma {
     catatan_bimbingan?: string | null
     nim?: string | null
     nip?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type bimbinganUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
-    pendaftaran_kp?: pendaftaran_kpUpdateOneWithoutBimbinganNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutBimbinganNestedInput
-    dosen?: dosenUpdateOneWithoutBimbinganNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutBimbinganNestedInput
   }
 
   export type bimbinganUncheckedUpdateInput = {
@@ -24398,7 +24319,6 @@ export namespace Prisma {
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type bimbinganCreateManyInput = {
@@ -24407,7 +24327,6 @@ export namespace Prisma {
     catatan_bimbingan?: string | null
     nim?: string | null
     nip?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type bimbinganUpdateManyMutationInput = {
@@ -24422,7 +24341,6 @@ export namespace Prisma {
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type daily_reportCreateInput = {
@@ -24432,9 +24350,8 @@ export namespace Prisma {
     catatan_evaluasi?: string | null
     latitude?: number | null
     longitude?: number | null
-    pendaftaran_kp?: pendaftaran_kpCreateNestedOneWithoutDaily_reportInput
-    mahasiswa?: mahasiswaCreateNestedOneWithoutDaily_reportInput
     detail_daily_report?: detail_daily_reportCreateNestedManyWithoutDaily_reportInput
+    mahasiswa?: mahasiswaCreateNestedOneWithoutDaily_reportInput
   }
 
   export type daily_reportUncheckedCreateInput = {
@@ -24445,7 +24362,6 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     nim?: string | null
-    id_pendaftaran_kp?: string | null
     detail_daily_report?: detail_daily_reportUncheckedCreateNestedManyWithoutDaily_reportInput
   }
 
@@ -24456,9 +24372,8 @@ export namespace Prisma {
     catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    pendaftaran_kp?: pendaftaran_kpUpdateOneWithoutDaily_reportNestedInput
-    mahasiswa?: mahasiswaUpdateOneWithoutDaily_reportNestedInput
     detail_daily_report?: detail_daily_reportUpdateManyWithoutDaily_reportNestedInput
+    mahasiswa?: mahasiswaUpdateOneWithoutDaily_reportNestedInput
   }
 
   export type daily_reportUncheckedUpdateInput = {
@@ -24469,7 +24384,6 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
     detail_daily_report?: detail_daily_reportUncheckedUpdateManyWithoutDaily_reportNestedInput
   }
 
@@ -24481,7 +24395,6 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     nim?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type daily_reportUpdateManyMutationInput = {
@@ -24501,58 +24414,57 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type detail_daily_reportCreateInput = {
+    waktu: Date | string
     judul_agenda: string
     deskripsi_agenda: string
-    waktu: Date | string
     daily_report?: daily_reportCreateNestedOneWithoutDetail_daily_reportInput
   }
 
   export type detail_daily_reportUncheckedCreateInput = {
     id?: number
+    waktu: Date | string
     judul_agenda: string
     deskripsi_agenda: string
-    waktu: Date | string
     id_daily_report?: string | null
   }
 
   export type detail_daily_reportUpdateInput = {
+    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     judul_agenda?: StringFieldUpdateOperationsInput | string
     deskripsi_agenda?: StringFieldUpdateOperationsInput | string
-    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     daily_report?: daily_reportUpdateOneWithoutDetail_daily_reportNestedInput
   }
 
   export type detail_daily_reportUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     judul_agenda?: StringFieldUpdateOperationsInput | string
     deskripsi_agenda?: StringFieldUpdateOperationsInput | string
-    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     id_daily_report?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type detail_daily_reportCreateManyInput = {
     id?: number
+    waktu: Date | string
     judul_agenda: string
     deskripsi_agenda: string
-    waktu: Date | string
     id_daily_report?: string | null
   }
 
   export type detail_daily_reportUpdateManyMutationInput = {
+    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     judul_agenda?: StringFieldUpdateOperationsInput | string
     deskripsi_agenda?: StringFieldUpdateOperationsInput | string
-    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type detail_daily_reportUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     judul_agenda?: StringFieldUpdateOperationsInput | string
     deskripsi_agenda?: StringFieldUpdateOperationsInput | string
-    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     id_daily_report?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -24562,8 +24474,9 @@ export namespace Prisma {
     no_hp?: string | null
     email: string
     id_telegram?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutDosenInput
+    bimbingan?: bimbinganCreateNestedManyWithoutDosen_pembimbingInput
     nilai?: nilaiCreateNestedManyWithoutDosenInput
+    pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutDosen_pembimbingInput
   }
 
   export type dosenUncheckedCreateInput = {
@@ -24572,8 +24485,9 @@ export namespace Prisma {
     no_hp?: string | null
     email: string
     id_telegram?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutDosenInput
+    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutDosen_pembimbingInput
     nilai?: nilaiUncheckedCreateNestedManyWithoutDosenInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutDosen_pembimbingInput
   }
 
   export type dosenUpdateInput = {
@@ -24582,8 +24496,9 @@ export namespace Prisma {
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutDosenNestedInput
+    bimbingan?: bimbinganUpdateManyWithoutDosen_pembimbingNestedInput
     nilai?: nilaiUpdateManyWithoutDosenNestedInput
+    pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutDosen_pembimbingNestedInput
   }
 
   export type dosenUncheckedUpdateInput = {
@@ -24592,8 +24507,9 @@ export namespace Prisma {
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutDosenNestedInput
+    bimbingan?: bimbinganUncheckedUpdateManyWithoutDosen_pembimbingNestedInput
     nilai?: nilaiUncheckedUpdateManyWithoutDosenNestedInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutDosen_pembimbingNestedInput
   }
 
   export type dosenCreateManyInput = {
@@ -24631,8 +24547,6 @@ export namespace Prisma {
     status?: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim?: string | null
-    nip?: string | null
     pembimbing_instansi?: pembimbing_instansiCreateNestedManyWithoutInstansiInput
     pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutInstansiInput
   }
@@ -24648,8 +24562,6 @@ export namespace Prisma {
     status?: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim?: string | null
-    nip?: string | null
     pembimbing_instansi?: pembimbing_instansiUncheckedCreateNestedManyWithoutInstansiInput
     pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutInstansiInput
   }
@@ -24665,8 +24577,6 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
     pembimbing_instansi?: pembimbing_instansiUpdateManyWithoutInstansiNestedInput
     pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutInstansiNestedInput
   }
@@ -24682,8 +24592,6 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
     pembimbing_instansi?: pembimbing_instansiUncheckedUpdateManyWithoutInstansiNestedInput
     pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutInstansiNestedInput
   }
@@ -24699,8 +24607,6 @@ export namespace Prisma {
     status?: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim?: string | null
-    nip?: string | null
   }
 
   export type instansiUpdateManyMutationInput = {
@@ -24714,8 +24620,6 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type instansiUncheckedUpdateManyInput = {
@@ -24729,8 +24633,6 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type jadwalCreateInput = {
@@ -24994,7 +24896,7 @@ export namespace Prisma {
     nilai_instansi?: number | null
     nim?: string | null
     nip?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedCreateNestedManyWithoutNilaiInput
@@ -25024,7 +24926,7 @@ export namespace Prisma {
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedUpdateManyWithoutNilaiNestedInput
@@ -25039,7 +24941,7 @@ export namespace Prisma {
     nilai_instansi?: number | null
     nim?: string | null
     nip?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
   }
 
@@ -25060,73 +24962,77 @@ export namespace Prisma {
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type pembimbing_instansiCreateInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
     nilai?: nilaiCreateNestedManyWithoutPembimbing_instansiInput
+    pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutPembimbing_instansiInput
     instansi?: instansiCreateNestedOneWithoutPembimbing_instansiInput
   }
 
   export type pembimbing_instansiUncheckedCreateInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
     id_instansi?: string | null
     nilai?: nilaiUncheckedCreateNestedManyWithoutPembimbing_instansiInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutPembimbing_instansiInput
   }
 
   export type pembimbing_instansiUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     nilai?: nilaiUpdateManyWithoutPembimbing_instansiNestedInput
+    pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutPembimbing_instansiNestedInput
     instansi?: instansiUpdateOneWithoutPembimbing_instansiNestedInput
   }
 
   export type pembimbing_instansiUncheckedUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     nilai?: nilaiUncheckedUpdateManyWithoutPembimbing_instansiNestedInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutPembimbing_instansiNestedInput
   }
 
   export type pembimbing_instansiCreateManyInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
     id_instansi?: string | null
   }
 
   export type pembimbing_instansiUpdateManyMutationInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
   }
 
   export type pembimbing_instansiUncheckedUpdateManyInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -25143,20 +25049,18 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: string | null
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
     instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
     tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutPendaftaran_kpInput
+    pembimbing_instansi?: pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput
   }
 
   export type pendaftaran_kpUncheckedCreateInput = {
@@ -25174,7 +25078,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -25182,8 +25086,6 @@ export namespace Prisma {
     nim?: string | null
     nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
   }
@@ -25201,20 +25103,18 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
     instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
     tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutPendaftaran_kpNestedInput
+    pembimbing_instansi?: pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput
   }
 
   export type pendaftaran_kpUncheckedUpdateInput = {
@@ -25232,7 +25132,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -25240,8 +25140,6 @@ export namespace Prisma {
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
   }
@@ -25261,7 +25159,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -25284,12 +25182,10 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -25308,7 +25204,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -25713,23 +25609,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type UuidNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type Pendaftaran_kpNullableScalarRelationFilter = {
-    is?: pendaftaran_kpWhereInput | null
-    isNot?: pendaftaran_kpWhereInput | null
-  }
-
   export type MahasiswaNullableScalarRelationFilter = {
     is?: mahasiswaWhereInput | null
     isNot?: mahasiswaWhereInput | null
@@ -25751,7 +25630,6 @@ export namespace Prisma {
     catatan_bimbingan?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
-    id_pendaftaran_kp?: SortOrder
   }
 
   export type bimbinganMaxOrderByAggregateInput = {
@@ -25760,7 +25638,6 @@ export namespace Prisma {
     catatan_bimbingan?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
-    id_pendaftaran_kp?: SortOrder
   }
 
   export type bimbinganMinOrderByAggregateInput = {
@@ -25769,7 +25646,6 @@ export namespace Prisma {
     catatan_bimbingan?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
-    id_pendaftaran_kp?: SortOrder
   }
 
   export type UuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -25819,21 +25695,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type Enumstatus_presensiNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.status_presensi | Enumstatus_presensiFieldRefInput<$PrismaModel> | null
     in?: $Enums.status_presensi[] | ListEnumstatus_presensiFieldRefInput<$PrismaModel> | null
@@ -25870,7 +25731,6 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     nim?: SortOrder
-    id_pendaftaran_kp?: SortOrder
   }
 
   export type daily_reportAvgOrderByAggregateInput = {
@@ -25886,7 +25746,6 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     nim?: SortOrder
-    id_pendaftaran_kp?: SortOrder
   }
 
   export type daily_reportMinOrderByAggregateInput = {
@@ -25897,7 +25756,6 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     nim?: SortOrder
-    id_pendaftaran_kp?: SortOrder
   }
 
   export type daily_reportSumOrderByAggregateInput = {
@@ -25942,6 +25800,17 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -25957,15 +25826,16 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  export type UuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
   }
 
   export type Daily_reportNullableScalarRelationFilter = {
@@ -25975,9 +25845,9 @@ export namespace Prisma {
 
   export type detail_daily_reportCountOrderByAggregateInput = {
     id?: SortOrder
+    waktu?: SortOrder
     judul_agenda?: SortOrder
     deskripsi_agenda?: SortOrder
-    waktu?: SortOrder
     id_daily_report?: SortOrder
   }
 
@@ -25987,17 +25857,17 @@ export namespace Prisma {
 
   export type detail_daily_reportMaxOrderByAggregateInput = {
     id?: SortOrder
+    waktu?: SortOrder
     judul_agenda?: SortOrder
     deskripsi_agenda?: SortOrder
-    waktu?: SortOrder
     id_daily_report?: SortOrder
   }
 
   export type detail_daily_reportMinOrderByAggregateInput = {
     id?: SortOrder
+    waktu?: SortOrder
     judul_agenda?: SortOrder
     deskripsi_agenda?: SortOrder
-    waktu?: SortOrder
     id_daily_report?: SortOrder
   }
 
@@ -26021,6 +25891,20 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -26039,18 +25923,19 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
+  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type BimbinganListRelationFilter = {
@@ -26065,11 +25950,21 @@ export namespace Prisma {
     none?: nilaiWhereInput
   }
 
+  export type Pendaftaran_kpListRelationFilter = {
+    every?: pendaftaran_kpWhereInput
+    some?: pendaftaran_kpWhereInput
+    none?: pendaftaran_kpWhereInput
+  }
+
   export type bimbinganOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type nilaiOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type pendaftaran_kpOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26117,17 +26012,7 @@ export namespace Prisma {
     none?: pembimbing_instansiWhereInput
   }
 
-  export type Pendaftaran_kpListRelationFilter = {
-    every?: pendaftaran_kpWhereInput
-    some?: pendaftaran_kpWhereInput
-    none?: pendaftaran_kpWhereInput
-  }
-
   export type pembimbing_instansiOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type pendaftaran_kpOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26142,8 +26027,6 @@ export namespace Prisma {
     status?: SortOrder
     nama_pj?: SortOrder
     no_hp_pj?: SortOrder
-    nim?: SortOrder
-    nip?: SortOrder
   }
 
   export type instansiAvgOrderByAggregateInput = {
@@ -26162,8 +26045,6 @@ export namespace Prisma {
     status?: SortOrder
     nama_pj?: SortOrder
     no_hp_pj?: SortOrder
-    nim?: SortOrder
-    nip?: SortOrder
   }
 
   export type instansiMinOrderByAggregateInput = {
@@ -26177,8 +26058,6 @@ export namespace Prisma {
     status?: SortOrder
     nama_pj?: SortOrder
     no_hp_pj?: SortOrder
-    nim?: SortOrder
-    nip?: SortOrder
   }
 
   export type instansiSumOrderByAggregateInput = {
@@ -26211,6 +26090,11 @@ export namespace Prisma {
     in?: $Enums.status_jadwal[] | ListEnumstatus_jadwalFieldRefInput<$PrismaModel> | null
     notIn?: $Enums.status_jadwal[] | ListEnumstatus_jadwalFieldRefInput<$PrismaModel> | null
     not?: NestedEnumstatus_jadwalNullableFilter<$PrismaModel> | $Enums.status_jadwal | null
+  }
+
+  export type Pendaftaran_kpNullableScalarRelationFilter = {
+    is?: pendaftaran_kpWhereInput | null
+    isNot?: pendaftaran_kpWhereInput | null
   }
 
   export type RuanganNullableScalarRelationFilter = {
@@ -26429,7 +26313,7 @@ export namespace Prisma {
     nilai_instansi?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
-    id_pembimbing_instansi?: SortOrder
+    email_pembimbing_instansi?: SortOrder
     id_jadwal_seminar?: SortOrder
   }
 
@@ -26447,7 +26331,7 @@ export namespace Prisma {
     nilai_instansi?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
-    id_pembimbing_instansi?: SortOrder
+    email_pembimbing_instansi?: SortOrder
     id_jadwal_seminar?: SortOrder
   }
 
@@ -26459,7 +26343,7 @@ export namespace Prisma {
     nilai_instansi?: SortOrder
     nim?: SortOrder
     nip?: SortOrder
-    id_pembimbing_instansi?: SortOrder
+    email_pembimbing_instansi?: SortOrder
     id_jadwal_seminar?: SortOrder
   }
 
@@ -26475,29 +26359,29 @@ export namespace Prisma {
   }
 
   export type pembimbing_instansiCountOrderByAggregateInput = {
+    email?: SortOrder
     id?: SortOrder
     nama?: SortOrder
     no_hp?: SortOrder
     jabatan?: SortOrder
-    email?: SortOrder
     id_instansi?: SortOrder
   }
 
   export type pembimbing_instansiMaxOrderByAggregateInput = {
+    email?: SortOrder
     id?: SortOrder
     nama?: SortOrder
     no_hp?: SortOrder
     jabatan?: SortOrder
-    email?: SortOrder
     id_instansi?: SortOrder
   }
 
   export type pembimbing_instansiMinOrderByAggregateInput = {
+    email?: SortOrder
     id?: SortOrder
     nama?: SortOrder
     no_hp?: SortOrder
     jabatan?: SortOrder
-    email?: SortOrder
     id_instansi?: SortOrder
   }
 
@@ -26850,12 +26734,6 @@ export namespace Prisma {
     id?: SortOrder
   }
 
-  export type pendaftaran_kpCreateNestedOneWithoutBimbinganInput = {
-    create?: XOR<pendaftaran_kpCreateWithoutBimbinganInput, pendaftaran_kpUncheckedCreateWithoutBimbinganInput>
-    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutBimbinganInput
-    connect?: pendaftaran_kpWhereUniqueInput
-  }
-
   export type mahasiswaCreateNestedOneWithoutBimbinganInput = {
     create?: XOR<mahasiswaCreateWithoutBimbinganInput, mahasiswaUncheckedCreateWithoutBimbinganInput>
     connectOrCreate?: mahasiswaCreateOrConnectWithoutBimbinganInput
@@ -26880,16 +26758,6 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type pendaftaran_kpUpdateOneWithoutBimbinganNestedInput = {
-    create?: XOR<pendaftaran_kpCreateWithoutBimbinganInput, pendaftaran_kpUncheckedCreateWithoutBimbinganInput>
-    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutBimbinganInput
-    upsert?: pendaftaran_kpUpsertWithoutBimbinganInput
-    disconnect?: pendaftaran_kpWhereInput | boolean
-    delete?: pendaftaran_kpWhereInput | boolean
-    connect?: pendaftaran_kpWhereUniqueInput
-    update?: XOR<XOR<pendaftaran_kpUpdateToOneWithWhereWithoutBimbinganInput, pendaftaran_kpUpdateWithoutBimbinganInput>, pendaftaran_kpUncheckedUpdateWithoutBimbinganInput>
-  }
-
   export type mahasiswaUpdateOneWithoutBimbinganNestedInput = {
     create?: XOR<mahasiswaCreateWithoutBimbinganInput, mahasiswaUncheckedCreateWithoutBimbinganInput>
     connectOrCreate?: mahasiswaCreateOrConnectWithoutBimbinganInput
@@ -26910,23 +26778,17 @@ export namespace Prisma {
     update?: XOR<XOR<dosenUpdateToOneWithWhereWithoutBimbinganInput, dosenUpdateWithoutBimbinganInput>, dosenUncheckedUpdateWithoutBimbinganInput>
   }
 
-  export type pendaftaran_kpCreateNestedOneWithoutDaily_reportInput = {
-    create?: XOR<pendaftaran_kpCreateWithoutDaily_reportInput, pendaftaran_kpUncheckedCreateWithoutDaily_reportInput>
-    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutDaily_reportInput
-    connect?: pendaftaran_kpWhereUniqueInput
+  export type detail_daily_reportCreateNestedManyWithoutDaily_reportInput = {
+    create?: XOR<detail_daily_reportCreateWithoutDaily_reportInput, detail_daily_reportUncheckedCreateWithoutDaily_reportInput> | detail_daily_reportCreateWithoutDaily_reportInput[] | detail_daily_reportUncheckedCreateWithoutDaily_reportInput[]
+    connectOrCreate?: detail_daily_reportCreateOrConnectWithoutDaily_reportInput | detail_daily_reportCreateOrConnectWithoutDaily_reportInput[]
+    createMany?: detail_daily_reportCreateManyDaily_reportInputEnvelope
+    connect?: detail_daily_reportWhereUniqueInput | detail_daily_reportWhereUniqueInput[]
   }
 
   export type mahasiswaCreateNestedOneWithoutDaily_reportInput = {
     create?: XOR<mahasiswaCreateWithoutDaily_reportInput, mahasiswaUncheckedCreateWithoutDaily_reportInput>
     connectOrCreate?: mahasiswaCreateOrConnectWithoutDaily_reportInput
     connect?: mahasiswaWhereUniqueInput
-  }
-
-  export type detail_daily_reportCreateNestedManyWithoutDaily_reportInput = {
-    create?: XOR<detail_daily_reportCreateWithoutDaily_reportInput, detail_daily_reportUncheckedCreateWithoutDaily_reportInput> | detail_daily_reportCreateWithoutDaily_reportInput[] | detail_daily_reportUncheckedCreateWithoutDaily_reportInput[]
-    connectOrCreate?: detail_daily_reportCreateOrConnectWithoutDaily_reportInput | detail_daily_reportCreateOrConnectWithoutDaily_reportInput[]
-    createMany?: detail_daily_reportCreateManyDaily_reportInputEnvelope
-    connect?: detail_daily_reportWhereUniqueInput | detail_daily_reportWhereUniqueInput[]
   }
 
   export type detail_daily_reportUncheckedCreateNestedManyWithoutDaily_reportInput = {
@@ -26948,26 +26810,6 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type pendaftaran_kpUpdateOneWithoutDaily_reportNestedInput = {
-    create?: XOR<pendaftaran_kpCreateWithoutDaily_reportInput, pendaftaran_kpUncheckedCreateWithoutDaily_reportInput>
-    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutDaily_reportInput
-    upsert?: pendaftaran_kpUpsertWithoutDaily_reportInput
-    disconnect?: pendaftaran_kpWhereInput | boolean
-    delete?: pendaftaran_kpWhereInput | boolean
-    connect?: pendaftaran_kpWhereUniqueInput
-    update?: XOR<XOR<pendaftaran_kpUpdateToOneWithWhereWithoutDaily_reportInput, pendaftaran_kpUpdateWithoutDaily_reportInput>, pendaftaran_kpUncheckedUpdateWithoutDaily_reportInput>
-  }
-
-  export type mahasiswaUpdateOneWithoutDaily_reportNestedInput = {
-    create?: XOR<mahasiswaCreateWithoutDaily_reportInput, mahasiswaUncheckedCreateWithoutDaily_reportInput>
-    connectOrCreate?: mahasiswaCreateOrConnectWithoutDaily_reportInput
-    upsert?: mahasiswaUpsertWithoutDaily_reportInput
-    disconnect?: mahasiswaWhereInput | boolean
-    delete?: mahasiswaWhereInput | boolean
-    connect?: mahasiswaWhereUniqueInput
-    update?: XOR<XOR<mahasiswaUpdateToOneWithWhereWithoutDaily_reportInput, mahasiswaUpdateWithoutDaily_reportInput>, mahasiswaUncheckedUpdateWithoutDaily_reportInput>
-  }
-
   export type detail_daily_reportUpdateManyWithoutDaily_reportNestedInput = {
     create?: XOR<detail_daily_reportCreateWithoutDaily_reportInput, detail_daily_reportUncheckedCreateWithoutDaily_reportInput> | detail_daily_reportCreateWithoutDaily_reportInput[] | detail_daily_reportUncheckedCreateWithoutDaily_reportInput[]
     connectOrCreate?: detail_daily_reportCreateOrConnectWithoutDaily_reportInput | detail_daily_reportCreateOrConnectWithoutDaily_reportInput[]
@@ -26980,6 +26822,16 @@ export namespace Prisma {
     update?: detail_daily_reportUpdateWithWhereUniqueWithoutDaily_reportInput | detail_daily_reportUpdateWithWhereUniqueWithoutDaily_reportInput[]
     updateMany?: detail_daily_reportUpdateManyWithWhereWithoutDaily_reportInput | detail_daily_reportUpdateManyWithWhereWithoutDaily_reportInput[]
     deleteMany?: detail_daily_reportScalarWhereInput | detail_daily_reportScalarWhereInput[]
+  }
+
+  export type mahasiswaUpdateOneWithoutDaily_reportNestedInput = {
+    create?: XOR<mahasiswaCreateWithoutDaily_reportInput, mahasiswaUncheckedCreateWithoutDaily_reportInput>
+    connectOrCreate?: mahasiswaCreateOrConnectWithoutDaily_reportInput
+    upsert?: mahasiswaUpsertWithoutDaily_reportInput
+    disconnect?: mahasiswaWhereInput | boolean
+    delete?: mahasiswaWhereInput | boolean
+    connect?: mahasiswaWhereUniqueInput
+    update?: XOR<XOR<mahasiswaUpdateToOneWithWhereWithoutDaily_reportInput, mahasiswaUpdateWithoutDaily_reportInput>, mahasiswaUncheckedUpdateWithoutDaily_reportInput>
   }
 
   export type detail_daily_reportUncheckedUpdateManyWithoutDaily_reportNestedInput = {
@@ -27024,10 +26876,10 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type bimbinganCreateNestedManyWithoutDosenInput = {
-    create?: XOR<bimbinganCreateWithoutDosenInput, bimbinganUncheckedCreateWithoutDosenInput> | bimbinganCreateWithoutDosenInput[] | bimbinganUncheckedCreateWithoutDosenInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutDosenInput | bimbinganCreateOrConnectWithoutDosenInput[]
-    createMany?: bimbinganCreateManyDosenInputEnvelope
+  export type bimbinganCreateNestedManyWithoutDosen_pembimbingInput = {
+    create?: XOR<bimbinganCreateWithoutDosen_pembimbingInput, bimbinganUncheckedCreateWithoutDosen_pembimbingInput> | bimbinganCreateWithoutDosen_pembimbingInput[] | bimbinganUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: bimbinganCreateOrConnectWithoutDosen_pembimbingInput | bimbinganCreateOrConnectWithoutDosen_pembimbingInput[]
+    createMany?: bimbinganCreateManyDosen_pembimbingInputEnvelope
     connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
   }
 
@@ -27038,10 +26890,17 @@ export namespace Prisma {
     connect?: nilaiWhereUniqueInput | nilaiWhereUniqueInput[]
   }
 
-  export type bimbinganUncheckedCreateNestedManyWithoutDosenInput = {
-    create?: XOR<bimbinganCreateWithoutDosenInput, bimbinganUncheckedCreateWithoutDosenInput> | bimbinganCreateWithoutDosenInput[] | bimbinganUncheckedCreateWithoutDosenInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutDosenInput | bimbinganCreateOrConnectWithoutDosenInput[]
-    createMany?: bimbinganCreateManyDosenInputEnvelope
+  export type pendaftaran_kpCreateNestedManyWithoutDosen_pembimbingInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput> | pendaftaran_kpCreateWithoutDosen_pembimbingInput[] | pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput | pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput[]
+    createMany?: pendaftaran_kpCreateManyDosen_pembimbingInputEnvelope
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+  }
+
+  export type bimbinganUncheckedCreateNestedManyWithoutDosen_pembimbingInput = {
+    create?: XOR<bimbinganCreateWithoutDosen_pembimbingInput, bimbinganUncheckedCreateWithoutDosen_pembimbingInput> | bimbinganCreateWithoutDosen_pembimbingInput[] | bimbinganUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: bimbinganCreateOrConnectWithoutDosen_pembimbingInput | bimbinganCreateOrConnectWithoutDosen_pembimbingInput[]
+    createMany?: bimbinganCreateManyDosen_pembimbingInputEnvelope
     connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
   }
 
@@ -27052,17 +26911,24 @@ export namespace Prisma {
     connect?: nilaiWhereUniqueInput | nilaiWhereUniqueInput[]
   }
 
-  export type bimbinganUpdateManyWithoutDosenNestedInput = {
-    create?: XOR<bimbinganCreateWithoutDosenInput, bimbinganUncheckedCreateWithoutDosenInput> | bimbinganCreateWithoutDosenInput[] | bimbinganUncheckedCreateWithoutDosenInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutDosenInput | bimbinganCreateOrConnectWithoutDosenInput[]
-    upsert?: bimbinganUpsertWithWhereUniqueWithoutDosenInput | bimbinganUpsertWithWhereUniqueWithoutDosenInput[]
-    createMany?: bimbinganCreateManyDosenInputEnvelope
+  export type pendaftaran_kpUncheckedCreateNestedManyWithoutDosen_pembimbingInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput> | pendaftaran_kpCreateWithoutDosen_pembimbingInput[] | pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput | pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput[]
+    createMany?: pendaftaran_kpCreateManyDosen_pembimbingInputEnvelope
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+  }
+
+  export type bimbinganUpdateManyWithoutDosen_pembimbingNestedInput = {
+    create?: XOR<bimbinganCreateWithoutDosen_pembimbingInput, bimbinganUncheckedCreateWithoutDosen_pembimbingInput> | bimbinganCreateWithoutDosen_pembimbingInput[] | bimbinganUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: bimbinganCreateOrConnectWithoutDosen_pembimbingInput | bimbinganCreateOrConnectWithoutDosen_pembimbingInput[]
+    upsert?: bimbinganUpsertWithWhereUniqueWithoutDosen_pembimbingInput | bimbinganUpsertWithWhereUniqueWithoutDosen_pembimbingInput[]
+    createMany?: bimbinganCreateManyDosen_pembimbingInputEnvelope
     set?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
     disconnect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
     delete?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
     connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    update?: bimbinganUpdateWithWhereUniqueWithoutDosenInput | bimbinganUpdateWithWhereUniqueWithoutDosenInput[]
-    updateMany?: bimbinganUpdateManyWithWhereWithoutDosenInput | bimbinganUpdateManyWithWhereWithoutDosenInput[]
+    update?: bimbinganUpdateWithWhereUniqueWithoutDosen_pembimbingInput | bimbinganUpdateWithWhereUniqueWithoutDosen_pembimbingInput[]
+    updateMany?: bimbinganUpdateManyWithWhereWithoutDosen_pembimbingInput | bimbinganUpdateManyWithWhereWithoutDosen_pembimbingInput[]
     deleteMany?: bimbinganScalarWhereInput | bimbinganScalarWhereInput[]
   }
 
@@ -27080,17 +26946,31 @@ export namespace Prisma {
     deleteMany?: nilaiScalarWhereInput | nilaiScalarWhereInput[]
   }
 
-  export type bimbinganUncheckedUpdateManyWithoutDosenNestedInput = {
-    create?: XOR<bimbinganCreateWithoutDosenInput, bimbinganUncheckedCreateWithoutDosenInput> | bimbinganCreateWithoutDosenInput[] | bimbinganUncheckedCreateWithoutDosenInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutDosenInput | bimbinganCreateOrConnectWithoutDosenInput[]
-    upsert?: bimbinganUpsertWithWhereUniqueWithoutDosenInput | bimbinganUpsertWithWhereUniqueWithoutDosenInput[]
-    createMany?: bimbinganCreateManyDosenInputEnvelope
+  export type pendaftaran_kpUpdateManyWithoutDosen_pembimbingNestedInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput> | pendaftaran_kpCreateWithoutDosen_pembimbingInput[] | pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput | pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput[]
+    upsert?: pendaftaran_kpUpsertWithWhereUniqueWithoutDosen_pembimbingInput | pendaftaran_kpUpsertWithWhereUniqueWithoutDosen_pembimbingInput[]
+    createMany?: pendaftaran_kpCreateManyDosen_pembimbingInputEnvelope
+    set?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    disconnect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    delete?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    update?: pendaftaran_kpUpdateWithWhereUniqueWithoutDosen_pembimbingInput | pendaftaran_kpUpdateWithWhereUniqueWithoutDosen_pembimbingInput[]
+    updateMany?: pendaftaran_kpUpdateManyWithWhereWithoutDosen_pembimbingInput | pendaftaran_kpUpdateManyWithWhereWithoutDosen_pembimbingInput[]
+    deleteMany?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
+  }
+
+  export type bimbinganUncheckedUpdateManyWithoutDosen_pembimbingNestedInput = {
+    create?: XOR<bimbinganCreateWithoutDosen_pembimbingInput, bimbinganUncheckedCreateWithoutDosen_pembimbingInput> | bimbinganCreateWithoutDosen_pembimbingInput[] | bimbinganUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: bimbinganCreateOrConnectWithoutDosen_pembimbingInput | bimbinganCreateOrConnectWithoutDosen_pembimbingInput[]
+    upsert?: bimbinganUpsertWithWhereUniqueWithoutDosen_pembimbingInput | bimbinganUpsertWithWhereUniqueWithoutDosen_pembimbingInput[]
+    createMany?: bimbinganCreateManyDosen_pembimbingInputEnvelope
     set?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
     disconnect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
     delete?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
     connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    update?: bimbinganUpdateWithWhereUniqueWithoutDosenInput | bimbinganUpdateWithWhereUniqueWithoutDosenInput[]
-    updateMany?: bimbinganUpdateManyWithWhereWithoutDosenInput | bimbinganUpdateManyWithWhereWithoutDosenInput[]
+    update?: bimbinganUpdateWithWhereUniqueWithoutDosen_pembimbingInput | bimbinganUpdateWithWhereUniqueWithoutDosen_pembimbingInput[]
+    updateMany?: bimbinganUpdateManyWithWhereWithoutDosen_pembimbingInput | bimbinganUpdateManyWithWhereWithoutDosen_pembimbingInput[]
     deleteMany?: bimbinganScalarWhereInput | bimbinganScalarWhereInput[]
   }
 
@@ -27106,6 +26986,20 @@ export namespace Prisma {
     update?: nilaiUpdateWithWhereUniqueWithoutDosenInput | nilaiUpdateWithWhereUniqueWithoutDosenInput[]
     updateMany?: nilaiUpdateManyWithWhereWithoutDosenInput | nilaiUpdateManyWithWhereWithoutDosenInput[]
     deleteMany?: nilaiScalarWhereInput | nilaiScalarWhereInput[]
+  }
+
+  export type pendaftaran_kpUncheckedUpdateManyWithoutDosen_pembimbingNestedInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput> | pendaftaran_kpCreateWithoutDosen_pembimbingInput[] | pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput | pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput[]
+    upsert?: pendaftaran_kpUpsertWithWhereUniqueWithoutDosen_pembimbingInput | pendaftaran_kpUpsertWithWhereUniqueWithoutDosen_pembimbingInput[]
+    createMany?: pendaftaran_kpCreateManyDosen_pembimbingInputEnvelope
+    set?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    disconnect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    delete?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    update?: pendaftaran_kpUpdateWithWhereUniqueWithoutDosen_pembimbingInput | pendaftaran_kpUpdateWithWhereUniqueWithoutDosen_pembimbingInput[]
+    updateMany?: pendaftaran_kpUpdateManyWithWhereWithoutDosen_pembimbingInput | pendaftaran_kpUpdateManyWithWhereWithoutDosen_pembimbingInput[]
+    deleteMany?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
   }
 
   export type pembimbing_instansiCreateNestedManyWithoutInstansiInput = {
@@ -27693,6 +27587,13 @@ export namespace Prisma {
     connect?: nilaiWhereUniqueInput | nilaiWhereUniqueInput[]
   }
 
+  export type pendaftaran_kpCreateNestedManyWithoutPembimbing_instansiInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput> | pendaftaran_kpCreateWithoutPembimbing_instansiInput[] | pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput | pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput[]
+    createMany?: pendaftaran_kpCreateManyPembimbing_instansiInputEnvelope
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+  }
+
   export type instansiCreateNestedOneWithoutPembimbing_instansiInput = {
     create?: XOR<instansiCreateWithoutPembimbing_instansiInput, instansiUncheckedCreateWithoutPembimbing_instansiInput>
     connectOrCreate?: instansiCreateOrConnectWithoutPembimbing_instansiInput
@@ -27704,6 +27605,13 @@ export namespace Prisma {
     connectOrCreate?: nilaiCreateOrConnectWithoutPembimbing_instansiInput | nilaiCreateOrConnectWithoutPembimbing_instansiInput[]
     createMany?: nilaiCreateManyPembimbing_instansiInputEnvelope
     connect?: nilaiWhereUniqueInput | nilaiWhereUniqueInput[]
+  }
+
+  export type pendaftaran_kpUncheckedCreateNestedManyWithoutPembimbing_instansiInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput> | pendaftaran_kpCreateWithoutPembimbing_instansiInput[] | pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput | pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput[]
+    createMany?: pendaftaran_kpCreateManyPembimbing_instansiInputEnvelope
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
   }
 
   export type nilaiUpdateManyWithoutPembimbing_instansiNestedInput = {
@@ -27718,6 +27626,20 @@ export namespace Prisma {
     update?: nilaiUpdateWithWhereUniqueWithoutPembimbing_instansiInput | nilaiUpdateWithWhereUniqueWithoutPembimbing_instansiInput[]
     updateMany?: nilaiUpdateManyWithWhereWithoutPembimbing_instansiInput | nilaiUpdateManyWithWhereWithoutPembimbing_instansiInput[]
     deleteMany?: nilaiScalarWhereInput | nilaiScalarWhereInput[]
+  }
+
+  export type pendaftaran_kpUpdateManyWithoutPembimbing_instansiNestedInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput> | pendaftaran_kpCreateWithoutPembimbing_instansiInput[] | pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput | pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput[]
+    upsert?: pendaftaran_kpUpsertWithWhereUniqueWithoutPembimbing_instansiInput | pendaftaran_kpUpsertWithWhereUniqueWithoutPembimbing_instansiInput[]
+    createMany?: pendaftaran_kpCreateManyPembimbing_instansiInputEnvelope
+    set?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    disconnect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    delete?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    update?: pendaftaran_kpUpdateWithWhereUniqueWithoutPembimbing_instansiInput | pendaftaran_kpUpdateWithWhereUniqueWithoutPembimbing_instansiInput[]
+    updateMany?: pendaftaran_kpUpdateManyWithWhereWithoutPembimbing_instansiInput | pendaftaran_kpUpdateManyWithWhereWithoutPembimbing_instansiInput[]
+    deleteMany?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
   }
 
   export type instansiUpdateOneWithoutPembimbing_instansiNestedInput = {
@@ -27744,18 +27666,18 @@ export namespace Prisma {
     deleteMany?: nilaiScalarWhereInput | nilaiScalarWhereInput[]
   }
 
-  export type bimbinganCreateNestedManyWithoutPendaftaran_kpInput = {
-    create?: XOR<bimbinganCreateWithoutPendaftaran_kpInput, bimbinganUncheckedCreateWithoutPendaftaran_kpInput> | bimbinganCreateWithoutPendaftaran_kpInput[] | bimbinganUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutPendaftaran_kpInput | bimbinganCreateOrConnectWithoutPendaftaran_kpInput[]
-    createMany?: bimbinganCreateManyPendaftaran_kpInputEnvelope
-    connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-  }
-
-  export type daily_reportCreateNestedManyWithoutPendaftaran_kpInput = {
-    create?: XOR<daily_reportCreateWithoutPendaftaran_kpInput, daily_reportUncheckedCreateWithoutPendaftaran_kpInput> | daily_reportCreateWithoutPendaftaran_kpInput[] | daily_reportUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: daily_reportCreateOrConnectWithoutPendaftaran_kpInput | daily_reportCreateOrConnectWithoutPendaftaran_kpInput[]
-    createMany?: daily_reportCreateManyPendaftaran_kpInputEnvelope
-    connect?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
+  export type pendaftaran_kpUncheckedUpdateManyWithoutPembimbing_instansiNestedInput = {
+    create?: XOR<pendaftaran_kpCreateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput> | pendaftaran_kpCreateWithoutPembimbing_instansiInput[] | pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput[]
+    connectOrCreate?: pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput | pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput[]
+    upsert?: pendaftaran_kpUpsertWithWhereUniqueWithoutPembimbing_instansiInput | pendaftaran_kpUpsertWithWhereUniqueWithoutPembimbing_instansiInput[]
+    createMany?: pendaftaran_kpCreateManyPembimbing_instansiInputEnvelope
+    set?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    disconnect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    delete?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    connect?: pendaftaran_kpWhereUniqueInput | pendaftaran_kpWhereUniqueInput[]
+    update?: pendaftaran_kpUpdateWithWhereUniqueWithoutPembimbing_instansiInput | pendaftaran_kpUpdateWithWhereUniqueWithoutPembimbing_instansiInput[]
+    updateMany?: pendaftaran_kpUpdateManyWithWhereWithoutPembimbing_instansiInput | pendaftaran_kpUpdateManyWithWhereWithoutPembimbing_instansiInput[]
+    deleteMany?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
   }
 
   export type dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput = {
@@ -27790,18 +27712,16 @@ export namespace Prisma {
     connect?: mahasiswaWhereUniqueInput
   }
 
-  export type bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput = {
-    create?: XOR<bimbinganCreateWithoutPendaftaran_kpInput, bimbinganUncheckedCreateWithoutPendaftaran_kpInput> | bimbinganCreateWithoutPendaftaran_kpInput[] | bimbinganUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutPendaftaran_kpInput | bimbinganCreateOrConnectWithoutPendaftaran_kpInput[]
-    createMany?: bimbinganCreateManyPendaftaran_kpInputEnvelope
-    connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
+  export type dosenCreateNestedOneWithoutPendaftaran_kpInput = {
+    create?: XOR<dosenCreateWithoutPendaftaran_kpInput, dosenUncheckedCreateWithoutPendaftaran_kpInput>
+    connectOrCreate?: dosenCreateOrConnectWithoutPendaftaran_kpInput
+    connect?: dosenWhereUniqueInput
   }
 
-  export type daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput = {
-    create?: XOR<daily_reportCreateWithoutPendaftaran_kpInput, daily_reportUncheckedCreateWithoutPendaftaran_kpInput> | daily_reportCreateWithoutPendaftaran_kpInput[] | daily_reportUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: daily_reportCreateOrConnectWithoutPendaftaran_kpInput | daily_reportCreateOrConnectWithoutPendaftaran_kpInput[]
-    createMany?: daily_reportCreateManyPendaftaran_kpInputEnvelope
-    connect?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
+  export type pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput = {
+    create?: XOR<pembimbing_instansiCreateWithoutPendaftaran_kpInput, pembimbing_instansiUncheckedCreateWithoutPendaftaran_kpInput>
+    connectOrCreate?: pembimbing_instansiCreateOrConnectWithoutPendaftaran_kpInput
+    connect?: pembimbing_instansiWhereUniqueInput
   }
 
   export type dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput = {
@@ -27820,34 +27740,6 @@ export namespace Prisma {
 
   export type NullableEnumstatus_pendaftaranFieldUpdateOperationsInput = {
     set?: $Enums.status_pendaftaran | null
-  }
-
-  export type bimbinganUpdateManyWithoutPendaftaran_kpNestedInput = {
-    create?: XOR<bimbinganCreateWithoutPendaftaran_kpInput, bimbinganUncheckedCreateWithoutPendaftaran_kpInput> | bimbinganCreateWithoutPendaftaran_kpInput[] | bimbinganUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutPendaftaran_kpInput | bimbinganCreateOrConnectWithoutPendaftaran_kpInput[]
-    upsert?: bimbinganUpsertWithWhereUniqueWithoutPendaftaran_kpInput | bimbinganUpsertWithWhereUniqueWithoutPendaftaran_kpInput[]
-    createMany?: bimbinganCreateManyPendaftaran_kpInputEnvelope
-    set?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    disconnect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    delete?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    update?: bimbinganUpdateWithWhereUniqueWithoutPendaftaran_kpInput | bimbinganUpdateWithWhereUniqueWithoutPendaftaran_kpInput[]
-    updateMany?: bimbinganUpdateManyWithWhereWithoutPendaftaran_kpInput | bimbinganUpdateManyWithWhereWithoutPendaftaran_kpInput[]
-    deleteMany?: bimbinganScalarWhereInput | bimbinganScalarWhereInput[]
-  }
-
-  export type daily_reportUpdateManyWithoutPendaftaran_kpNestedInput = {
-    create?: XOR<daily_reportCreateWithoutPendaftaran_kpInput, daily_reportUncheckedCreateWithoutPendaftaran_kpInput> | daily_reportCreateWithoutPendaftaran_kpInput[] | daily_reportUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: daily_reportCreateOrConnectWithoutPendaftaran_kpInput | daily_reportCreateOrConnectWithoutPendaftaran_kpInput[]
-    upsert?: daily_reportUpsertWithWhereUniqueWithoutPendaftaran_kpInput | daily_reportUpsertWithWhereUniqueWithoutPendaftaran_kpInput[]
-    createMany?: daily_reportCreateManyPendaftaran_kpInputEnvelope
-    set?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    disconnect?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    delete?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    connect?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    update?: daily_reportUpdateWithWhereUniqueWithoutPendaftaran_kpInput | daily_reportUpdateWithWhereUniqueWithoutPendaftaran_kpInput[]
-    updateMany?: daily_reportUpdateManyWithWhereWithoutPendaftaran_kpInput | daily_reportUpdateManyWithWhereWithoutPendaftaran_kpInput[]
-    deleteMany?: daily_reportScalarWhereInput | daily_reportScalarWhereInput[]
   }
 
   export type dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput = {
@@ -27908,32 +27800,24 @@ export namespace Prisma {
     update?: XOR<XOR<mahasiswaUpdateToOneWithWhereWithoutPendaftaran_kpInput, mahasiswaUpdateWithoutPendaftaran_kpInput>, mahasiswaUncheckedUpdateWithoutPendaftaran_kpInput>
   }
 
-  export type bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput = {
-    create?: XOR<bimbinganCreateWithoutPendaftaran_kpInput, bimbinganUncheckedCreateWithoutPendaftaran_kpInput> | bimbinganCreateWithoutPendaftaran_kpInput[] | bimbinganUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: bimbinganCreateOrConnectWithoutPendaftaran_kpInput | bimbinganCreateOrConnectWithoutPendaftaran_kpInput[]
-    upsert?: bimbinganUpsertWithWhereUniqueWithoutPendaftaran_kpInput | bimbinganUpsertWithWhereUniqueWithoutPendaftaran_kpInput[]
-    createMany?: bimbinganCreateManyPendaftaran_kpInputEnvelope
-    set?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    disconnect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    delete?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    connect?: bimbinganWhereUniqueInput | bimbinganWhereUniqueInput[]
-    update?: bimbinganUpdateWithWhereUniqueWithoutPendaftaran_kpInput | bimbinganUpdateWithWhereUniqueWithoutPendaftaran_kpInput[]
-    updateMany?: bimbinganUpdateManyWithWhereWithoutPendaftaran_kpInput | bimbinganUpdateManyWithWhereWithoutPendaftaran_kpInput[]
-    deleteMany?: bimbinganScalarWhereInput | bimbinganScalarWhereInput[]
+  export type dosenUpdateOneWithoutPendaftaran_kpNestedInput = {
+    create?: XOR<dosenCreateWithoutPendaftaran_kpInput, dosenUncheckedCreateWithoutPendaftaran_kpInput>
+    connectOrCreate?: dosenCreateOrConnectWithoutPendaftaran_kpInput
+    upsert?: dosenUpsertWithoutPendaftaran_kpInput
+    disconnect?: dosenWhereInput | boolean
+    delete?: dosenWhereInput | boolean
+    connect?: dosenWhereUniqueInput
+    update?: XOR<XOR<dosenUpdateToOneWithWhereWithoutPendaftaran_kpInput, dosenUpdateWithoutPendaftaran_kpInput>, dosenUncheckedUpdateWithoutPendaftaran_kpInput>
   }
 
-  export type daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput = {
-    create?: XOR<daily_reportCreateWithoutPendaftaran_kpInput, daily_reportUncheckedCreateWithoutPendaftaran_kpInput> | daily_reportCreateWithoutPendaftaran_kpInput[] | daily_reportUncheckedCreateWithoutPendaftaran_kpInput[]
-    connectOrCreate?: daily_reportCreateOrConnectWithoutPendaftaran_kpInput | daily_reportCreateOrConnectWithoutPendaftaran_kpInput[]
-    upsert?: daily_reportUpsertWithWhereUniqueWithoutPendaftaran_kpInput | daily_reportUpsertWithWhereUniqueWithoutPendaftaran_kpInput[]
-    createMany?: daily_reportCreateManyPendaftaran_kpInputEnvelope
-    set?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    disconnect?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    delete?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    connect?: daily_reportWhereUniqueInput | daily_reportWhereUniqueInput[]
-    update?: daily_reportUpdateWithWhereUniqueWithoutPendaftaran_kpInput | daily_reportUpdateWithWhereUniqueWithoutPendaftaran_kpInput[]
-    updateMany?: daily_reportUpdateManyWithWhereWithoutPendaftaran_kpInput | daily_reportUpdateManyWithWhereWithoutPendaftaran_kpInput[]
-    deleteMany?: daily_reportScalarWhereInput | daily_reportScalarWhereInput[]
+  export type pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput = {
+    create?: XOR<pembimbing_instansiCreateWithoutPendaftaran_kpInput, pembimbing_instansiUncheckedCreateWithoutPendaftaran_kpInput>
+    connectOrCreate?: pembimbing_instansiCreateOrConnectWithoutPendaftaran_kpInput
+    upsert?: pembimbing_instansiUpsertWithoutPendaftaran_kpInput
+    disconnect?: pembimbing_instansiWhereInput | boolean
+    delete?: pembimbing_instansiWhereInput | boolean
+    connect?: pembimbing_instansiWhereUniqueInput
+    update?: XOR<XOR<pembimbing_instansiUpdateToOneWithWhereWithoutPendaftaran_kpInput, pembimbing_instansiUpdateWithoutPendaftaran_kpInput>, pembimbing_instansiUncheckedUpdateWithoutPendaftaran_kpInput>
   }
 
   export type dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput = {
@@ -28172,17 +28056,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedUuidNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -28264,20 +28137,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type NestedEnumstatus_presensiNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.status_presensi | Enumstatus_presensiFieldRefInput<$PrismaModel> | null
     in?: $Enums.status_presensi[] | ListEnumstatus_presensiFieldRefInput<$PrismaModel> | null
@@ -28333,6 +28192,17 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedUuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -28360,6 +28230,20 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -28377,18 +28261,18 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
+  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumjenis_instansiFilter<$PrismaModel = never> = {
@@ -28509,67 +28393,6 @@ export namespace Prisma {
     _max?: NestedEnumstatus_dokumenNullableFilter<$PrismaModel>
   }
 
-  export type pendaftaran_kpCreateWithoutBimbinganInput = {
-    id?: string
-    status?: $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: Date | string | null
-    tanggal_mulai: Date | string
-    tanggal_selesai?: Date | string | null
-    kelas_kp?: string | null
-    tujuan_surat_instansi: string
-    link_surat_pengantar?: string | null
-    link_surat_balasan?: string | null
-    link_surat_penunjukan_dospem?: string | null
-    link_surat_perpanjangan_kp?: string | null
-    id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
-    catatan_penolakan?: string | null
-    level_akses?: number | null
-    judul_kp?: string | null
-    alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
-    nip_penguji?: string | null
-    daily_report?: daily_reportCreateNestedManyWithoutPendaftaran_kpInput
-    dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
-    jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
-    instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
-    tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
-    mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
-  }
-
-  export type pendaftaran_kpUncheckedCreateWithoutBimbinganInput = {
-    id?: string
-    status?: $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: Date | string | null
-    tanggal_mulai: Date | string
-    tanggal_selesai?: Date | string | null
-    kelas_kp?: string | null
-    tujuan_surat_instansi: string
-    link_surat_pengantar?: string | null
-    link_surat_balasan?: string | null
-    link_surat_penunjukan_dospem?: string | null
-    link_surat_perpanjangan_kp?: string | null
-    id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
-    catatan_penolakan?: string | null
-    level_akses?: number | null
-    judul_kp?: string | null
-    alasan_lanjut_kp?: string | null
-    id_tahun_ajaran?: number | null
-    id_instansi?: string | null
-    nim?: string | null
-    nip_pembimbing?: string | null
-    nip_penguji?: string | null
-    daily_report?: daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-  }
-
-  export type pendaftaran_kpCreateOrConnectWithoutBimbinganInput = {
-    where: pendaftaran_kpWhereUniqueInput
-    create: XOR<pendaftaran_kpCreateWithoutBimbinganInput, pendaftaran_kpUncheckedCreateWithoutBimbinganInput>
-  }
-
   export type mahasiswaCreateWithoutBimbinganInput = {
     nim: string
     nama: string
@@ -28606,6 +28429,7 @@ export namespace Prisma {
     email: string
     id_telegram?: string | null
     nilai?: nilaiCreateNestedManyWithoutDosenInput
+    pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutDosen_pembimbingInput
   }
 
   export type dosenUncheckedCreateWithoutBimbinganInput = {
@@ -28615,78 +28439,12 @@ export namespace Prisma {
     email: string
     id_telegram?: string | null
     nilai?: nilaiUncheckedCreateNestedManyWithoutDosenInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutDosen_pembimbingInput
   }
 
   export type dosenCreateOrConnectWithoutBimbinganInput = {
     where: dosenWhereUniqueInput
     create: XOR<dosenCreateWithoutBimbinganInput, dosenUncheckedCreateWithoutBimbinganInput>
-  }
-
-  export type pendaftaran_kpUpsertWithoutBimbinganInput = {
-    update: XOR<pendaftaran_kpUpdateWithoutBimbinganInput, pendaftaran_kpUncheckedUpdateWithoutBimbinganInput>
-    create: XOR<pendaftaran_kpCreateWithoutBimbinganInput, pendaftaran_kpUncheckedCreateWithoutBimbinganInput>
-    where?: pendaftaran_kpWhereInput
-  }
-
-  export type pendaftaran_kpUpdateToOneWithWhereWithoutBimbinganInput = {
-    where?: pendaftaran_kpWhereInput
-    data: XOR<pendaftaran_kpUpdateWithoutBimbinganInput, pendaftaran_kpUncheckedUpdateWithoutBimbinganInput>
-  }
-
-  export type pendaftaran_kpUpdateWithoutBimbinganInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
-    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
-    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
-    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    daily_report?: daily_reportUpdateManyWithoutPendaftaran_kpNestedInput
-    dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
-    jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
-    instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
-    tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
-    mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
-  }
-
-  export type pendaftaran_kpUncheckedUpdateWithoutBimbinganInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
-    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
-    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
-    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
-    id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    daily_report?: daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
   }
 
   export type mahasiswaUpsertWithoutBimbinganInput = {
@@ -28742,6 +28500,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
     nilai?: nilaiUpdateManyWithoutDosenNestedInput
+    pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutDosen_pembimbingNestedInput
   }
 
   export type dosenUncheckedUpdateWithoutBimbinganInput = {
@@ -28751,67 +28510,30 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
     nilai?: nilaiUncheckedUpdateManyWithoutDosenNestedInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutDosen_pembimbingNestedInput
   }
 
-  export type pendaftaran_kpCreateWithoutDaily_reportInput = {
-    id?: string
-    status?: $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: Date | string | null
-    tanggal_mulai: Date | string
-    tanggal_selesai?: Date | string | null
-    kelas_kp?: string | null
-    tujuan_surat_instansi: string
-    link_surat_pengantar?: string | null
-    link_surat_balasan?: string | null
-    link_surat_penunjukan_dospem?: string | null
-    link_surat_perpanjangan_kp?: string | null
-    id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
-    catatan_penolakan?: string | null
-    level_akses?: number | null
-    judul_kp?: string | null
-    alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
-    nip_penguji?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutPendaftaran_kpInput
-    dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
-    jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
-    instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
-    tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
-    mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+  export type detail_daily_reportCreateWithoutDaily_reportInput = {
+    waktu: Date | string
+    judul_agenda: string
+    deskripsi_agenda: string
   }
 
-  export type pendaftaran_kpUncheckedCreateWithoutDaily_reportInput = {
-    id?: string
-    status?: $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: Date | string | null
-    tanggal_mulai: Date | string
-    tanggal_selesai?: Date | string | null
-    kelas_kp?: string | null
-    tujuan_surat_instansi: string
-    link_surat_pengantar?: string | null
-    link_surat_balasan?: string | null
-    link_surat_penunjukan_dospem?: string | null
-    link_surat_perpanjangan_kp?: string | null
-    id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
-    catatan_penolakan?: string | null
-    level_akses?: number | null
-    judul_kp?: string | null
-    alasan_lanjut_kp?: string | null
-    id_tahun_ajaran?: number | null
-    id_instansi?: string | null
-    nim?: string | null
-    nip_pembimbing?: string | null
-    nip_penguji?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
+  export type detail_daily_reportUncheckedCreateWithoutDaily_reportInput = {
+    id?: number
+    waktu: Date | string
+    judul_agenda: string
+    deskripsi_agenda: string
   }
 
-  export type pendaftaran_kpCreateOrConnectWithoutDaily_reportInput = {
-    where: pendaftaran_kpWhereUniqueInput
-    create: XOR<pendaftaran_kpCreateWithoutDaily_reportInput, pendaftaran_kpUncheckedCreateWithoutDaily_reportInput>
+  export type detail_daily_reportCreateOrConnectWithoutDaily_reportInput = {
+    where: detail_daily_reportWhereUniqueInput
+    create: XOR<detail_daily_reportCreateWithoutDaily_reportInput, detail_daily_reportUncheckedCreateWithoutDaily_reportInput>
+  }
+
+  export type detail_daily_reportCreateManyDaily_reportInputEnvelope = {
+    data: detail_daily_reportCreateManyDaily_reportInput | detail_daily_reportCreateManyDaily_reportInput[]
+    skipDuplicates?: boolean
   }
 
   export type mahasiswaCreateWithoutDaily_reportInput = {
@@ -28843,94 +28565,31 @@ export namespace Prisma {
     create: XOR<mahasiswaCreateWithoutDaily_reportInput, mahasiswaUncheckedCreateWithoutDaily_reportInput>
   }
 
-  export type detail_daily_reportCreateWithoutDaily_reportInput = {
-    judul_agenda: string
-    deskripsi_agenda: string
-    waktu: Date | string
-  }
-
-  export type detail_daily_reportUncheckedCreateWithoutDaily_reportInput = {
-    id?: number
-    judul_agenda: string
-    deskripsi_agenda: string
-    waktu: Date | string
-  }
-
-  export type detail_daily_reportCreateOrConnectWithoutDaily_reportInput = {
+  export type detail_daily_reportUpsertWithWhereUniqueWithoutDaily_reportInput = {
     where: detail_daily_reportWhereUniqueInput
+    update: XOR<detail_daily_reportUpdateWithoutDaily_reportInput, detail_daily_reportUncheckedUpdateWithoutDaily_reportInput>
     create: XOR<detail_daily_reportCreateWithoutDaily_reportInput, detail_daily_reportUncheckedCreateWithoutDaily_reportInput>
   }
 
-  export type detail_daily_reportCreateManyDaily_reportInputEnvelope = {
-    data: detail_daily_reportCreateManyDaily_reportInput | detail_daily_reportCreateManyDaily_reportInput[]
-    skipDuplicates?: boolean
+  export type detail_daily_reportUpdateWithWhereUniqueWithoutDaily_reportInput = {
+    where: detail_daily_reportWhereUniqueInput
+    data: XOR<detail_daily_reportUpdateWithoutDaily_reportInput, detail_daily_reportUncheckedUpdateWithoutDaily_reportInput>
   }
 
-  export type pendaftaran_kpUpsertWithoutDaily_reportInput = {
-    update: XOR<pendaftaran_kpUpdateWithoutDaily_reportInput, pendaftaran_kpUncheckedUpdateWithoutDaily_reportInput>
-    create: XOR<pendaftaran_kpCreateWithoutDaily_reportInput, pendaftaran_kpUncheckedCreateWithoutDaily_reportInput>
-    where?: pendaftaran_kpWhereInput
+  export type detail_daily_reportUpdateManyWithWhereWithoutDaily_reportInput = {
+    where: detail_daily_reportScalarWhereInput
+    data: XOR<detail_daily_reportUpdateManyMutationInput, detail_daily_reportUncheckedUpdateManyWithoutDaily_reportInput>
   }
 
-  export type pendaftaran_kpUpdateToOneWithWhereWithoutDaily_reportInput = {
-    where?: pendaftaran_kpWhereInput
-    data: XOR<pendaftaran_kpUpdateWithoutDaily_reportInput, pendaftaran_kpUncheckedUpdateWithoutDaily_reportInput>
-  }
-
-  export type pendaftaran_kpUpdateWithoutDaily_reportInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
-    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
-    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
-    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutPendaftaran_kpNestedInput
-    dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
-    jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
-    instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
-    tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
-    mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
-  }
-
-  export type pendaftaran_kpUncheckedUpdateWithoutDaily_reportInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
-    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
-    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
-    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
-    id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
+  export type detail_daily_reportScalarWhereInput = {
+    AND?: detail_daily_reportScalarWhereInput | detail_daily_reportScalarWhereInput[]
+    OR?: detail_daily_reportScalarWhereInput[]
+    NOT?: detail_daily_reportScalarWhereInput | detail_daily_reportScalarWhereInput[]
+    id?: IntFilter<"detail_daily_report"> | number
+    waktu?: DateTimeFilter<"detail_daily_report"> | Date | string
+    judul_agenda?: StringFilter<"detail_daily_report"> | string
+    deskripsi_agenda?: StringFilter<"detail_daily_report"> | string
+    id_daily_report?: UuidNullableFilter<"detail_daily_report"> | string | null
   }
 
   export type mahasiswaUpsertWithoutDaily_reportInput = {
@@ -28968,33 +28627,6 @@ export namespace Prisma {
     pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutMahasiswaNestedInput
   }
 
-  export type detail_daily_reportUpsertWithWhereUniqueWithoutDaily_reportInput = {
-    where: detail_daily_reportWhereUniqueInput
-    update: XOR<detail_daily_reportUpdateWithoutDaily_reportInput, detail_daily_reportUncheckedUpdateWithoutDaily_reportInput>
-    create: XOR<detail_daily_reportCreateWithoutDaily_reportInput, detail_daily_reportUncheckedCreateWithoutDaily_reportInput>
-  }
-
-  export type detail_daily_reportUpdateWithWhereUniqueWithoutDaily_reportInput = {
-    where: detail_daily_reportWhereUniqueInput
-    data: XOR<detail_daily_reportUpdateWithoutDaily_reportInput, detail_daily_reportUncheckedUpdateWithoutDaily_reportInput>
-  }
-
-  export type detail_daily_reportUpdateManyWithWhereWithoutDaily_reportInput = {
-    where: detail_daily_reportScalarWhereInput
-    data: XOR<detail_daily_reportUpdateManyMutationInput, detail_daily_reportUncheckedUpdateManyWithoutDaily_reportInput>
-  }
-
-  export type detail_daily_reportScalarWhereInput = {
-    AND?: detail_daily_reportScalarWhereInput | detail_daily_reportScalarWhereInput[]
-    OR?: detail_daily_reportScalarWhereInput[]
-    NOT?: detail_daily_reportScalarWhereInput | detail_daily_reportScalarWhereInput[]
-    id?: IntFilter<"detail_daily_report"> | number
-    judul_agenda?: StringFilter<"detail_daily_report"> | string
-    deskripsi_agenda?: StringFilter<"detail_daily_report"> | string
-    waktu?: DateTimeFilter<"detail_daily_report"> | Date | string
-    id_daily_report?: UuidNullableFilter<"detail_daily_report"> | string | null
-  }
-
   export type daily_reportCreateWithoutDetail_daily_reportInput = {
     id?: string
     tanggal_presensi?: Date | string | null
@@ -29002,7 +28634,6 @@ export namespace Prisma {
     catatan_evaluasi?: string | null
     latitude?: number | null
     longitude?: number | null
-    pendaftaran_kp?: pendaftaran_kpCreateNestedOneWithoutDaily_reportInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutDaily_reportInput
   }
 
@@ -29014,7 +28645,6 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     nim?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type daily_reportCreateOrConnectWithoutDetail_daily_reportInput = {
@@ -29040,7 +28670,6 @@ export namespace Prisma {
     catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    pendaftaran_kp?: pendaftaran_kpUpdateOneWithoutDaily_reportNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutDaily_reportNestedInput
   }
 
@@ -29052,32 +28681,29 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type bimbinganCreateWithoutDosenInput = {
+  export type bimbinganCreateWithoutDosen_pembimbingInput = {
     id?: string
     tanggal_bimbingan?: Date | string | null
     catatan_bimbingan?: string | null
-    pendaftaran_kp?: pendaftaran_kpCreateNestedOneWithoutBimbinganInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutBimbinganInput
   }
 
-  export type bimbinganUncheckedCreateWithoutDosenInput = {
+  export type bimbinganUncheckedCreateWithoutDosen_pembimbingInput = {
     id?: string
     tanggal_bimbingan?: Date | string | null
     catatan_bimbingan?: string | null
     nim?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
-  export type bimbinganCreateOrConnectWithoutDosenInput = {
+  export type bimbinganCreateOrConnectWithoutDosen_pembimbingInput = {
     where: bimbinganWhereUniqueInput
-    create: XOR<bimbinganCreateWithoutDosenInput, bimbinganUncheckedCreateWithoutDosenInput>
+    create: XOR<bimbinganCreateWithoutDosen_pembimbingInput, bimbinganUncheckedCreateWithoutDosen_pembimbingInput>
   }
 
-  export type bimbinganCreateManyDosenInputEnvelope = {
-    data: bimbinganCreateManyDosenInput | bimbinganCreateManyDosenInput[]
+  export type bimbinganCreateManyDosen_pembimbingInputEnvelope = {
+    data: bimbinganCreateManyDosen_pembimbingInput | bimbinganCreateManyDosen_pembimbingInput[]
     skipDuplicates?: boolean
   }
 
@@ -29102,7 +28728,7 @@ export namespace Prisma {
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
     nim?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedCreateNestedManyWithoutNilaiInput
@@ -29119,20 +28745,82 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type bimbinganUpsertWithWhereUniqueWithoutDosenInput = {
-    where: bimbinganWhereUniqueInput
-    update: XOR<bimbinganUpdateWithoutDosenInput, bimbinganUncheckedUpdateWithoutDosenInput>
-    create: XOR<bimbinganCreateWithoutDosenInput, bimbinganUncheckedCreateWithoutDosenInput>
+  export type pendaftaran_kpCreateWithoutDosen_pembimbingInput = {
+    id?: string
+    status?: $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: Date | string | null
+    tanggal_mulai: Date | string
+    tanggal_selesai?: Date | string | null
+    kelas_kp?: string | null
+    tujuan_surat_instansi: string
+    link_surat_pengantar?: string | null
+    link_surat_balasan?: string | null
+    link_surat_penunjukan_dospem?: string | null
+    link_surat_perpanjangan_kp?: string | null
+    id_surat_pengajuan_dospem?: string | null
+    catatan_penolakan?: string | null
+    level_akses?: number
+    judul_kp?: string | null
+    alasan_lanjut_kp?: string | null
+    nip_penguji?: string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
+    jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
+    instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
+    tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
+    mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+    pembimbing_instansi?: pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput
   }
 
-  export type bimbinganUpdateWithWhereUniqueWithoutDosenInput = {
-    where: bimbinganWhereUniqueInput
-    data: XOR<bimbinganUpdateWithoutDosenInput, bimbinganUncheckedUpdateWithoutDosenInput>
+  export type pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput = {
+    id?: string
+    status?: $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: Date | string | null
+    tanggal_mulai: Date | string
+    tanggal_selesai?: Date | string | null
+    kelas_kp?: string | null
+    tujuan_surat_instansi: string
+    link_surat_pengantar?: string | null
+    link_surat_balasan?: string | null
+    link_surat_penunjukan_dospem?: string | null
+    link_surat_perpanjangan_kp?: string | null
+    id_surat_pengajuan_dospem?: string | null
+    email_pembimbing_instansi?: string | null
+    catatan_penolakan?: string | null
+    level_akses?: number
+    judul_kp?: string | null
+    alasan_lanjut_kp?: string | null
+    id_tahun_ajaran?: number | null
+    id_instansi?: string | null
+    nim?: string | null
+    nip_penguji?: string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
+    jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
   }
 
-  export type bimbinganUpdateManyWithWhereWithoutDosenInput = {
+  export type pendaftaran_kpCreateOrConnectWithoutDosen_pembimbingInput = {
+    where: pendaftaran_kpWhereUniqueInput
+    create: XOR<pendaftaran_kpCreateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput>
+  }
+
+  export type pendaftaran_kpCreateManyDosen_pembimbingInputEnvelope = {
+    data: pendaftaran_kpCreateManyDosen_pembimbingInput | pendaftaran_kpCreateManyDosen_pembimbingInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type bimbinganUpsertWithWhereUniqueWithoutDosen_pembimbingInput = {
+    where: bimbinganWhereUniqueInput
+    update: XOR<bimbinganUpdateWithoutDosen_pembimbingInput, bimbinganUncheckedUpdateWithoutDosen_pembimbingInput>
+    create: XOR<bimbinganCreateWithoutDosen_pembimbingInput, bimbinganUncheckedCreateWithoutDosen_pembimbingInput>
+  }
+
+  export type bimbinganUpdateWithWhereUniqueWithoutDosen_pembimbingInput = {
+    where: bimbinganWhereUniqueInput
+    data: XOR<bimbinganUpdateWithoutDosen_pembimbingInput, bimbinganUncheckedUpdateWithoutDosen_pembimbingInput>
+  }
+
+  export type bimbinganUpdateManyWithWhereWithoutDosen_pembimbingInput = {
     where: bimbinganScalarWhereInput
-    data: XOR<bimbinganUpdateManyMutationInput, bimbinganUncheckedUpdateManyWithoutDosenInput>
+    data: XOR<bimbinganUpdateManyMutationInput, bimbinganUncheckedUpdateManyWithoutDosen_pembimbingInput>
   }
 
   export type bimbinganScalarWhereInput = {
@@ -29144,7 +28832,6 @@ export namespace Prisma {
     catatan_bimbingan?: StringNullableFilter<"bimbingan"> | string | null
     nim?: StringNullableFilter<"bimbingan"> | string | null
     nip?: StringNullableFilter<"bimbingan"> | string | null
-    id_pendaftaran_kp?: UuidNullableFilter<"bimbingan"> | string | null
   }
 
   export type nilaiUpsertWithWhereUniqueWithoutDosenInput = {
@@ -29174,26 +28861,72 @@ export namespace Prisma {
     nilai_instansi?: FloatNullableFilter<"nilai"> | number | null
     nim?: StringNullableFilter<"nilai"> | string | null
     nip?: StringNullableFilter<"nilai"> | string | null
-    id_pembimbing_instansi?: UuidNullableFilter<"nilai"> | string | null
+    email_pembimbing_instansi?: StringNullableFilter<"nilai"> | string | null
     id_jadwal_seminar?: UuidNullableFilter<"nilai"> | string | null
   }
 
+  export type pendaftaran_kpUpsertWithWhereUniqueWithoutDosen_pembimbingInput = {
+    where: pendaftaran_kpWhereUniqueInput
+    update: XOR<pendaftaran_kpUpdateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedUpdateWithoutDosen_pembimbingInput>
+    create: XOR<pendaftaran_kpCreateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedCreateWithoutDosen_pembimbingInput>
+  }
+
+  export type pendaftaran_kpUpdateWithWhereUniqueWithoutDosen_pembimbingInput = {
+    where: pendaftaran_kpWhereUniqueInput
+    data: XOR<pendaftaran_kpUpdateWithoutDosen_pembimbingInput, pendaftaran_kpUncheckedUpdateWithoutDosen_pembimbingInput>
+  }
+
+  export type pendaftaran_kpUpdateManyWithWhereWithoutDosen_pembimbingInput = {
+    where: pendaftaran_kpScalarWhereInput
+    data: XOR<pendaftaran_kpUpdateManyMutationInput, pendaftaran_kpUncheckedUpdateManyWithoutDosen_pembimbingInput>
+  }
+
+  export type pendaftaran_kpScalarWhereInput = {
+    AND?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
+    OR?: pendaftaran_kpScalarWhereInput[]
+    NOT?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
+    id?: UuidFilter<"pendaftaran_kp"> | string
+    status?: Enumstatus_pendaftaranNullableFilter<"pendaftaran_kp"> | $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: DateTimeNullableFilter<"pendaftaran_kp"> | Date | string | null
+    tanggal_mulai?: DateTimeFilter<"pendaftaran_kp"> | Date | string
+    tanggal_selesai?: DateTimeNullableFilter<"pendaftaran_kp"> | Date | string | null
+    kelas_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    tujuan_surat_instansi?: StringFilter<"pendaftaran_kp"> | string
+    link_surat_pengantar?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    link_surat_balasan?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    link_surat_penunjukan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    link_surat_perpanjangan_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    id_surat_pengajuan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    email_pembimbing_instansi?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    catatan_penolakan?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    level_akses?: IntFilter<"pendaftaran_kp"> | number
+    judul_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    alasan_lanjut_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    id_tahun_ajaran?: IntNullableFilter<"pendaftaran_kp"> | number | null
+    id_instansi?: UuidNullableFilter<"pendaftaran_kp"> | string | null
+    nim?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    nip_pembimbing?: StringNullableFilter<"pendaftaran_kp"> | string | null
+    nip_penguji?: StringNullableFilter<"pendaftaran_kp"> | string | null
+  }
+
   export type pembimbing_instansiCreateWithoutInstansiInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
     nilai?: nilaiCreateNestedManyWithoutPembimbing_instansiInput
+    pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutPembimbing_instansiInput
   }
 
   export type pembimbing_instansiUncheckedCreateWithoutInstansiInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
     nilai?: nilaiUncheckedCreateNestedManyWithoutPembimbing_instansiInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutPembimbing_instansiInput
   }
 
   export type pembimbing_instansiCreateOrConnectWithoutInstansiInput = {
@@ -29219,19 +28952,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: string | null
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
     tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutPendaftaran_kpInput
+    pembimbing_instansi?: pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput
   }
 
   export type pendaftaran_kpUncheckedCreateWithoutInstansiInput = {
@@ -29249,15 +28980,13 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
     nim?: string | null
     nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
   }
@@ -29292,11 +29021,11 @@ export namespace Prisma {
     AND?: pembimbing_instansiScalarWhereInput | pembimbing_instansiScalarWhereInput[]
     OR?: pembimbing_instansiScalarWhereInput[]
     NOT?: pembimbing_instansiScalarWhereInput | pembimbing_instansiScalarWhereInput[]
-    id?: UuidFilter<"pembimbing_instansi"> | string
+    email?: StringFilter<"pembimbing_instansi"> | string
+    id?: StringFilter<"pembimbing_instansi"> | string
     nama?: StringNullableFilter<"pembimbing_instansi"> | string | null
     no_hp?: StringNullableFilter<"pembimbing_instansi"> | string | null
     jabatan?: StringNullableFilter<"pembimbing_instansi"> | string | null
-    email?: StringFilter<"pembimbing_instansi"> | string
     id_instansi?: UuidNullableFilter<"pembimbing_instansi"> | string | null
   }
 
@@ -29316,34 +29045,6 @@ export namespace Prisma {
     data: XOR<pendaftaran_kpUpdateManyMutationInput, pendaftaran_kpUncheckedUpdateManyWithoutInstansiInput>
   }
 
-  export type pendaftaran_kpScalarWhereInput = {
-    AND?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
-    OR?: pendaftaran_kpScalarWhereInput[]
-    NOT?: pendaftaran_kpScalarWhereInput | pendaftaran_kpScalarWhereInput[]
-    id?: UuidFilter<"pendaftaran_kp"> | string
-    status?: Enumstatus_pendaftaranNullableFilter<"pendaftaran_kp"> | $Enums.status_pendaftaran | null
-    tanggal_pengajuan?: DateTimeNullableFilter<"pendaftaran_kp"> | Date | string | null
-    tanggal_mulai?: DateTimeFilter<"pendaftaran_kp"> | Date | string
-    tanggal_selesai?: DateTimeNullableFilter<"pendaftaran_kp"> | Date | string | null
-    kelas_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    tujuan_surat_instansi?: StringFilter<"pendaftaran_kp"> | string
-    link_surat_pengantar?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    link_surat_balasan?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    link_surat_penunjukan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    link_surat_perpanjangan_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    id_surat_pengajuan_dospem?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    email_pembimbing_instansi?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    catatan_penolakan?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    level_akses?: IntNullableFilter<"pendaftaran_kp"> | number | null
-    judul_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    alasan_lanjut_kp?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    id_tahun_ajaran?: IntNullableFilter<"pendaftaran_kp"> | number | null
-    id_instansi?: UuidNullableFilter<"pendaftaran_kp"> | string | null
-    nim?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    nip_pembimbing?: StringNullableFilter<"pendaftaran_kp"> | string | null
-    nip_penguji?: StringNullableFilter<"pendaftaran_kp"> | string | null
-  }
-
   export type pendaftaran_kpCreateWithoutJadwalInput = {
     id?: string
     status?: $Enums.status_pendaftaran | null
@@ -29357,19 +29058,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: string | null
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
     instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
     tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutPendaftaran_kpInput
+    pembimbing_instansi?: pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput
   }
 
   export type pendaftaran_kpUncheckedCreateWithoutJadwalInput = {
@@ -29387,7 +29086,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -29395,8 +29094,6 @@ export namespace Prisma {
     nim?: string | null
     nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
   }
 
@@ -29471,19 +29168,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
     instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
     tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutPendaftaran_kpNestedInput
+    pembimbing_instansi?: pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput
   }
 
   export type pendaftaran_kpUncheckedUpdateWithoutJadwalInput = {
@@ -29501,7 +29196,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -29509,8 +29204,6 @@ export namespace Prisma {
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
   }
 
@@ -29572,8 +29265,7 @@ export namespace Prisma {
     id?: string
     tanggal_bimbingan?: Date | string | null
     catatan_bimbingan?: string | null
-    pendaftaran_kp?: pendaftaran_kpCreateNestedOneWithoutBimbinganInput
-    dosen?: dosenCreateNestedOneWithoutBimbinganInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutBimbinganInput
   }
 
   export type bimbinganUncheckedCreateWithoutMahasiswaInput = {
@@ -29581,7 +29273,6 @@ export namespace Prisma {
     tanggal_bimbingan?: Date | string | null
     catatan_bimbingan?: string | null
     nip?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type bimbinganCreateOrConnectWithoutMahasiswaInput = {
@@ -29601,7 +29292,6 @@ export namespace Prisma {
     catatan_evaluasi?: string | null
     latitude?: number | null
     longitude?: number | null
-    pendaftaran_kp?: pendaftaran_kpCreateNestedOneWithoutDaily_reportInput
     detail_daily_report?: detail_daily_reportCreateNestedManyWithoutDaily_reportInput
   }
 
@@ -29612,7 +29302,6 @@ export namespace Prisma {
     catatan_evaluasi?: string | null
     latitude?: number | null
     longitude?: number | null
-    id_pendaftaran_kp?: string | null
     detail_daily_report?: detail_daily_reportUncheckedCreateNestedManyWithoutDaily_reportInput
   }
 
@@ -29707,7 +29396,7 @@ export namespace Prisma {
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
     nip?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedCreateNestedManyWithoutNilaiInput
@@ -29737,19 +29426,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: string | null
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
     instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
     tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutPendaftaran_kpInput
+    pembimbing_instansi?: pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput
   }
 
   export type pendaftaran_kpUncheckedCreateWithoutMahasiswaInput = {
@@ -29767,15 +29454,13 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
     id_instansi?: string | null
     nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
   }
@@ -29833,7 +29518,6 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"daily_report"> | number | null
     longitude?: FloatNullableFilter<"daily_report"> | number | null
     nim?: StringNullableFilter<"daily_report"> | string | null
-    id_pendaftaran_kp?: UuidNullableFilter<"daily_report"> | string | null
   }
 
   export type dokumen_seminar_kpUpsertWithWhereUniqueWithoutMahasiswaInput = {
@@ -30013,21 +29697,23 @@ export namespace Prisma {
   }
 
   export type pembimbing_instansiCreateWithoutNilaiInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
+    pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutPembimbing_instansiInput
     instansi?: instansiCreateNestedOneWithoutPembimbing_instansiInput
   }
 
   export type pembimbing_instansiUncheckedCreateWithoutNilaiInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
     id_instansi?: string | null
+    pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutPembimbing_instansiInput
   }
 
   export type pembimbing_instansiCreateOrConnectWithoutNilaiInput = {
@@ -30070,7 +29756,8 @@ export namespace Prisma {
     no_hp?: string | null
     email: string
     id_telegram?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutDosenInput
+    bimbingan?: bimbinganCreateNestedManyWithoutDosen_pembimbingInput
+    pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutDosen_pembimbingInput
   }
 
   export type dosenUncheckedCreateWithoutNilaiInput = {
@@ -30079,7 +29766,8 @@ export namespace Prisma {
     no_hp?: string | null
     email: string
     id_telegram?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutDosenInput
+    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutDosen_pembimbingInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutDosen_pembimbingInput
   }
 
   export type dosenCreateOrConnectWithoutNilaiInput = {
@@ -30186,21 +29874,23 @@ export namespace Prisma {
   }
 
   export type pembimbing_instansiUpdateWithoutNilaiInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutPembimbing_instansiNestedInput
     instansi?: instansiUpdateOneWithoutPembimbing_instansiNestedInput
   }
 
   export type pembimbing_instansiUncheckedUpdateWithoutNilaiInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutPembimbing_instansiNestedInput
   }
 
   export type mahasiswaUpsertWithoutNilaiInput = {
@@ -30255,7 +29945,8 @@ export namespace Prisma {
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutDosenNestedInput
+    bimbingan?: bimbinganUpdateManyWithoutDosen_pembimbingNestedInput
+    pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutDosen_pembimbingNestedInput
   }
 
   export type dosenUncheckedUpdateWithoutNilaiInput = {
@@ -30264,7 +29955,8 @@ export namespace Prisma {
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutDosenNestedInput
+    bimbingan?: bimbinganUncheckedUpdateManyWithoutDosen_pembimbingNestedInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutDosen_pembimbingNestedInput
   }
 
   export type nilaiCreateWithoutPembimbing_instansiInput = {
@@ -30305,6 +29997,68 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type pendaftaran_kpCreateWithoutPembimbing_instansiInput = {
+    id?: string
+    status?: $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: Date | string | null
+    tanggal_mulai: Date | string
+    tanggal_selesai?: Date | string | null
+    kelas_kp?: string | null
+    tujuan_surat_instansi: string
+    link_surat_pengantar?: string | null
+    link_surat_balasan?: string | null
+    link_surat_penunjukan_dospem?: string | null
+    link_surat_perpanjangan_kp?: string | null
+    id_surat_pengajuan_dospem?: string | null
+    catatan_penolakan?: string | null
+    level_akses?: number
+    judul_kp?: string | null
+    alasan_lanjut_kp?: string | null
+    nip_penguji?: string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
+    jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
+    instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
+    tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
+    mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutPendaftaran_kpInput
+  }
+
+  export type pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput = {
+    id?: string
+    status?: $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: Date | string | null
+    tanggal_mulai: Date | string
+    tanggal_selesai?: Date | string | null
+    kelas_kp?: string | null
+    tujuan_surat_instansi: string
+    link_surat_pengantar?: string | null
+    link_surat_balasan?: string | null
+    link_surat_penunjukan_dospem?: string | null
+    link_surat_perpanjangan_kp?: string | null
+    id_surat_pengajuan_dospem?: string | null
+    catatan_penolakan?: string | null
+    level_akses?: number
+    judul_kp?: string | null
+    alasan_lanjut_kp?: string | null
+    id_tahun_ajaran?: number | null
+    id_instansi?: string | null
+    nim?: string | null
+    nip_pembimbing?: string | null
+    nip_penguji?: string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
+    jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
+  }
+
+  export type pendaftaran_kpCreateOrConnectWithoutPembimbing_instansiInput = {
+    where: pendaftaran_kpWhereUniqueInput
+    create: XOR<pendaftaran_kpCreateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput>
+  }
+
+  export type pendaftaran_kpCreateManyPembimbing_instansiInputEnvelope = {
+    data: pendaftaran_kpCreateManyPembimbing_instansiInput | pendaftaran_kpCreateManyPembimbing_instansiInput[]
+    skipDuplicates?: boolean
+  }
+
   export type instansiCreateWithoutPembimbing_instansiInput = {
     id?: string
     nama: string
@@ -30316,8 +30070,6 @@ export namespace Prisma {
     status?: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim?: string | null
-    nip?: string | null
     pendaftaran_kp?: pendaftaran_kpCreateNestedManyWithoutInstansiInput
   }
 
@@ -30332,8 +30084,6 @@ export namespace Prisma {
     status?: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim?: string | null
-    nip?: string | null
     pendaftaran_kp?: pendaftaran_kpUncheckedCreateNestedManyWithoutInstansiInput
   }
 
@@ -30358,6 +30108,22 @@ export namespace Prisma {
     data: XOR<nilaiUpdateManyMutationInput, nilaiUncheckedUpdateManyWithoutPembimbing_instansiInput>
   }
 
+  export type pendaftaran_kpUpsertWithWhereUniqueWithoutPembimbing_instansiInput = {
+    where: pendaftaran_kpWhereUniqueInput
+    update: XOR<pendaftaran_kpUpdateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedUpdateWithoutPembimbing_instansiInput>
+    create: XOR<pendaftaran_kpCreateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedCreateWithoutPembimbing_instansiInput>
+  }
+
+  export type pendaftaran_kpUpdateWithWhereUniqueWithoutPembimbing_instansiInput = {
+    where: pendaftaran_kpWhereUniqueInput
+    data: XOR<pendaftaran_kpUpdateWithoutPembimbing_instansiInput, pendaftaran_kpUncheckedUpdateWithoutPembimbing_instansiInput>
+  }
+
+  export type pendaftaran_kpUpdateManyWithWhereWithoutPembimbing_instansiInput = {
+    where: pendaftaran_kpScalarWhereInput
+    data: XOR<pendaftaran_kpUpdateManyMutationInput, pendaftaran_kpUncheckedUpdateManyWithoutPembimbing_instansiInput>
+  }
+
   export type instansiUpsertWithoutPembimbing_instansiInput = {
     update: XOR<instansiUpdateWithoutPembimbing_instansiInput, instansiUncheckedUpdateWithoutPembimbing_instansiInput>
     create: XOR<instansiCreateWithoutPembimbing_instansiInput, instansiUncheckedCreateWithoutPembimbing_instansiInput>
@@ -30380,8 +30146,6 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
     pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutInstansiNestedInput
   }
 
@@ -30396,67 +30160,7 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
     pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutInstansiNestedInput
-  }
-
-  export type bimbinganCreateWithoutPendaftaran_kpInput = {
-    id?: string
-    tanggal_bimbingan?: Date | string | null
-    catatan_bimbingan?: string | null
-    mahasiswa?: mahasiswaCreateNestedOneWithoutBimbinganInput
-    dosen?: dosenCreateNestedOneWithoutBimbinganInput
-  }
-
-  export type bimbinganUncheckedCreateWithoutPendaftaran_kpInput = {
-    id?: string
-    tanggal_bimbingan?: Date | string | null
-    catatan_bimbingan?: string | null
-    nim?: string | null
-    nip?: string | null
-  }
-
-  export type bimbinganCreateOrConnectWithoutPendaftaran_kpInput = {
-    where: bimbinganWhereUniqueInput
-    create: XOR<bimbinganCreateWithoutPendaftaran_kpInput, bimbinganUncheckedCreateWithoutPendaftaran_kpInput>
-  }
-
-  export type bimbinganCreateManyPendaftaran_kpInputEnvelope = {
-    data: bimbinganCreateManyPendaftaran_kpInput | bimbinganCreateManyPendaftaran_kpInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type daily_reportCreateWithoutPendaftaran_kpInput = {
-    id?: string
-    tanggal_presensi?: Date | string | null
-    status?: $Enums.status_presensi | null
-    catatan_evaluasi?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    mahasiswa?: mahasiswaCreateNestedOneWithoutDaily_reportInput
-    detail_daily_report?: detail_daily_reportCreateNestedManyWithoutDaily_reportInput
-  }
-
-  export type daily_reportUncheckedCreateWithoutPendaftaran_kpInput = {
-    id?: string
-    tanggal_presensi?: Date | string | null
-    status?: $Enums.status_presensi | null
-    catatan_evaluasi?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    nim?: string | null
-    detail_daily_report?: detail_daily_reportUncheckedCreateNestedManyWithoutDaily_reportInput
-  }
-
-  export type daily_reportCreateOrConnectWithoutPendaftaran_kpInput = {
-    where: daily_reportWhereUniqueInput
-    create: XOR<daily_reportCreateWithoutPendaftaran_kpInput, daily_reportUncheckedCreateWithoutPendaftaran_kpInput>
-  }
-
-  export type daily_reportCreateManyPendaftaran_kpInputEnvelope = {
-    data: daily_reportCreateManyPendaftaran_kpInput | daily_reportCreateManyPendaftaran_kpInput[]
-    skipDuplicates?: boolean
   }
 
   export type dokumen_seminar_kpCreateWithoutPendaftaran_kpInput = {
@@ -30530,8 +30234,6 @@ export namespace Prisma {
     status?: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim?: string | null
-    nip?: string | null
     pembimbing_instansi?: pembimbing_instansiCreateNestedManyWithoutInstansiInput
   }
 
@@ -30546,8 +30248,6 @@ export namespace Prisma {
     status?: $Enums.status_instansi | null
     nama_pj: string
     no_hp_pj: string
-    nim?: string | null
-    nip?: string | null
     pembimbing_instansi?: pembimbing_instansiUncheckedCreateNestedManyWithoutInstansiInput
   }
 
@@ -30601,36 +30301,54 @@ export namespace Prisma {
     create: XOR<mahasiswaCreateWithoutPendaftaran_kpInput, mahasiswaUncheckedCreateWithoutPendaftaran_kpInput>
   }
 
-  export type bimbinganUpsertWithWhereUniqueWithoutPendaftaran_kpInput = {
-    where: bimbinganWhereUniqueInput
-    update: XOR<bimbinganUpdateWithoutPendaftaran_kpInput, bimbinganUncheckedUpdateWithoutPendaftaran_kpInput>
-    create: XOR<bimbinganCreateWithoutPendaftaran_kpInput, bimbinganUncheckedCreateWithoutPendaftaran_kpInput>
+  export type dosenCreateWithoutPendaftaran_kpInput = {
+    nip: string
+    nama: string
+    no_hp?: string | null
+    email: string
+    id_telegram?: string | null
+    bimbingan?: bimbinganCreateNestedManyWithoutDosen_pembimbingInput
+    nilai?: nilaiCreateNestedManyWithoutDosenInput
   }
 
-  export type bimbinganUpdateWithWhereUniqueWithoutPendaftaran_kpInput = {
-    where: bimbinganWhereUniqueInput
-    data: XOR<bimbinganUpdateWithoutPendaftaran_kpInput, bimbinganUncheckedUpdateWithoutPendaftaran_kpInput>
+  export type dosenUncheckedCreateWithoutPendaftaran_kpInput = {
+    nip: string
+    nama: string
+    no_hp?: string | null
+    email: string
+    id_telegram?: string | null
+    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutDosen_pembimbingInput
+    nilai?: nilaiUncheckedCreateNestedManyWithoutDosenInput
   }
 
-  export type bimbinganUpdateManyWithWhereWithoutPendaftaran_kpInput = {
-    where: bimbinganScalarWhereInput
-    data: XOR<bimbinganUpdateManyMutationInput, bimbinganUncheckedUpdateManyWithoutPendaftaran_kpInput>
+  export type dosenCreateOrConnectWithoutPendaftaran_kpInput = {
+    where: dosenWhereUniqueInput
+    create: XOR<dosenCreateWithoutPendaftaran_kpInput, dosenUncheckedCreateWithoutPendaftaran_kpInput>
   }
 
-  export type daily_reportUpsertWithWhereUniqueWithoutPendaftaran_kpInput = {
-    where: daily_reportWhereUniqueInput
-    update: XOR<daily_reportUpdateWithoutPendaftaran_kpInput, daily_reportUncheckedUpdateWithoutPendaftaran_kpInput>
-    create: XOR<daily_reportCreateWithoutPendaftaran_kpInput, daily_reportUncheckedCreateWithoutPendaftaran_kpInput>
+  export type pembimbing_instansiCreateWithoutPendaftaran_kpInput = {
+    email: string
+    id: string
+    nama?: string | null
+    no_hp?: string | null
+    jabatan?: string | null
+    nilai?: nilaiCreateNestedManyWithoutPembimbing_instansiInput
+    instansi?: instansiCreateNestedOneWithoutPembimbing_instansiInput
   }
 
-  export type daily_reportUpdateWithWhereUniqueWithoutPendaftaran_kpInput = {
-    where: daily_reportWhereUniqueInput
-    data: XOR<daily_reportUpdateWithoutPendaftaran_kpInput, daily_reportUncheckedUpdateWithoutPendaftaran_kpInput>
+  export type pembimbing_instansiUncheckedCreateWithoutPendaftaran_kpInput = {
+    email: string
+    id: string
+    nama?: string | null
+    no_hp?: string | null
+    jabatan?: string | null
+    id_instansi?: string | null
+    nilai?: nilaiUncheckedCreateNestedManyWithoutPembimbing_instansiInput
   }
 
-  export type daily_reportUpdateManyWithWhereWithoutPendaftaran_kpInput = {
-    where: daily_reportScalarWhereInput
-    data: XOR<daily_reportUpdateManyMutationInput, daily_reportUncheckedUpdateManyWithoutPendaftaran_kpInput>
+  export type pembimbing_instansiCreateOrConnectWithoutPendaftaran_kpInput = {
+    where: pembimbing_instansiWhereUniqueInput
+    create: XOR<pembimbing_instansiCreateWithoutPendaftaran_kpInput, pembimbing_instansiUncheckedCreateWithoutPendaftaran_kpInput>
   }
 
   export type dokumen_seminar_kpUpsertWithWhereUniqueWithoutPendaftaran_kpInput = {
@@ -30687,8 +30405,6 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
     pembimbing_instansi?: pembimbing_instansiUpdateManyWithoutInstansiNestedInput
   }
 
@@ -30703,8 +30419,6 @@ export namespace Prisma {
     status?: NullableEnumstatus_instansiFieldUpdateOperationsInput | $Enums.status_instansi | null
     nama_pj?: StringFieldUpdateOperationsInput | string
     no_hp_pj?: StringFieldUpdateOperationsInput | string
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
     pembimbing_instansi?: pembimbing_instansiUncheckedUpdateManyWithoutInstansiNestedInput
   }
 
@@ -30763,6 +30477,68 @@ export namespace Prisma {
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutMahasiswaNestedInput
     jadwal?: jadwalUncheckedUpdateManyWithoutMahasiswaNestedInput
     nilai?: nilaiUncheckedUpdateManyWithoutMahasiswaNestedInput
+  }
+
+  export type dosenUpsertWithoutPendaftaran_kpInput = {
+    update: XOR<dosenUpdateWithoutPendaftaran_kpInput, dosenUncheckedUpdateWithoutPendaftaran_kpInput>
+    create: XOR<dosenCreateWithoutPendaftaran_kpInput, dosenUncheckedCreateWithoutPendaftaran_kpInput>
+    where?: dosenWhereInput
+  }
+
+  export type dosenUpdateToOneWithWhereWithoutPendaftaran_kpInput = {
+    where?: dosenWhereInput
+    data: XOR<dosenUpdateWithoutPendaftaran_kpInput, dosenUncheckedUpdateWithoutPendaftaran_kpInput>
+  }
+
+  export type dosenUpdateWithoutPendaftaran_kpInput = {
+    nip?: StringFieldUpdateOperationsInput | string
+    nama?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
+    bimbingan?: bimbinganUpdateManyWithoutDosen_pembimbingNestedInput
+    nilai?: nilaiUpdateManyWithoutDosenNestedInput
+  }
+
+  export type dosenUncheckedUpdateWithoutPendaftaran_kpInput = {
+    nip?: StringFieldUpdateOperationsInput | string
+    nama?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    id_telegram?: NullableStringFieldUpdateOperationsInput | string | null
+    bimbingan?: bimbinganUncheckedUpdateManyWithoutDosen_pembimbingNestedInput
+    nilai?: nilaiUncheckedUpdateManyWithoutDosenNestedInput
+  }
+
+  export type pembimbing_instansiUpsertWithoutPendaftaran_kpInput = {
+    update: XOR<pembimbing_instansiUpdateWithoutPendaftaran_kpInput, pembimbing_instansiUncheckedUpdateWithoutPendaftaran_kpInput>
+    create: XOR<pembimbing_instansiCreateWithoutPendaftaran_kpInput, pembimbing_instansiUncheckedCreateWithoutPendaftaran_kpInput>
+    where?: pembimbing_instansiWhereInput
+  }
+
+  export type pembimbing_instansiUpdateToOneWithWhereWithoutPendaftaran_kpInput = {
+    where?: pembimbing_instansiWhereInput
+    data: XOR<pembimbing_instansiUpdateWithoutPendaftaran_kpInput, pembimbing_instansiUncheckedUpdateWithoutPendaftaran_kpInput>
+  }
+
+  export type pembimbing_instansiUpdateWithoutPendaftaran_kpInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
+    nama?: NullableStringFieldUpdateOperationsInput | string | null
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
+    jabatan?: NullableStringFieldUpdateOperationsInput | string | null
+    nilai?: nilaiUpdateManyWithoutPembimbing_instansiNestedInput
+    instansi?: instansiUpdateOneWithoutPembimbing_instansiNestedInput
+  }
+
+  export type pembimbing_instansiUncheckedUpdateWithoutPendaftaran_kpInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
+    nama?: NullableStringFieldUpdateOperationsInput | string | null
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
+    jabatan?: NullableStringFieldUpdateOperationsInput | string | null
+    id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    nilai?: nilaiUncheckedUpdateManyWithoutPembimbing_instansiNestedInput
   }
 
   export type jadwalCreateWithoutRuanganInput = {
@@ -30824,19 +30600,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: string | null
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
     instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
     tahun_ajaran?: tahun_ajaranCreateNestedOneWithoutPendaftaran_kpInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutPendaftaran_kpInput
+    pembimbing_instansi?: pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput
   }
 
   export type pendaftaran_kpUncheckedCreateWithoutDokumen_seminar_kpInput = {
@@ -30854,7 +30628,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -30862,8 +30636,6 @@ export namespace Prisma {
     nim?: string | null
     nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
   }
 
@@ -30925,19 +30697,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
     instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
     tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutPendaftaran_kpNestedInput
+    pembimbing_instansi?: pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput
   }
 
   export type pendaftaran_kpUncheckedUpdateWithoutDokumen_seminar_kpInput = {
@@ -30955,7 +30725,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -30963,8 +30733,6 @@ export namespace Prisma {
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
   }
 
@@ -31025,7 +30793,7 @@ export namespace Prisma {
     nilai_instansi?: number | null
     nim?: string | null
     nip?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedCreateNestedManyWithoutNilaiInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiUncheckedCreateNestedManyWithoutNilaiInput
@@ -31069,7 +30837,7 @@ export namespace Prisma {
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiUncheckedUpdateManyWithoutNilaiNestedInput
@@ -31097,7 +30865,7 @@ export namespace Prisma {
     nilai_instansi?: number | null
     nim?: string | null
     nip?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedCreateNestedManyWithoutNilaiInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiUncheckedCreateNestedManyWithoutNilaiInput
@@ -31141,7 +30909,7 @@ export namespace Prisma {
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_penguji?: komponen_penilaian_pengujiUncheckedUpdateManyWithoutNilaiNestedInput
@@ -31169,7 +30937,7 @@ export namespace Prisma {
     nilai_instansi?: number | null
     nim?: string | null
     nip?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedCreateNestedManyWithoutNilaiInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedCreateNestedManyWithoutNilaiInput
@@ -31213,7 +30981,7 @@ export namespace Prisma {
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedUpdateManyWithoutNilaiNestedInput
@@ -31232,19 +31000,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: string | null
     link_surat_perpanjangan_kp?: string | null
     id_surat_pengajuan_dospem?: string | null
-    email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
-    nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalCreateNestedManyWithoutPendaftaran_kpInput
     instansi?: instansiCreateNestedOneWithoutPendaftaran_kpInput
     mahasiswa?: mahasiswaCreateNestedOneWithoutPendaftaran_kpInput
+    dosen_pembimbing?: dosenCreateNestedOneWithoutPendaftaran_kpInput
+    pembimbing_instansi?: pembimbing_instansiCreateNestedOneWithoutPendaftaran_kpInput
   }
 
   export type pendaftaran_kpUncheckedCreateWithoutTahun_ajaranInput = {
@@ -31262,15 +31028,13 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_instansi?: string | null
     nim?: string | null
     nip_pembimbing?: string | null
     nip_penguji?: string | null
-    bimbingan?: bimbinganUncheckedCreateNestedManyWithoutPendaftaran_kpInput
-    daily_report?: daily_reportUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedCreateNestedManyWithoutPendaftaran_kpInput
     jadwal?: jadwalUncheckedCreateNestedManyWithoutPendaftaran_kpInput
   }
@@ -31303,37 +31067,36 @@ export namespace Prisma {
 
   export type detail_daily_reportCreateManyDaily_reportInput = {
     id?: number
+    waktu: Date | string
     judul_agenda: string
     deskripsi_agenda: string
-    waktu: Date | string
   }
 
   export type detail_daily_reportUpdateWithoutDaily_reportInput = {
+    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     judul_agenda?: StringFieldUpdateOperationsInput | string
     deskripsi_agenda?: StringFieldUpdateOperationsInput | string
-    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type detail_daily_reportUncheckedUpdateWithoutDaily_reportInput = {
     id?: IntFieldUpdateOperationsInput | number
+    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     judul_agenda?: StringFieldUpdateOperationsInput | string
     deskripsi_agenda?: StringFieldUpdateOperationsInput | string
-    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type detail_daily_reportUncheckedUpdateManyWithoutDaily_reportInput = {
     id?: IntFieldUpdateOperationsInput | number
+    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
     judul_agenda?: StringFieldUpdateOperationsInput | string
     deskripsi_agenda?: StringFieldUpdateOperationsInput | string
-    waktu?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type bimbinganCreateManyDosenInput = {
+  export type bimbinganCreateManyDosen_pembimbingInput = {
     id?: string
     tanggal_bimbingan?: Date | string | null
     catatan_bimbingan?: string | null
     nim?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type nilaiCreateManyDosenInput = {
@@ -31343,32 +31106,53 @@ export namespace Prisma {
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
     nim?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
   }
 
-  export type bimbinganUpdateWithoutDosenInput = {
+  export type pendaftaran_kpCreateManyDosen_pembimbingInput = {
+    id?: string
+    status?: $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: Date | string | null
+    tanggal_mulai: Date | string
+    tanggal_selesai?: Date | string | null
+    kelas_kp?: string | null
+    tujuan_surat_instansi: string
+    link_surat_pengantar?: string | null
+    link_surat_balasan?: string | null
+    link_surat_penunjukan_dospem?: string | null
+    link_surat_perpanjangan_kp?: string | null
+    id_surat_pengajuan_dospem?: string | null
+    email_pembimbing_instansi?: string | null
+    catatan_penolakan?: string | null
+    level_akses?: number
+    judul_kp?: string | null
+    alasan_lanjut_kp?: string | null
+    id_tahun_ajaran?: number | null
+    id_instansi?: string | null
+    nim?: string | null
+    nip_penguji?: string | null
+  }
+
+  export type bimbinganUpdateWithoutDosen_pembimbingInput = {
     id?: StringFieldUpdateOperationsInput | string
     tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
-    pendaftaran_kp?: pendaftaran_kpUpdateOneWithoutBimbinganNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutBimbinganNestedInput
   }
 
-  export type bimbinganUncheckedUpdateWithoutDosenInput = {
+  export type bimbinganUncheckedUpdateWithoutDosen_pembimbingInput = {
     id?: StringFieldUpdateOperationsInput | string
     tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type bimbinganUncheckedUpdateManyWithoutDosenInput = {
+  export type bimbinganUncheckedUpdateManyWithoutDosen_pembimbingInput = {
     id?: StringFieldUpdateOperationsInput | string
     tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type nilaiUpdateWithoutDosenInput = {
@@ -31392,7 +31176,7 @@ export namespace Prisma {
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedUpdateManyWithoutNilaiNestedInput
@@ -31406,16 +31190,92 @@ export namespace Prisma {
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type pendaftaran_kpUpdateWithoutDosen_pembimbingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
+    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    level_akses?: IntFieldUpdateOperationsInput | number
+    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
+    jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
+    instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
+    tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
+    mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
+    pembimbing_instansi?: pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput
+  }
+
+  export type pendaftaran_kpUncheckedUpdateWithoutDosen_pembimbingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
+    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    level_akses?: IntFieldUpdateOperationsInput | number
+    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
+    id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
+    jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
+  }
+
+  export type pendaftaran_kpUncheckedUpdateManyWithoutDosen_pembimbingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
+    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    level_akses?: IntFieldUpdateOperationsInput | number
+    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
+    id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type pembimbing_instansiCreateManyInstansiInput = {
-    id?: string
+    email: string
+    id: string
     nama?: string | null
     no_hp?: string | null
     jabatan?: string | null
-    email: string
   }
 
   export type pendaftaran_kpCreateManyInstansiInput = {
@@ -31433,7 +31293,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -31443,29 +31303,31 @@ export namespace Prisma {
   }
 
   export type pembimbing_instansiUpdateWithoutInstansiInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     nilai?: nilaiUpdateManyWithoutPembimbing_instansiNestedInput
+    pendaftaran_kp?: pendaftaran_kpUpdateManyWithoutPembimbing_instansiNestedInput
   }
 
   export type pembimbing_instansiUncheckedUpdateWithoutInstansiInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
     nilai?: nilaiUncheckedUpdateManyWithoutPembimbing_instansiNestedInput
+    pendaftaran_kp?: pendaftaran_kpUncheckedUpdateManyWithoutPembimbing_instansiNestedInput
   }
 
   export type pembimbing_instansiUncheckedUpdateManyWithoutInstansiInput = {
+    email?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
     nama?: NullableStringFieldUpdateOperationsInput | string | null
     no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     jabatan?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
   }
 
   export type pendaftaran_kpUpdateWithoutInstansiInput = {
@@ -31481,19 +31343,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
     tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutPendaftaran_kpNestedInput
+    pembimbing_instansi?: pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput
   }
 
   export type pendaftaran_kpUncheckedUpdateWithoutInstansiInput = {
@@ -31511,15 +31371,13 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
   }
@@ -31539,7 +31397,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31553,7 +31411,6 @@ export namespace Prisma {
     tanggal_bimbingan?: Date | string | null
     catatan_bimbingan?: string | null
     nip?: string | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type daily_reportCreateManyMahasiswaInput = {
@@ -31563,7 +31420,6 @@ export namespace Prisma {
     catatan_evaluasi?: string | null
     latitude?: number | null
     longitude?: number | null
-    id_pendaftaran_kp?: string | null
   }
 
   export type dokumen_seminar_kpCreateManyMahasiswaInput = {
@@ -31593,7 +31449,7 @@ export namespace Prisma {
     nilai_pembimbing?: number | null
     nilai_instansi?: number | null
     nip?: string | null
-    id_pembimbing_instansi?: string | null
+    email_pembimbing_instansi?: string | null
     id_jadwal_seminar?: string | null
   }
 
@@ -31612,7 +31468,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_tahun_ajaran?: number | null
@@ -31625,8 +31481,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
-    pendaftaran_kp?: pendaftaran_kpUpdateOneWithoutBimbinganNestedInput
-    dosen?: dosenUpdateOneWithoutBimbinganNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutBimbinganNestedInput
   }
 
   export type bimbinganUncheckedUpdateWithoutMahasiswaInput = {
@@ -31634,7 +31489,6 @@ export namespace Prisma {
     tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type bimbinganUncheckedUpdateManyWithoutMahasiswaInput = {
@@ -31642,7 +31496,6 @@ export namespace Prisma {
     tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type daily_reportUpdateWithoutMahasiswaInput = {
@@ -31652,7 +31505,6 @@ export namespace Prisma {
     catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    pendaftaran_kp?: pendaftaran_kpUpdateOneWithoutDaily_reportNestedInput
     detail_daily_report?: detail_daily_reportUpdateManyWithoutDaily_reportNestedInput
   }
 
@@ -31663,7 +31515,6 @@ export namespace Prisma {
     catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
     detail_daily_report?: detail_daily_reportUncheckedUpdateManyWithoutDaily_reportNestedInput
   }
 
@@ -31674,7 +31525,6 @@ export namespace Prisma {
     catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    id_pendaftaran_kp?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type dokumen_seminar_kpUpdateWithoutMahasiswaInput = {
@@ -31758,7 +31608,7 @@ export namespace Prisma {
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
     komponen_penilaian_instansi?: komponen_penilaian_instansiUncheckedUpdateManyWithoutNilaiNestedInput
     komponen_penilaian_pembimbing?: komponen_penilaian_pembimbingUncheckedUpdateManyWithoutNilaiNestedInput
@@ -31772,7 +31622,7 @@ export namespace Prisma {
     nilai_pembimbing?: NullableFloatFieldUpdateOperationsInput | number | null
     nilai_instansi?: NullableFloatFieldUpdateOperationsInput | number | null
     nip?: NullableStringFieldUpdateOperationsInput | string | null
-    id_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -31789,19 +31639,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
     instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
     tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutPendaftaran_kpNestedInput
+    pembimbing_instansi?: pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput
   }
 
   export type pendaftaran_kpUncheckedUpdateWithoutMahasiswaInput = {
@@ -31819,15 +31667,13 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
   }
@@ -31847,7 +31693,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
@@ -31975,6 +31821,30 @@ export namespace Prisma {
     id_jadwal_seminar?: string | null
   }
 
+  export type pendaftaran_kpCreateManyPembimbing_instansiInput = {
+    id?: string
+    status?: $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: Date | string | null
+    tanggal_mulai: Date | string
+    tanggal_selesai?: Date | string | null
+    kelas_kp?: string | null
+    tujuan_surat_instansi: string
+    link_surat_pengantar?: string | null
+    link_surat_balasan?: string | null
+    link_surat_penunjukan_dospem?: string | null
+    link_surat_perpanjangan_kp?: string | null
+    id_surat_pengajuan_dospem?: string | null
+    catatan_penolakan?: string | null
+    level_akses?: number
+    judul_kp?: string | null
+    alasan_lanjut_kp?: string | null
+    id_tahun_ajaran?: number | null
+    id_instansi?: string | null
+    nim?: string | null
+    nip_pembimbing?: string | null
+    nip_penguji?: string | null
+  }
+
   export type nilaiUpdateWithoutPembimbing_instansiInput = {
     id?: StringFieldUpdateOperationsInput | string
     tanggal?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -32014,22 +31884,80 @@ export namespace Prisma {
     id_jadwal_seminar?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type bimbinganCreateManyPendaftaran_kpInput = {
-    id?: string
-    tanggal_bimbingan?: Date | string | null
-    catatan_bimbingan?: string | null
-    nim?: string | null
-    nip?: string | null
+  export type pendaftaran_kpUpdateWithoutPembimbing_instansiInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
+    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    level_akses?: IntFieldUpdateOperationsInput | number
+    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
+    jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
+    instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
+    tahun_ajaran?: tahun_ajaranUpdateOneWithoutPendaftaran_kpNestedInput
+    mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutPendaftaran_kpNestedInput
   }
 
-  export type daily_reportCreateManyPendaftaran_kpInput = {
-    id?: string
-    tanggal_presensi?: Date | string | null
-    status?: $Enums.status_presensi | null
-    catatan_evaluasi?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    nim?: string | null
+  export type pendaftaran_kpUncheckedUpdateWithoutPembimbing_instansiInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
+    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    level_akses?: IntFieldUpdateOperationsInput | number
+    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
+    id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
+    dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
+    jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
+  }
+
+  export type pendaftaran_kpUncheckedUpdateManyWithoutPembimbing_instansiInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumstatus_pendaftaranFieldUpdateOperationsInput | $Enums.status_pendaftaran | null
+    tanggal_pengajuan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tanggal_mulai?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_selesai?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    kelas_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuan_surat_instansi?: StringFieldUpdateOperationsInput | string
+    link_surat_pengantar?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_balasan?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    level_akses?: IntFieldUpdateOperationsInput | number
+    judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
+    id_tahun_ajaran?: NullableIntFieldUpdateOperationsInput | number | null
+    id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
+    nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type dokumen_seminar_kpCreateManyPendaftaran_kpInput = {
@@ -32050,62 +31978,6 @@ export namespace Prisma {
     status?: $Enums.status_jadwal | null
     nim?: string | null
     nama_ruangan?: string | null
-  }
-
-  export type bimbinganUpdateWithoutPendaftaran_kpInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
-    mahasiswa?: mahasiswaUpdateOneWithoutBimbinganNestedInput
-    dosen?: dosenUpdateOneWithoutBimbinganNestedInput
-  }
-
-  export type bimbinganUncheckedUpdateWithoutPendaftaran_kpInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type bimbinganUncheckedUpdateManyWithoutPendaftaran_kpInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tanggal_bimbingan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    catatan_bimbingan?: NullableStringFieldUpdateOperationsInput | string | null
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    nip?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type daily_reportUpdateWithoutPendaftaran_kpInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tanggal_presensi?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: NullableEnumstatus_presensiFieldUpdateOperationsInput | $Enums.status_presensi | null
-    catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    mahasiswa?: mahasiswaUpdateOneWithoutDaily_reportNestedInput
-    detail_daily_report?: detail_daily_reportUpdateManyWithoutDaily_reportNestedInput
-  }
-
-  export type daily_reportUncheckedUpdateWithoutPendaftaran_kpInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tanggal_presensi?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: NullableEnumstatus_presensiFieldUpdateOperationsInput | $Enums.status_presensi | null
-    catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
-    detail_daily_report?: detail_daily_reportUncheckedUpdateManyWithoutDaily_reportNestedInput
-  }
-
-  export type daily_reportUncheckedUpdateManyWithoutPendaftaran_kpInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tanggal_presensi?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: NullableEnumstatus_presensiFieldUpdateOperationsInput | $Enums.status_presensi | null
-    catatan_evaluasi?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    nim?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type dokumen_seminar_kpUpdateWithoutPendaftaran_kpInput = {
@@ -32223,7 +32095,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: string | null
     email_pembimbing_instansi?: string | null
     catatan_penolakan?: string | null
-    level_akses?: number | null
+    level_akses?: number
     judul_kp?: string | null
     alasan_lanjut_kp?: string | null
     id_instansi?: string | null
@@ -32245,19 +32117,17 @@ export namespace Prisma {
     link_surat_penunjukan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     link_surat_perpanjangan_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
-    email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
-    nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUpdateManyWithoutPendaftaran_kpNestedInput
     instansi?: instansiUpdateOneWithoutPendaftaran_kpNestedInput
     mahasiswa?: mahasiswaUpdateOneWithoutPendaftaran_kpNestedInput
+    dosen_pembimbing?: dosenUpdateOneWithoutPendaftaran_kpNestedInput
+    pembimbing_instansi?: pembimbing_instansiUpdateOneWithoutPendaftaran_kpNestedInput
   }
 
   export type pendaftaran_kpUncheckedUpdateWithoutTahun_ajaranInput = {
@@ -32275,15 +32145,13 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     nim?: NullableStringFieldUpdateOperationsInput | string | null
     nip_pembimbing?: NullableStringFieldUpdateOperationsInput | string | null
     nip_penguji?: NullableStringFieldUpdateOperationsInput | string | null
-    bimbingan?: bimbinganUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
-    daily_report?: daily_reportUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     dokumen_seminar_kp?: dokumen_seminar_kpUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
     jadwal?: jadwalUncheckedUpdateManyWithoutPendaftaran_kpNestedInput
   }
@@ -32303,7 +32171,7 @@ export namespace Prisma {
     id_surat_pengajuan_dospem?: NullableStringFieldUpdateOperationsInput | string | null
     email_pembimbing_instansi?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
-    level_akses?: NullableIntFieldUpdateOperationsInput | number | null
+    level_akses?: IntFieldUpdateOperationsInput | number
     judul_kp?: NullableStringFieldUpdateOperationsInput | string | null
     alasan_lanjut_kp?: NullableStringFieldUpdateOperationsInput | string | null
     id_instansi?: NullableStringFieldUpdateOperationsInput | string | null
