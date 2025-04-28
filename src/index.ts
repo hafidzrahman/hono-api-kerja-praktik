@@ -9,13 +9,14 @@ import bimbinganKPRoute from "./routes/bimbingan-kp.route";
 import dailyReportRoute from "./routes/daily-report.route";
 import seminarKPRoute from "./routes/seminar-kp.route";
 import daftarKPRoute from "./routes/daftar-kp.route";
+import LogMiddleware from "./middlewares/log.middleware";
 
 // Init Hono Object and Load environment variables from .env file
 const app: Hono<BlankEnv, BlankSchema, "/"> = new Hono({ router: new RegExpRouter() });
 const { APP_PORT }: NodeJS.ProcessEnv = process.env;
 
 // Load all available middlewares
-app.use('*', logger())
+app.use('*', LogMiddleware.hanzLogger);
 app.use('*', cors({
   origin: '*', // restrict this in production
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
