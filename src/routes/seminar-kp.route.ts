@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { RegExpRouter } from "hono/router/reg-exp-router";
-import { PrismaClient, jenis_dokumen } from "../generated/prisma";
+import { jenis_dokumen } from "../generated/prisma";
 import AuthMiddleware from "../middlewares/auth.middleware";
 import DokumenSeminarKpHandler from "../handlers/dokumen-seminar-kp.handler";
 import JadwalSeminarKpHandler from "../handlers/jadwal-seminar-kp.handler";
@@ -20,7 +20,7 @@ const dokumenSeminarKpHandler = new DokumenSeminarKpHandler(dokumenSeminarKpServ
 const jadwalSeminarKpHandler = new JadwalSeminarKpHandler();
 
 dokumenSeminarKpRoute.post(
-  "/dokumen/surat-keterangan-seminar-kp",
+  "/dokumen/surat-keterangan-selesai-kp",
   AuthMiddleware.JWTBearerTokenExtraction,
   (c) => dokumenSeminarKpHandler.uploadDokumen(c, jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP)
 )
