@@ -9,4 +9,15 @@ export default class MahasiswaHelper {
         }
         return semester;
     }
+
+    public static getTahunAjaran(): number {
+        const date = new Date();
+        if (date.getMonth() >= 7) {
+            return date.getFullYear() * 10000 + ((date.getFullYear() + 1) * 10 + 1)
+        }
+        
+        return (date.getFullYear() - 1) * 10000 + (date.getFullYear() * 10 + 1)
+    }
+
 }
+
