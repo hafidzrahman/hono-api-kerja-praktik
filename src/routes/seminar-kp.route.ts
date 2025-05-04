@@ -4,29 +4,26 @@ import { jenis_dokumen } from "../generated/prisma";
 import AuthMiddleware from "../middlewares/auth.middleware";
 import DokumenSeminarKpHandler from "../handlers/dokumen-seminar-kp.handler";
 import JadwalSeminarKpHandler from "../handlers/jadwal-seminar-kp.handler";
-import * as nilaiSeminarKpHandler from "../handlers/nilai-seminar-kp.handler"
+import * as nilaiSeminarKpHandler from "../handlers/nilai-seminar-kp.handler";
 
 const dokumenSeminarKpRoute = new Hono({ router: new RegExpRouter() });
 const jadwalSeminarKpRoute = new Hono({ router: new RegExpRouter() });
 const nilaiSeminarKpRoute = new Hono({ router: new RegExpRouter() });
-
 const jadwalSeminarKpHandler = new JadwalSeminarKpHandler();
 
 dokumenSeminarKpRoute.use(AuthMiddleware.JWTBearerTokenExtraction);
 
-const dokumenTypes = Object.keys(jenis_dokumen).map(key => ({
-  route: key.toLowerCase().replace(/_/g, '-'),
-  type: key as keyof typeof jenis_dokumen
-}))
+const dokumenTypes = Object.keys(jenis_dokumen).map((key) => ({
+  route: key.toLowerCase().replace(/_/g, "-"),
+  type: key as keyof typeof jenis_dokumen,
+}));
 
-dokumenTypes.forEach(({route, type}) => {
-  dokumenSeminarKpRoute.post(
-    `/dokumen/${route}`,
-    (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen[type])
-  )
-})
+dokumenTypes.forEach(({ route, type }) => {
+  dokumenSeminarKpRoute.post(`/dokumen/${route}`, (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen[type]));
+});
 
-dokumenSeminarKpRoute.get("/dokumen/:nim", DokumenSeminarKpHandler.getDokumenSeminarKP);
+dokumenSeminarKpRoute.get("/dokumen", DokumenSeminarKpHandler.getAllDokumenSeminarKP);
+dokumenSeminarKpRoute.get("/dokumen/:nim", DokumenSeminarKpHandler.getDokumenSeminarKPByNIM);
 dokumenSeminarKpRoute.post("/dokumen/:id/validate", DokumenSeminarKpHandler.validateDokumenSeminarKP);
 dokumenSeminarKpRoute.post("/dokumen/:id/reject", DokumenSeminarKpHandler.rejectDokumenSeminarKP);
 
