@@ -20,12 +20,20 @@ export default class DokumenHandler {
     return c.json(dokumen);
   }
 
-  public static async getDokumenSeminarKP(c: Context) {
+  public static async getDokumenSeminarKPByNIM(c: Context) {
     const { email } = c.get("user");
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await DokumenSeminarKpService.getDokumenSeminarKp(email));
+    return c.json(await DokumenSeminarKpService.getDokumenSeminarKpByNIM(email));
+  }
+
+  public static async getAllDokumenSeminarKP(c: Context) {
+    const { email } = c.get("user");
+
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    return c.json(await DokumenSeminarKpService.getAllDokumenSeminarKP)
   }
 
   public static async validateDokumenSeminarKP(ctx: Context) {
