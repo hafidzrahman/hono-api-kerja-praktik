@@ -4,7 +4,6 @@ import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput } from "../typ
 import { APIError } from "../utils/api-error.util";
 
 export default class DokumenSeminarKpRepository {
-
   public static async createDokumen(jenis_dokumen: jenis_dokumen, input: CreateDokumenSeminarKPInput) {
     return await prisma.dokumen_seminar_kp.create({
       data: {
@@ -18,14 +17,54 @@ export default class DokumenSeminarKpRepository {
     });
   }
 
-  public static async getDokumenSeminarKP(
-    nim: string,
-  ) {
-    return await prisma.dokumen_seminar_kp.findMany({
+  public static async getAllDokumenSeminarKP() {
+    return await prisma.mahasiswa.findMany({
+      where: {
+        dokumen_seminar_kp:{
+          some: {}
+        }
+      },
+      select:{
+        nim: true,
+        nama: true,
+        email: true,
+        dokumen_seminar_kp: {
+          select: {
+            id: true,
+            jenis_dokumen: true,
+            link_path: true,
+            tanggal_upload: true,
+            status: true,
+            komentar: true,
+            id_pendaftaran_kp: true
+          }
+        }
+      }
+    });
+  }
+
+  public static async getDokumenSeminarKPByNIM(nim: string) {
+    return await prisma.mahasiswa.findUnique({
       where: {
         nim: nim,
-      }
-    })
+      },
+      select: {
+        nim: true,
+        nama: true,
+        email: true,
+        dokumen_seminar_kp: {
+          select: {
+            id: true,
+            jenis_dokumen: true,
+            link_path: true,
+            tanggal_upload: true,
+            status: true,
+            komentar: true,
+            id_pendaftaran_kp: true,
+          },
+        },
+      },
+    });
   }
 
   public static async getDokumenSeminarKPById(id: string) {
