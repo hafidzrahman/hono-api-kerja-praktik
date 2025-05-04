@@ -24,8 +24,8 @@ dokumenTypes.forEach(({ route, type }) => {
 
 dokumenSeminarKpRoute.get("/dokumen", DokumenSeminarKpHandler.getAllDokumenSeminarKP);
 dokumenSeminarKpRoute.get("/dokumen/:nim", DokumenSeminarKpHandler.getDokumenSeminarKPByNIM);
-dokumenSeminarKpRoute.post("/dokumen/diterima/:id", DokumenSeminarKpHandler.validateDokumenSeminarKP);
-dokumenSeminarKpRoute.post("/dokumen/ditolak/:id", DokumenSeminarKpHandler.rejectDokumenSeminarKP);
+dokumenSeminarKpRoute.post("/dokumen/diterima/:id", DokumenSeminarKpHandler.postTerimaDokumenSeminarKP);
+dokumenSeminarKpRoute.post("/dokumen/ditolak/:id", DokumenSeminarKpHandler.postTolakDokumenSeminarKP);
 
 // endpoint jadwal seminar kp
 jadwalSeminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.createJadwal);

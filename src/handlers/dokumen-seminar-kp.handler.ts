@@ -36,7 +36,7 @@ export default class DokumenHandler {
     return c.json(await DokumenSeminarKpService.getAllDokumenSeminarKP)
   }
 
-  public static async validateDokumenSeminarKP(ctx: Context) {
+  public static async postTerimaDokumenSeminarKP(ctx: Context) {
     try {
       const { email } = ctx.get("user");
       if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
@@ -45,7 +45,7 @@ export default class DokumenHandler {
       const body = await ctx.req.json();
       const { komentar } = body;
 
-      const dokumen = await DokumenSeminarKpService.validateDokumenSeminarKP(id, komentar);
+      const dokumen = await DokumenSeminarKpService.postTerimaDokumenSeminarKP(id, komentar);
       const jenisDokumenName = getNamaJenisDokumen(dokumen.jenis_dokumen);
 
       return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
@@ -57,7 +57,7 @@ export default class DokumenHandler {
     }
   }
 
-  public static async rejectDokumenSeminarKP(ctx: Context) {
+  public static async postTolakDokumenSeminarKP(ctx: Context) {
     try {
       const { email } = ctx.get("user");
       if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
@@ -69,7 +69,7 @@ export default class DokumenHandler {
         return errorResponse(ctx, "Komentar penolakan harus diisi", null, 400);
       }
 
-      const dokumen = await DokumenSeminarKpService.rejectDokumenSeminarKP(id, body.komentar);
+      const dokumen = await DokumenSeminarKpService.postTolakDokumenSeminarKP(id, body.komentar);
       const jenisDokumenName = getNamaJenisDokumen(dokumen.jenis_dokumen);
 
       return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);

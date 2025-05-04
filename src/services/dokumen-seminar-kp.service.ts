@@ -13,7 +13,7 @@ export default class DokumenSeminarKpService {
 
     const { level_akses } = await MahasiswaRepository.getPendaftaranKP(nim);
     if (level_akses < 5) {
-      throw new APIError(`Waduh, anda tidak memiliki akses untuk mengupload dokumen seminar KP! 😭`, 403);
+      throw new APIError(`Waduh, anda belum memiliki akses untuk mengupload dokumen seminar KP! 😭`, 403);
     }
 
     const jumlahBimbingan = await MahasiswaRepository.countBimbinganByNIM(nim);
@@ -75,7 +75,7 @@ export default class DokumenSeminarKpService {
     return dokumen;
   }
 
-  public static async validateDokumenSeminarKP(id: string, komentar?: string) {
+  public static async postTerimaDokumenSeminarKP(id: string, komentar?: string) {
     const dokumen = await DokumenSeminarKpRepository.getDokumenSeminarKPById(id);
     if (!dokumen) {
       throw new APIError("Waduh, Dokumen tidak ditemukan! 😭", 404);
@@ -86,7 +86,7 @@ export default class DokumenSeminarKpService {
     });
   }
 
-  public static async rejectDokumenSeminarKP(id: string, komentar: string) {
+  public static async postTolakDokumenSeminarKP(id: string, komentar: string) {
     const dokumen = await DokumenSeminarKpRepository.getDokumenSeminarKPById(id);
     if (!dokumen) {
       throw new APIError("Waduh, Dokumen tidak ditemukan! 😭", 404);
