@@ -14,39 +14,17 @@ const jadwalSeminarKpHandler = new JadwalSeminarKpHandler();
 
 dokumenSeminarKpRoute.use(AuthMiddleware.JWTBearerTokenExtraction);
 
-dokumenSeminarKpRoute.post(
-  "/dokumen/surat-keterangan-selesai-kp", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/laporan-tambahan-kp", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.LAPORAN_TAMBAHAN_KP)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/form-kehadiran-seminar", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.FORM_KEHADIRAN_SEMINAR)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/id-surat-undangan", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.ID_SURAT_UNDANGAN)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/surat-undangan-seminar-kp", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/berita-acara-seminar", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.BERITA_ACARA_SEMINAR)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/daftar-hadir-seminar", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.DAFTAR_HADIR_SEMINAR)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/lembar-pengesahan-kp", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.LEMBAR_PENGESAHAN_KP)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/revisi-daily-report", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.REVISI_DAILY_REPORT)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/revisi-laporan-tambahan", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.REVISI_LAPORAN_TAMBAHAN)
-)
-dokumenSeminarKpRoute.post(
-  "/dokumen/sistem-kp-final", (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen.SISTEM_KP_FINAL)
-)
+const dokumenTypes = Object.keys(jenis_dokumen).map(key => ({
+  route: key.toLowerCase().replace(/_/g, '-'),
+  type: key as keyof typeof jenis_dokumen
+}))
+
+dokumenTypes.forEach(({route, type}) => {
+  dokumenSeminarKpRoute.post(
+    `/dokumen/${route}`,
+    (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen[type])
+  )
+})
 
 dokumenSeminarKpRoute.get("/dokumen/:nim", DokumenSeminarKpHandler.getDokumenSeminarKP);
 dokumenSeminarKpRoute.post("/dokumen/:id/validate", DokumenSeminarKpHandler.validateDokumenSeminarKP);
