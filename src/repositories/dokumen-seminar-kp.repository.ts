@@ -1,7 +1,6 @@
 import { jenis_dokumen } from "../generated/prisma";
 import prisma from "../infrastructures/db.infrastructure";
-import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput } from "../types/seminar-kp/dokumen-seminar-kp.type";
-import { APIError } from "../utils/api-error.util";
+import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput, MahasiswaWithDokumen } from "../types/seminar-kp/dokumen-seminar-kp.type";
 
 export default class DokumenSeminarKpRepository {
   public static async createDokumen(jenis_dokumen: jenis_dokumen, input: CreateDokumenSeminarKPInput) {
@@ -17,7 +16,7 @@ export default class DokumenSeminarKpRepository {
     });
   }
 
-  public static async getAllDokumenSeminarKP() {
+  public static async getAllDokumenSeminarKP(): Promise<MahasiswaWithDokumen[]> {
     return await prisma.mahasiswa.findMany({
       where: {
         dokumen_seminar_kp:{
@@ -43,7 +42,7 @@ export default class DokumenSeminarKpRepository {
     });
   }
 
-  public static async getDokumenSeminarKPByNIM(nim: string) {
+  public static async getDokumenSeminarKPByNIM(nim: string): Promise<MahasiswaWithDokumen | null> {
     return await prisma.mahasiswa.findUnique({
       where: {
         nim: nim,
