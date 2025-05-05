@@ -33,7 +33,7 @@ export default class DokumenHandler {
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await DokumenSeminarKpService.getAllDokumenSeminarKP)
+    return c.json(await DokumenSeminarKpService.getAllDokumenSeminarKP())
   }
 
   public static async postTerimaDokumenSeminarKP(ctx: Context) {
