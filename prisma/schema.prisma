@@ -50,7 +50,8 @@ model dosen {
   id_telegram    String?          @unique @db.VarChar(10)
   bimbingan      bimbingan[]
   nilai          nilai[]
-  pendaftaran_kp pendaftaran_kp[]
+  pembimbing     pendaftaran_kp[] @relation("pembimbing")
+  penguji        pendaftaran_kp[] @relation("penguji")
   mahasiswa      mahasiswa[]
 }
 
@@ -173,7 +174,8 @@ model pendaftaran_kp {
   instansi            instansi?            @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tahun_ajaran        tahun_ajaran?        @relation(fields: [id_tahun_ajaran], references: [id], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
-  dosen_pembimbing    dosen?               @relation(fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  dosen_pembimbing    dosen?               @relation("pembimbing", fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  dosen_penguji       dosen?               @relation("penguji", fields: [nip_penguji], references: [nip], onDelete: NoAction, onUpdate: NoAction)
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
 }
 
