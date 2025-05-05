@@ -1,144 +1,83 @@
 import { Context } from "hono";
 import { jenis_dokumen } from "../generated/prisma";
-import DokumenService from "../services/dokumen-seminar-kp.service";
 import { createDokumenSeminarKpSchema, dokumenIdSchema, updateDokumenSeminarKpSchema } from "../validators/dokumen-seminar-kp.validator";
 import { errorResponse, handleZodError, successResponse } from "../helpers/response.helper";
 import { getNamaJenisDokumen } from "../helpers/dokumen-seminar-kp";
 import { ZodError } from "zod";
+import { APIError } from "../utils/api-error.util";
+import DokumenSeminarKpService from "../services/dokumen-seminar-kp.service";
 
 export default class DokumenHandler {
-  constructor(private dokumenService: DokumenService) {}
+  public static async postDokumenSeminarKP(c: Context, jenis: jenis_dokumen) {
+    const { email } = c.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-  uploadDokumen = async (ctx: Context, jenis: jenis_dokumen) => {
-    try {
-      const body = await ctx.req.json();
-      const validatedData = createDokumenSeminarKpSchema.parse(body);
-      
-      const dokumen = await this.dokumenService.uploadDokumenSeminarKp(jenis, validatedData);
-      const jenisDokumenName = getNamaJenisDokumen(jenis);
-      
-      return successResponse(
-        ctx,
-        dokumen,
-        `Berhasil mengupload dokumen ${jenisDokumenName}`,
-        201
-      );
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return handleZodError(ctx, error);
-      }
-      return errorResponse(
-        ctx, 
-        error instanceof Error ? error.message : "Terjadi kesalahan saat mengupload dokumen",
-        null,
-        400
-      );
-    }
-  };
+    const body = await c.req.json();
+    const validatedData = createDokumenSeminarKpSchema.parse(body);
 
-  getDokumenById = async (ctx: Context) => {
-    try {
-      const { id } = dokumenIdSchema.parse(ctx.req.param());
-      const dokumen = await this.dokumenService.getDokumenSeminarKpById(id);
-      
-      return successResponse(ctx, dokumen, "Berhasil mendapatkan dokumen", 201);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return handleZodError(ctx, error);
-      }
-      return errorResponse(
-        ctx, 
-        error instanceof Error ? error.message : "Dokumen tidak ditemukan", 
-        null, 
-        404
-      );
-    }
-  };
+    const dokumen = await DokumenSeminarKpService.postDokumenSeminarKp(email, jenis, validatedData);
 
-  validateDokumen = async (ctx: Context) => {
+    return c.json(dokumen);
+  }
+
+  public static async getDokumenSeminarKPByNIM(c: Context) {
+    const { email } = c.get("user");
+
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    return c.json(await DokumenSeminarKpService.getDokumenSeminarKpByNIM(email));
+  }
+
+  public static async getAllDokumenSeminarKP(c: Context) {
+    const { email } = c.get("user");
+
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    return c.json(await DokumenSeminarKpService.getAllDokumenSeminarKP)
+  }
+
+  public static async postTerimaDokumenSeminarKP(ctx: Context) {
     try {
+      const { email } = ctx.get("user");
+      if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
       const { id } = dokumenIdSchema.parse(ctx.req.param());
       const body = await ctx.req.json();
       const { komentar } = body;
-      
-      const dokumen = await this.dokumenService.validateDokumen(id, komentar);
+
+      const dokumen = await DokumenSeminarKpService.postTerimaDokumenSeminarKP(id, komentar);
       const jenisDokumenName = getNamaJenisDokumen(dokumen.jenis_dokumen);
-      
-      return successResponse(
-        ctx,
-        dokumen,
-        `Dokumen ${jenisDokumenName} berhasil divalidasi`,
-        201
-      );
+
+      return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
     } catch (error) {
       if (error instanceof ZodError) {
         return handleZodError(ctx, error);
       }
-      return errorResponse(
-        ctx, 
-        error instanceof Error ? error.message : "Terjadi kesalahan saat memvalidasi dokumen", 
-        null, 
-        400
-      );
+      return errorResponse(ctx, error instanceof Error ? error.message : "Terjadi kesalahan saat memvalidasi dokumen", null, 400);
     }
-  };
+  }
 
-  rejectDokumen = async (ctx: Context) => {
+  public static async postTolakDokumenSeminarKP(ctx: Context) {
     try {
+      const { email } = ctx.get("user");
+      if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
       const { id } = dokumenIdSchema.parse(ctx.req.param());
       const body = await ctx.req.json();
-      
+
       if (!body.komentar) {
         return errorResponse(ctx, "Komentar penolakan harus diisi", null, 400);
       }
-      
-      const dokumen = await this.dokumenService.rejectDokumen(id, body.komentar);
-      const jenisDokumenName = getNamaJenisDokumen(dokumen.jenis_dokumen);
-      
-      return successResponse(
-        ctx,
-        dokumen,
-        `Dokumen ${jenisDokumenName} ditolak`,
-        201
-      );
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return handleZodError(ctx, error);
-      }
-      return errorResponse(
-        ctx, 
-        error instanceof Error ? error.message : "Terjadi kesalahan saat menolak dokumen", 
-        null, 
-        400
-      );
-    }
-  };
 
-  updateDokumen = async (ctx: Context) => {
-    try {
-      const { id } = dokumenIdSchema.parse(ctx.req.param());
-      const body = await ctx.req.json();
-      const validatedData = updateDokumenSeminarKpSchema.parse(body);
-      
-      const dokumen = await this.dokumenService.updateDokumenSeminarKp(id, validatedData);
+      const dokumen = await DokumenSeminarKpService.postTolakDokumenSeminarKP(id, body.komentar);
       const jenisDokumenName = getNamaJenisDokumen(dokumen.jenis_dokumen);
-      
-      return successResponse(
-        ctx,
-        dokumen,
-        `Dokumen ${jenisDokumenName} berhasil diperbarui`,
-        201
-      );
+
+      return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);
     } catch (error) {
       if (error instanceof ZodError) {
         return handleZodError(ctx, error);
       }
-      return errorResponse(
-        ctx, 
-        error instanceof Error ? error.message : "Terjadi kesalahan saat memperbarui dokumen", 
-        null, 
-        400
-      );
+      return errorResponse(ctx, error instanceof Error ? error.message : "Terjadi kesalahan saat menolak dokumen", null, 400);
     }
-  };
+  }
 }

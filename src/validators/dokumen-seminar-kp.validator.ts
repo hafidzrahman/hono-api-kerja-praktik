@@ -13,34 +13,31 @@ const validateLinkPath = (value: string, ctx: z.RefinementCtx, jenis_dokumen?: j
     return true;
   }
 
+  const gdriveLinkRegex =  /^https:\/\/drive\.google\.com\/(file\/d\/|drive\/folders\/|open\?id=)([a-zA-Z0-9_-]+)(\/?|\?usp=sharing|\&authuser=0)/;
+
   // Check if it's a Google Drive link
-  if (!value.startsWith("https://drive.google.com/")) {
+  if (!gdriveLinkRegex.test(value)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Link harus dari Google Drive",
+      message: "Link harus dari Google Drive dengan format yang valid",
     });
     return false;
   }
 
-  // Check for public sharing patterns
-  const publicSharingPatterns = [
-    /\/file\/d\/.*\/view\?usp=sharing/,
-    /\/file\/d\/.*\/view\?usp=drive_link/,
-    /\/drive\/folders\/.*\?usp=sharing/,
-    /\/open\?id=.*&authuser=0/
-  ];
+  if (value.includes('file/d/')) {
+    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    const hasValidExtension = allowedExtensions.some(ext => value.toLowerCase().includes(ext));
 
-  const isPublic = publicSharingPatterns.some(pattern => pattern.test(value));
-  
-  if (!isPublic) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Link Google Drive harus bersifat publik (gunakan opsi 'Anyone with the link can view')",
-    });
-    return false;
+    if (!hasValidExtension) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "File harus berformat PDF, DOC, DOCX, XLS, XLSX, PPT, atau PPTX",
+      });
+      return false;
+    }
   }
-
   return true;
+
 };
 
 export const createDokumenSeminarKpSchema = z.object({

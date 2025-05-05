@@ -7,3 +7,13 @@ export interface FindByEmailReturnInterface {
     nim: string;
     nama: string;
 }
+
+export interface FindByNIMParamsInterface {
+    nim: string;
+}
+
+export interface FindByNIMReturnInterface {
+    email: string;
+    nim: string;
+    nama: string;
+}

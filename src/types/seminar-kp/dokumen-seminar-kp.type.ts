@@ -22,3 +22,19 @@ export interface UpdateDokumenSeminarKPInput {
   status?: status_dokumen;
   komentar?: string;
 }
+export interface DokumenSeminarKP {
+  id: string,
+  jenis_dokumen: jenis_dokumen,
+  link_path: string,
+  tanggal_upload: Date | null;
+  status: status_dokumen | null;
+  komentar: string | null;
+  id_pendaftaran_kp: string | null;
+}
+
+export interface MahasiswaWithDokumen {
+  nim: string;
+  nama: string;
+  email: string;
+  dokumen_seminar_kp: DokumenSeminarKP[]
+}
