@@ -43,7 +43,7 @@ export default class DokumenSeminarKpRepository {
   }
 
   public static async getDokumenSeminarKPByNIM(nim: string): Promise<MahasiswaWithDokumen | null> {
-    const mahasiswa = await prisma.mahasiswa.findUnique({
+    return await prisma.mahasiswa.findUnique({
       where: {
         nim: nim, 
       },
@@ -114,24 +114,7 @@ export default class DokumenSeminarKpRepository {
           }
         }
       },
-    });
-
-    if (mahasiswa && mahasiswa.nilai) {
-      const { nilai_instansi, nilai_pembimbing, nilai_penguji } = mahasiswa.nilai;
-      
-      // Pastikan semua nilai tersedia sebelum melakukan kalkulasi
-      if (nilai_instansi !== null && nilai_pembimbing !== null && nilai_penguji !== null) {
-        const nilaiAkhirKalkulasi = (
-          (nilai_instansi * 0.4) +
-          (nilai_pembimbing * 0.4) +
-          (nilai_penguji * 0.2)
-        );
-        
-        mahasiswa.nilai.nilai_akhir = nilaiAkhirKalkulasi;
-      }
-    }
-
-    return mahasiswa
+    })
   }
 
   public static async getDokumenSeminarKPById(id: string) {
