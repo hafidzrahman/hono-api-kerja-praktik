@@ -48,12 +48,12 @@ export default class DokumenSeminarKPHandler {
     }
   }
 
-  public static async getDokumenSeminarKPByNIM(c: Context) {
+  public static async getDokumenSeminarKPSaya(c: Context) {
     const { email } = c.get("user");
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await DokumenSeminarKpService.getDokumenSeminarKpByNIM(email));
+    return c.json(await DokumenSeminarKpService.getDokumenSeminarKpSaya(email));
   }
 
   public static async getAllDokumenSeminarKP(c: Context) {
