@@ -9,7 +9,6 @@ import * as nilaiSeminarKpHandler from "../handlers/nilai-seminar-kp.handler";
 const dokumenSeminarKpRoute = new Hono({ router: new RegExpRouter() });
 const jadwalSeminarKpRoute = new Hono({ router: new RegExpRouter() });
 const nilaiSeminarKpRoute = new Hono({ router: new RegExpRouter() });
-const jadwalSeminarKpHandler = new JadwalSeminarKpHandler();
 
 dokumenSeminarKpRoute.use(AuthMiddleware.JWTBearerTokenExtraction);
 
@@ -23,18 +22,18 @@ dokumenTypes.forEach(({ route, type }) => {
 });
 
 dokumenSeminarKpRoute.get("/dokumen", DokumenSeminarKpHandler.getAllDokumenSeminarKP);
-dokumenSeminarKpRoute.get("/dokumen/:nim", DokumenSeminarKpHandler.getDokumenSeminarKPByNIM);
+dokumenSeminarKpRoute.get("/dokumen-saya", DokumenSeminarKpHandler.getDokumenSeminarKPSaya);
 dokumenSeminarKpRoute.post("/dokumen/diterima/:id", DokumenSeminarKpHandler.postTerimaDokumenSeminarKP);
 dokumenSeminarKpRoute.post("/dokumen/ditolak/:id", DokumenSeminarKpHandler.postTolakDokumenSeminarKP);
 
 // endpoint jadwal seminar kp
-jadwalSeminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.createJadwal);
-jadwalSeminarKpRoute.get("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.getAllJadwal);
-jadwalSeminarKpRoute.get("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.getJadwalById);
-jadwalSeminarKpRoute.put("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.updateJadwal);
-jadwalSeminarKpRoute.delete("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.deleteJadwal);
-jadwalSeminarKpRoute.post("/jadwal/:id/selesai", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.completeJadwal);
-jadwalSeminarKpRoute.post("/jadwal/:id/jadwal-ulang", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.rescheduleJadwal);
+jadwalSeminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.createJadwal);
+jadwalSeminarKpRoute.get("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllJadwal);
+jadwalSeminarKpRoute.get("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getJadwalById);
+jadwalSeminarKpRoute.put("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.updateJadwal);
+jadwalSeminarKpRoute.delete("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.deleteJadwal);
+jadwalSeminarKpRoute.post("/jadwal/selesai/:id", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.completeJadwal);
+jadwalSeminarKpRoute.post("/jadwal/jadwal-baru/:id", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.rescheduleJadwal);
 
 // endpoint nilai seminar kp
 nilaiSeminarKpRoute.post("/nilai/dosen-pembimbing", AuthMiddleware.JWTBearerTokenExtraction, nilaiSeminarKpHandler.createNilaiPembimbing);
