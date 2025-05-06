@@ -34,7 +34,7 @@ export default class DokumenSeminarKpService {
     return await DokumenSeminarKpRepository.createDokumen(jenis_dokumen, input);
   }
 
-  public static async getDokumenSeminarKpByNIM(email: string) {
+  public static async getDokumenSeminarKpSaya(email: string) {
     const { nim } = await MahasiswaRepository.findNIMByEmail(email);
     if (!nim) {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan! 😭`, 404);
