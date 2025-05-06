@@ -43,14 +43,43 @@ export default class DokumenSeminarKpRepository {
   }
 
   public static async getDokumenSeminarKPByNIM(nim: string): Promise<MahasiswaWithDokumen | null> {
-    return await prisma.mahasiswa.findUnique({
+    const mahasiswa = await prisma.mahasiswa.findUnique({
       where: {
-        nim: nim,
+        nim: nim, 
       },
       select: {
         nim: true,
         nama: true,
         email: true,
+        pendaftaran_kp: {
+          select: {
+            id: true,
+            judul_kp: true,
+            id_instansi: true,
+            tanggal_mulai: true,
+            tanggal_selesai: true,
+            instansi: {
+              select: {
+                nama: true,
+                alamat: true,
+              }
+            },
+            dosen_pembimbing: {
+              select: {
+                nip: true,
+                nama: true,
+                no_hp: true
+              }
+            },
+            dosen_penguji: {
+              select: {
+                nip: true,
+                nama: true,
+                no_hp: true
+              }
+            }
+          }
+        },
         dokumen_seminar_kp: {
           select: {
             id: true,
@@ -62,8 +91,47 @@ export default class DokumenSeminarKpRepository {
             id_pendaftaran_kp: true,
           },
         },
+        jadwal: {
+          select: {
+            id: true,
+            tanggal: true,
+            waktu_mulai: true,
+            waktu_selesai: true,
+            status: true,
+            ruangan: {
+              select: {
+                nama: true
+              }
+            }
+          }
+        },
+        nilai: {
+          select: {
+            nilai_penguji: true,
+            nilai_instansi: true,
+            nilai_pembimbing: true,
+            nilai_akhir: true
+          }
+        }
       },
     });
+
+    if (mahasiswa && mahasiswa.nilai) {
+      const { nilai_instansi, nilai_pembimbing, nilai_penguji } = mahasiswa.nilai;
+      
+      // Pastikan semua nilai tersedia sebelum melakukan kalkulasi
+      if (nilai_instansi !== null && nilai_pembimbing !== null && nilai_penguji !== null) {
+        const nilaiAkhirKalkulasi = (
+          (nilai_instansi * 0.4) +
+          (nilai_pembimbing * 0.4) +
+          (nilai_penguji * 0.2)
+        );
+        
+        mahasiswa.nilai.nilai_akhir = nilaiAkhirKalkulasi;
+      }
+    }
+
+    return mahasiswa
   }
 
   public static async getDokumenSeminarKPById(id: string) {
