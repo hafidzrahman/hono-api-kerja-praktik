@@ -1,29 +1,15 @@
 import { jenis_dokumen } from "../generated/prisma";
-import DokumenSeminarKpRepository from "../repositories/dokumen-seminar-kp.repository";
+import SeminarKpRepository from "../repositories/seminar-kp.repository";
 import JadwalSeminarKPRepository from "../repositories/jadwal-seminar-kp.repository";
 import { APIError } from "../utils/api-error.util";
 
-const DOKUMEN_STEP_1: jenis_dokumen[] = [
-  jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, 
-  jenis_dokumen.FORM_KEHADIRAN_SEMINAR, 
-  jenis_dokumen.LAPORAN_TAMBAHAN_KP
-];
+const DOKUMEN_STEP_1: jenis_dokumen[] = [jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, jenis_dokumen.FORM_KEHADIRAN_SEMINAR, jenis_dokumen.LAPORAN_TAMBAHAN_KP];
 
-const DOKUMEN_STEP_2: jenis_dokumen[] = [
-  jenis_dokumen.ID_SURAT_UNDANGAN
-];
+const DOKUMEN_STEP_2: jenis_dokumen[] = [jenis_dokumen.ID_SURAT_UNDANGAN];
 
-const DOKUMEN_STEP_3: jenis_dokumen[] = [
-  jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP
-];
+const DOKUMEN_STEP_3: jenis_dokumen[] = [jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP];
 
-const DOKUMEN_STEP_5: jenis_dokumen[] = [
-  jenis_dokumen.BERITA_ACARA_SEMINAR, 
-  jenis_dokumen.LEMBAR_PENGESAHAN_KP, 
-  jenis_dokumen.DAFTAR_HADIR_SEMINAR, 
-  jenis_dokumen.REVISI_DAILY_REPORT, 
-  jenis_dokumen.REVISI_LAPORAN_TAMBAHAN
-];
+const DOKUMEN_STEP_5: jenis_dokumen[] = [jenis_dokumen.BERITA_ACARA_SEMINAR, jenis_dokumen.LEMBAR_PENGESAHAN_KP, jenis_dokumen.DAFTAR_HADIR_SEMINAR, jenis_dokumen.REVISI_DAILY_REPORT, jenis_dokumen.REVISI_LAPORAN_TAMBAHAN];
 
 export const validasiStepDokumen = async (step: number, id_pendaftaran_kp: string): Promise<boolean> => {
   let dokumenList: jenis_dokumen[] = [];
@@ -42,7 +28,7 @@ export const validasiStepDokumen = async (step: number, id_pendaftaran_kp: strin
   }
 
   for (const jenisDokumen of dokumenList) {
-    const dokumen = await DokumenSeminarKpRepository.getDokumenSeminarKPByJenisAndPendaftaranId(jenisDokumen, id_pendaftaran_kp);
+    const dokumen = await SeminarKpRepository.getDokumenSeminarKPByJenisAndPendaftaranId(jenisDokumen, id_pendaftaran_kp);
     if (!dokumen || dokumen.status !== "Divalidasi") {
       return false;
     }
@@ -158,4 +144,26 @@ export const getNamaDokumen = (jenis: jenis_dokumen): string => {
   };
 
   return names[jenis];
+};
+
+export const getCurrentStep = (documents: any[]): number => {
+  const steps = documents.map((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen)).filter((step) => step !== undefined);
+
+  if (steps.length === 0) return 1;
+
+  const maxStep = Math.max(...steps);
+  for (let step = maxStep; step >= 1; step--) {
+    const docsInStep = documents.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === step);
+
+    const allValidated = docsInStep.every((doc) => doc.status === "Divalidasi");
+    if (allValidated) {
+      return step + 1 <= 5 ? step + 1 : 5;
+    }
+
+    if (docsInStep.length > 0) {
+      return step;
+    }
+  }
+
+  return 1;
 };
