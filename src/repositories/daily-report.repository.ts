@@ -1,47 +1,24 @@
 import prisma from "../infrastructures/db.infrastructure";
 import { status_presensi } from "../generated/prisma";
-import { APIError } from "../utils/api-error.util";
 
 export default class DailyReportRepository {
-  public static async getNIM(email: string) {
-    const result = await prisma.mahasiswa.findUnique({
+  public static async findMahasiswa(email: string) {
+    return await prisma.mahasiswa.findUnique({
       where: {
         email: email,
       },
-      select: {
-        nim: true,
-      },
     });
-
-    if (!result) {
-      throw new APIError(`Waduh, mahasiswa tidak ditemukan! 😭`, 404);
-    }
-
-    return result;
   }
 
-  public static async getPendaftaranKP(nim: string) {
-    const result = await prisma.pendaftaran_kp.findFirst({
+  public static async findPendaftaranKP(nim: string) {
+    return await prisma.pendaftaran_kp.findFirst({
       where: {
         nim: nim,
       },
-      select: {
-        id: true,
-        id_instansi: true,
-        email_pembimbing_instansi: true,
-        nip_pembimbing: true,
-        level_akses: true,
-      },
     });
-
-    if (!result) {
-      throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
-    }
-
-    return result;
   }
 
-  public static async getDailyReport(
+  public static async findDailyReport(
     nim: string,
     email_pembimbing_instansi: string,
     nip_pembimbing: string
@@ -51,13 +28,14 @@ export default class DailyReportRepository {
         nim: nim,
       },
       select: {
+        status: true,
+        tanggal_mulai: true,
+        tanggal_selesai: true,
         instansi: {
           select: {
             nama: true,
           },
         },
-        tanggal_mulai: true,
-        tanggal_selesai: true,
         pembimbing_instansi: {
           where: {
             email: email_pembimbing_instansi,
@@ -100,7 +78,7 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async getDailyReportByDate(nim: string, date: Date) {
+  public static async findDailyReportByDate(nim: string, date: Date) {
     return prisma.daily_report.findFirst({
       where: {
         nim: nim,
@@ -109,14 +87,10 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async getInstansiLocation(id_instansi: string) {
+  public static async findInstansi(id_instansi: string) {
     return prisma.instansi.findFirst({
       where: {
         id: id_instansi,
-      },
-      select: {
-        latitude: true,
-        longitude: true,
       },
     });
   }
@@ -176,7 +150,7 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async evaluateDailyReport(
+  public static async updateDailyReport(
     id_daily_report: string,
     catatan_evaluasi: string,
     status: string
@@ -192,7 +166,7 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async getPembimbingInstansi(email: string) {
+  public static async findPembimbingInstansi(email: string) {
     return prisma.pembimbing_instansi.findUnique({
       where: {
         email: email,
@@ -200,9 +174,7 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async getMahasiswaForPembimbingInstansi(
-    email_pembimbing_instansi: string
-  ) {
+  public static async findMahasiswaInstansi(email_pembimbing_instansi: string) {
     return prisma.mahasiswa.findMany({
       where: {
         pendaftaran_kp: {
@@ -220,27 +192,11 @@ export default class DailyReportRepository {
             tanggal_selesai: true,
           },
         },
-        daily_report: {
-          select: {
-            id: true,
-            tanggal_presensi: true,
-            status: true,
-            catatan_evaluasi: true,
-            detail_daily_report: {
-              select: {
-                id: true,
-                judul_agenda: true,
-                deskripsi_agenda: true,
-                waktu: true,
-              },
-            },
-          },
-        },
       },
     });
   }
 
-  public static async getDosenPembimbing(email: string) {
+  public static async findDosenPembimbing(email: string) {
     return prisma.dosen.findUnique({
       where: {
         email: email,
@@ -248,7 +204,7 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async getMahasiswaForDosenPembimbing(nip: string) {
+  public static async findMahasiswaBimbingan(nip: string) {
     return prisma.mahasiswa.findMany({
       where: {
         pendaftaran_kp: {
@@ -260,20 +216,10 @@ export default class DailyReportRepository {
       select: {
         nama: true,
         nim: true,
-        daily_report: {
+        pendaftaran_kp: {
           select: {
-            id: true,
-            tanggal_presensi: true,
-            status: true,
-            catatan_evaluasi: true,
-            detail_daily_report: {
-              select: {
-                id: true,
-                waktu: true,
-                judul_agenda: true,
-                deskripsi_agenda: true,
-              },
-            },
+            tanggal_mulai: true,
+            tanggal_selesai: true,
           },
         },
       },
@@ -324,7 +270,7 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async getNilai(nim: string) {
+  public static async findNilai(nim: string) {
     return prisma.nilai.findFirst({
       where: {
         nim: nim,
@@ -342,6 +288,86 @@ export default class DailyReportRepository {
             masukan: true,
           },
         },
+      },
+    });
+  }
+
+  public static async findDetailMahasiswaInstansi(email: string, nim: string) {
+    return prisma.pendaftaran_kp.findFirst({
+      where: {
+        email_pembimbing_instansi: email,
+        nim: nim,
+      },
+      select: {
+        mahasiswa: {
+          select: {
+            daily_report: {
+              select: {
+                id: true,
+                tanggal_presensi: true,
+                status: true,
+                catatan_evaluasi: true,
+                detail_daily_report: {
+                  select: {
+                    id: true,
+                    judul_agenda: true,
+                    deskripsi_agenda: true,
+                    waktu: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        instansi: {
+          select: {
+            nama: true,
+            alamat: true,
+          },
+        },
+        tanggal_mulai: true,
+        tanggal_selesai: true,
+      },
+    });
+  }
+
+  public static async findDetailMahasiswaBimbingan(nip: string, nim: string) {
+    return prisma.pendaftaran_kp.findFirst({
+      where: {
+        nip_pembimbing: nip,
+        nim: nim,
+      },
+      select: {
+        mahasiswa: {
+          select: {
+            nim: true,
+            nama: true,
+            daily_report: {
+              select: {
+                id: true,
+                tanggal_presensi: true,
+                status: true,
+                catatan_evaluasi: true,
+                detail_daily_report: {
+                  select: {
+                    id: true,
+                    judul_agenda: true,
+                    deskripsi_agenda: true,
+                    waktu: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        instansi: {
+          select: {
+            nama: true,
+            alamat: true,
+          },
+        },
+        tanggal_mulai: true,
+        tanggal_selesai: true,
       },
     });
   }

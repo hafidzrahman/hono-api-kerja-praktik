@@ -4,39 +4,42 @@ import { APIError } from "../utils/api-error.util";
 import { haversineDistance } from "../utils/geo.util";
 
 export default class DailyReportHandler {
-  public static async checkAccessLevel(c: Context) {
+  public static async getAccessSaya(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await DailyReportService.checkAccessLevel(email));
+    return c.json(await DailyReportService.getAccessSaya(email));
   }
 
-  public static async getDailyReport(c: Context) {
+  public static async getDailyReportSaya(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await DailyReportService.getDailyReport(email));
+    return c.json(await DailyReportService.getDailyReportSaya(email));
   }
 
-  public static async createDailyReport(c: Context) {
+  public static async postDailyReport(c: Context) {
     const { email } = c.get("user");
     const { latitude, longitude } = await c.req.json();
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     if (!latitude || !longitude)
-      throw new APIError("Data koordinat tidak lengkap! 😭", 400);
+      throw new APIError("Data yang kamu isi tidak lengkap! 😭", 400);
 
-    const isPresent = await DailyReportService.checkPresence(email);
+    const isPresent = await DailyReportService.checkPresensiSaya(email);
 
     if (isPresent) {
       throw new APIError("Kamu sudah presensi untuk hari ini! 😡", 400);
     }
 
-    const instansi = await DailyReportService.getInstansiLocation(email);
+    const instansi = await DailyReportService.getInstansiSaya(email);
 
     if (instansi.latitude == null || instansi.longitude == null) {
-      throw new APIError("Koordinat lokasi instansi tidak ada! 😭", 400);
+      throw new APIError(
+        "Waduh, koordinat lokasi instansi kosong cuy! 😭",
+        400
+      );
     }
 
     const distance = haversineDistance(
@@ -56,12 +59,12 @@ export default class DailyReportHandler {
     }
 
     return c.json(
-      await DailyReportService.createDailyReport(email, latitude, longitude),
+      await DailyReportService.postDailyReport(email, latitude, longitude),
       201
     );
   }
 
-  public static async createDetailDailyReport(c: Context) {
+  public static async postDetailDailyReport(c: Context) {
     const { email } = c.get("user");
     const { id_daily_report, judul_agenda, deskripsi_agenda } =
       await c.req.json();
@@ -69,11 +72,11 @@ export default class DailyReportHandler {
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     if (!id_daily_report || !judul_agenda || !deskripsi_agenda) {
-      throw new APIError("Data detail daily report tidak lengkap! 😭", 400);
+      throw new APIError("Data yang kamu isi tidak lengkap! 😭", 400);
     }
 
     return c.json(
-      await DailyReportService.createDetailDailyReport(
+      await DailyReportService.postDetailDailyReport(
         id_daily_report,
         judul_agenda,
         deskripsi_agenda
@@ -82,7 +85,7 @@ export default class DailyReportHandler {
     );
   }
 
-  public static async updateDetailDailyReport(c: Context) {
+  public static async putDetailDailyReport(c: Context) {
     const { email } = c.get("user");
     const { id_detail_daily_report, judul_agenda, deskripsi_agenda } =
       await c.req.json();
@@ -90,11 +93,11 @@ export default class DailyReportHandler {
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     if (!id_detail_daily_report || !judul_agenda || !deskripsi_agenda) {
-      throw new APIError("Data detail daily report tidak lengkap! 😭", 400);
+      throw new APIError("Data yang kamu isi tidak lengkap! 😭", 400);
     }
 
     return c.json(
-      await DailyReportService.updateDetailDailyReport(
+      await DailyReportService.putDetailDailyReport(
         id_detail_daily_report,
         judul_agenda,
         deskripsi_agenda
@@ -103,18 +106,18 @@ export default class DailyReportHandler {
     );
   }
 
-  public static async evaluateDailyReport(c: Context) {
+  public static async putDailyReport(c: Context) {
     const { email } = c.get("user");
     const { id_daily_report, catatan_evaluasi, status } = await c.req.json();
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     if (!id_daily_report || !catatan_evaluasi || !status) {
-      throw new APIError("Data evaluasi daily report tidak lengkap! 😭", 400);
+      throw new APIError("Data yang kamu isi tidak lengkap! 😭", 400);
     }
 
     return c.json(
-      await DailyReportService.evaluateDailyReport(
+      await DailyReportService.putDailyReport(
         id_daily_report,
         catatan_evaluasi,
         status
@@ -123,27 +126,46 @@ export default class DailyReportHandler {
     );
   }
 
-  public static async getMahasiswaForPembimbingInstansi(c: Context) {
+  public static async getMahasiswaInstansiSaya(c: Context) {
     const { email } = c.get("user");
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(
-      await DailyReportService.getMahasiswaForPembimbingInstansi(email)
-    );
+    return c.json(await DailyReportService.getMahasiswaInstansiSaya(email));
   }
 
-  public static async getMahasiswaForDosenPembimbing(c: Context) {
+  public static async getDetailMahasiswaInstansiSaya(c: Context) {
     const { email } = c.get("user");
+    const nim = c.req.query("nim");
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+    if (!nim) throw new APIError("Waduh, butuh param nim cuy! 😭", 400);
 
     return c.json(
-      await DailyReportService.getMahasiswaForDosenPembimbing(email)
+      await DailyReportService.getDetailMahasiswaInstansiSaya(email, nim)
     );
   }
 
-  public static async createNilai(c: Context) {
+  public static async getMahasiswaBimbinganSaya(c: Context) {
+    const { email } = c.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    return c.json(await DailyReportService.getMahasiswaBimbinganSaya(email));
+  }
+
+  public static async getDetailMahasiswaBimbinganSaya(c: Context) {
+    const { email } = c.get("user");
+    const nim = c.req.query("nim");
+
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+    if (!nim) throw new APIError("Waduh, butuh param nim cuy! 😭", 400);
+
+    return c.json(
+      await DailyReportService.getDetailMahasiswaBimbinganSaya(email, nim)
+    );
+  }
+
+  public static async postNilai(c: Context) {
     const { email } = c.get("user");
     const {
       nim,
@@ -172,7 +194,7 @@ export default class DailyReportHandler {
     }
 
     return c.json(
-      await DailyReportService.createNilai(email, nim, {
+      await DailyReportService.postNilai(email, nim, {
         deliverables,
         ketepatan_waktu,
         kedisiplinan,
@@ -185,11 +207,11 @@ export default class DailyReportHandler {
     );
   }
 
-  public static async getNilai(c: Context) {
+  public static async getNilaiSaya(c: Context) {
     const { email } = c.get("user");
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await DailyReportService.getNilai(email));
+    return c.json(await DailyReportService.getNilaiSaya(email));
   }
 }

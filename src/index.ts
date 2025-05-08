@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { RegExpRouter } from "hono/router/reg-exp-router";
 import { BlankEnv, BlankSchema } from "hono/types";
