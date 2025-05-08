@@ -1,6 +1,6 @@
 import { jenis_dokumen } from "../generated/prisma";
 import prisma from "../infrastructures/db.infrastructure";
-import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput, MahasiswaWithDokumen, SeminarKPSaya, DokumenMahasiswa } from "../types/seminar-kp/dokumen-seminar-kp.type";
+import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput, MahasiswaWithDokumen, SeminarKPSaya, DokumenMahasiswa } from "../types/seminar-kp/dokumen.type";
 
 export default class SeminarKpRepository {
   public static async createDokumen(jenis_dokumen: jenis_dokumen, input: CreateDokumenSeminarKPInput) {
@@ -118,7 +118,7 @@ export default class SeminarKpRepository {
             },
             komponen_penilaian_penguji: {
               select: {
-                catatan: true
+                catatan: true,
               },
             },
           },
@@ -237,6 +237,4 @@ export default class SeminarKpRepository {
       data,
     });
   }
-
-  
 }
