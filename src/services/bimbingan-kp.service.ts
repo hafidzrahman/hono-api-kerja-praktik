@@ -3,12 +3,12 @@ import DailyReportRepository from "../repositories/daily-report.repository";
 import { APIError } from "../utils/api-error.util";
 
 export default class BimbinganKPService {
-  public static async createBimbingan(
+  public static async postBimbingan(
     email: string,
     catatan_bimbingan: string,
     nim: string
   ) {
-    const dosen = await DailyReportRepository.getDosenPembimbing(email);
+    const dosen = await DailyReportRepository.findDosenPembimbing(email);
 
     if (!dosen) {
       throw new APIError("Dosen pembimbing tidak ditemukan! 😭", 404);
@@ -27,9 +27,13 @@ export default class BimbinganKPService {
     };
   }
 
-  public static async getBimbingan(email: string) {
-    const { nim } = await DailyReportRepository.getNIM(email);
-    const bimbingan = await BimbinganKPRepository.getBimbingan(nim);
+  public static async getBimbinganSaya(email: string) {
+    const mahasiswa = await DailyReportRepository.findMahasiswa(email);
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
+    }
+    const { nim } = mahasiswa;
+    const bimbingan = await BimbinganKPRepository.findBimbingan(nim);
 
     return {
       response: true,
@@ -38,7 +42,7 @@ export default class BimbinganKPService {
     };
   }
 
-  public static async updateBimbingan(
+  public static async putBimbingan(
     id_bimbingan: string,
     catatan_bimbingan: string
   ) {
@@ -54,14 +58,20 @@ export default class BimbinganKPService {
     };
   }
 
-  public static async getMahasiswa(email: string) {
-    const dosen = await DailyReportRepository.getDosenPembimbing(email);
+  public static async getDetailMahasiswaBimbinganSaya(
+    email: string,
+    nim: string
+  ) {
+    const dosen = await DailyReportRepository.findDosenPembimbing(email);
 
     if (!dosen) {
       throw new APIError("Dosen pembimbing tidak ditemukan! 😭", 404);
     }
 
-    const mahasiswa = await BimbinganKPRepository.getMahasiswa(dosen.nip);
+    const mahasiswa = await BimbinganKPRepository.findDetailMahasiswaBimbingan(
+      dosen.nip,
+      nim
+    );
 
     return {
       response: true,

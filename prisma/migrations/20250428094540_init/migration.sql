@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "jenis_dokumen" AS ENUM ('SURAT_KETERANGAN_SELESAI_KP', 'LAPORAN_TAMBAHAN_KP', 'FORM_KEHADIRAN_SEMINAR', 'ID_SURAT_UNDANGAN', 'SURAT_UNDANGAN_SEMINAR_HASIL', 'BERITA_ACARA_SEMINAR', 'DAFTAR_HADIR_SEMINAR', 'LEMBAR_PENGESAHAN_KP', 'REVISI_DAILY_REPORT', 'REVISI_LAPORAN_TAMBAHAN', 'SISTEM_KP_FINAL');
+CREATE TYPE "jenis_dokumen" AS ENUM ('SURAT_KETERANGAN_SELESAI_KP', 'LAPORAN_TAMBAHAN_KP', 'FORM_KEHADIRAN_SEMINAR', 'ID_SURAT_UNDANGAN', 'SURAT_UNDANGAN_SEMINAR_KP', 'BERITA_ACARA_SEMINAR', 'DAFTAR_HADIR_SEMINAR', 'LEMBAR_PENGESAHAN_KP', 'REVISI_DAILY_REPORT', 'REVISI_LAPORAN_TAMBAHAN', 'SISTEM_KP_FINAL');
 
 -- CreateEnum
 CREATE TYPE "jenis_instansi" AS ENUM ('Swasta', 'Pemerintahan', 'Pendidikan', 'UMKM');
@@ -117,6 +117,7 @@ CREATE TABLE "mahasiswa" (
     "nama" VARCHAR(255) NOT NULL,
     "no_hp" VARCHAR(14),
     "email" VARCHAR(255) NOT NULL,
+    "nip" VARCHAR(20) NOT NULL,
 
     CONSTRAINT "mahasiswa_pkey" PRIMARY KEY ("nim")
 );
@@ -128,6 +129,7 @@ CREATE TABLE "nilai" (
     "nilai_penguji" DOUBLE PRECISION,
     "nilai_pembimbing" DOUBLE PRECISION,
     "nilai_instansi" DOUBLE PRECISION,
+    "nilai_akhir" DOUBLE PRECISION,
     "nim" VARCHAR(11),
     "nip" VARCHAR(20),
     "email_pembimbing_instansi" VARCHAR(255),
@@ -280,6 +282,9 @@ ALTER TABLE "jadwal" ADD CONSTRAINT "jadwal_nama_ruangan_fkey" FOREIGN KEY ("nam
 
 -- AddForeignKey
 ALTER TABLE "jadwal" ADD CONSTRAINT "jadwal_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "mahasiswa" ADD CONSTRAINT "mahasiswa_nip_fkey" FOREIGN KEY ("nip") REFERENCES "dosen"("nip") ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "nilai" ADD CONSTRAINT "nilai_email_pembimbing_instansi_fkey" FOREIGN KEY ("email_pembimbing_instansi") REFERENCES "pembimbing_instansi"("email") ON DELETE NO ACTION ON UPDATE NO ACTION;

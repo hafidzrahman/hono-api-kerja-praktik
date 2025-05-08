@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { RegExpRouter } from "hono/router/reg-exp-router";
 import { BlankEnv, BlankSchema } from "hono/types";
@@ -33,8 +32,8 @@ app.onError(GlobalHandler.error);
 // Load all available routes
 app.route("/", globalRoute);
 app.route("/daftar-kp", daftarKPRoute);
-app.route("/daily-report", dailyReportRoute);
-app.route("/bimbingan-kp", bimbinganKPRoute);
+app.route("/", dailyReportRoute);
+app.route("/", bimbinganKPRoute);
 app.route("/seminar-kp", seminarKPRoute);
 
 export default {

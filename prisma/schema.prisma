@@ -51,6 +51,10 @@ model dosen {
   bimbingan      bimbingan[]
   nilai          nilai[]
   pendaftaran_kp pendaftaran_kp[]
+<<<<<<< HEAD
+=======
+  mahasiswa      mahasiswa[]
+>>>>>>> 358f9639ef01b9bb8e359660963bfcdfd2cbac7e
 }
 
 model instansi {
@@ -100,12 +104,14 @@ model mahasiswa {
   nama               String               @db.VarChar(255)
   no_hp              String?              @db.VarChar(14)
   email              String               @unique @db.VarChar(255)
+  nip                String               @db.VarChar(20)
   bimbingan          bimbingan[]
   daily_report       daily_report[]
   dokumen_seminar_kp dokumen_seminar_kp[]
   jadwal             jadwal[]
   nilai              nilai[]
   pendaftaran_kp     pendaftaran_kp[]
+  dosen              dosen?               @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: Cascade)
 }
 
 model nilai {
