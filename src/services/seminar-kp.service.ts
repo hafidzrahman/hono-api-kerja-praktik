@@ -1,7 +1,7 @@
 import { jenis_dokumen } from "../generated/prisma";
 import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import SeminarKpRepository from "../repositories/seminar-kp.repository";
-import { CreateDokumenSeminarKPInput } from "../types/seminar-kp/dokumen-seminar-kp.type";
+import { CreateDokumenSeminarKPInput } from "../types/seminar-kp/dokumen.type";
 import { APIError } from "../utils/api-error.util";
 import { getCurrentStep, getStepForDokumen, stepAkses, validasiStepAksesDokumen } from "../helpers/dokumen-step.helper";
 import JadwalHelper, { tambahHitungMundurJadwal } from "../helpers/jadwal.helper";
