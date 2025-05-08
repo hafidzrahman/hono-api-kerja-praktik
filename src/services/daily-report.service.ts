@@ -2,94 +2,123 @@ import DailyReportRepository from "../repositories/daily-report.repository";
 import { APIError } from "../utils/api-error.util";
 
 export default class DailyReportService {
-  public static async checkAccessLevel(email: string) {
-    const { nim } = await DailyReportRepository.getNIM(email);
-    const { id, level_akses } = await DailyReportRepository.getPendaftaranKP(
-      nim
+  public static async getAccessSaya(email: string) {
+    const mahasiswa = await DailyReportRepository.findMahasiswa(email);
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
+    }
+
+    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(
+      mahasiswa.nim
     );
+    if (!pendaftaran_kp) {
+      throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
+    }
 
     return {
       response: true,
       message:
-        level_akses >= 5 ? "Sudah bisa diakses! 😁" : "Belum bisa diakses! 😡",
+        pendaftaran_kp.level_akses >= 5
+          ? "Sudah bisa diakses! 😁"
+          : "Belum bisa diakses! 😡",
       data: {
-        id: id,
-        nim: nim,
-        accessLevel: level_akses,
-        hasAccess: level_akses >= 5,
+        id: pendaftaran_kp.id,
+        nama: mahasiswa.nama,
+        nim: mahasiswa.nim,
+        level_akses: pendaftaran_kp.level_akses,
+        access: pendaftaran_kp.level_akses >= 5,
       },
     };
   }
 
-  public static async getDailyReport(email: string) {
-    const { nim } = await DailyReportRepository.getNIM(email);
-    const { email_pembimbing_instansi, nip_pembimbing } =
-      await DailyReportRepository.getPendaftaranKP(nim);
-
-    if (!email_pembimbing_instansi) {
-      throw new APIError(`Email pembimbing instansi tidak ada! 😭`, 404);
+  public static async getDailyReportSaya(email: string) {
+    const mahasiswa = await DailyReportRepository.findMahasiswa(email);
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
 
-    if (!nip_pembimbing) {
-      throw new APIError(`NIP dosen pembimbing tidak ada! 😭`, 404);
-    }
-
-    const dailyReport = await DailyReportRepository.getDailyReport(
-      nim,
-      email_pembimbing_instansi,
-      nip_pembimbing
+    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(
+      mahasiswa.nim
     );
-
-    if (!dailyReport) {
-      throw new APIError(`Data daily report tidak ditemukan! 😭`, 404);
+    if (!pendaftaran_kp) {
+      throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
     }
+
+    if (
+      !pendaftaran_kp.email_pembimbing_instansi ||
+      !pendaftaran_kp.nip_pembimbing
+    ) {
+      throw new APIError(`Waduh, pembimbing kamu belum ada nih! 😭`, 404);
+    }
+
+    const daily_report = await DailyReportRepository.findDailyReport(
+      mahasiswa.nim,
+      pendaftaran_kp.email_pembimbing_instansi,
+      pendaftaran_kp.nip_pembimbing
+    );
 
     return {
       response: true,
       message: "Data daily report berhasil diambil! 😁",
-      data: dailyReport,
+      data: daily_report,
     };
   }
 
-  public static async checkPresence(email: string) {
-    const { nim } = await DailyReportRepository.getNIM(email);
+  public static async checkPresensiSaya(email: string) {
+    const mahasiswa = await DailyReportRepository.findMahasiswa(email);
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
+    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const report = await DailyReportRepository.getDailyReportByDate(nim, today);
+    const report = await DailyReportRepository.findDailyReportByDate(
+      mahasiswa.nim,
+      today
+    );
 
     return !!report;
   }
 
-  public static async getInstansiLocation(email: string) {
-    const { nim } = await DailyReportRepository.getNIM(email);
-    const { id_instansi } = await DailyReportRepository.getPendaftaranKP(nim);
-
-    if (!id_instansi) {
-      throw new APIError(`Id instansi tidak ada! 😭`, 404);
+  public static async getInstansiSaya(email: string) {
+    const mahasiswa = await DailyReportRepository.findMahasiswa(email);
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
 
-    const instansi = await DailyReportRepository.getInstansiLocation(
-      id_instansi
+    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(
+      mahasiswa.nim
     );
+    if (!pendaftaran_kp) {
+      throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
+    }
 
+    const { id_instansi } = pendaftaran_kp;
+    if (!id_instansi) {
+      throw new APIError(`Waduh, instansi belum ada nih! 😭`, 404);
+    }
+
+    const instansi = await DailyReportRepository.findInstansi(id_instansi);
     if (!instansi) {
-      throw new APIError("Instansi tidak ditemukan! 😭", 404);
+      throw new APIError(`Waduh, instansi tidak ditemukan nih! 😭`, 404);
     }
 
     return instansi;
   }
 
-  public static async createDailyReport(
+  public static async postDailyReport(
     email: string,
     latitude: number,
     longitude: number
   ) {
-    const { nim } = await DailyReportRepository.getNIM(email);
+    const mahasiswa = await DailyReportRepository.findMahasiswa(email);
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
+    }
 
-    const dailyReport = await DailyReportRepository.createDailyReport(
-      nim,
+    const daily_report = await DailyReportRepository.createDailyReport(
+      mahasiswa.nim,
       latitude,
       longitude
     );
@@ -97,16 +126,16 @@ export default class DailyReportService {
     return {
       response: true,
       message: "Presensi berhasil! 😁",
-      data: dailyReport,
+      data: daily_report,
     };
   }
 
-  public static async createDetailDailyReport(
+  public static async postDetailDailyReport(
     id_daily_report: string,
     judul_agenda: string,
     deskripsi_agenda: string
   ) {
-    const detailDailyReport =
+    const detail_daily_report =
       await DailyReportRepository.createDetailDailyReport(
         id_daily_report,
         judul_agenda,
@@ -116,16 +145,16 @@ export default class DailyReportService {
     return {
       response: true,
       message: "Detail daily report berhasil dibuat! 😁",
-      data: detailDailyReport,
+      data: detail_daily_report,
     };
   }
 
-  public static async updateDetailDailyReport(
+  public static async putDetailDailyReport(
     id_detail_daily_report: number,
     judul_agenda: string,
     deskripsi_agenda: string
   ) {
-    const updateDetailDailyReport =
+    const detail_daily_report =
       await DailyReportRepository.updateDetailDailyReport(
         id_detail_daily_report,
         judul_agenda,
@@ -135,16 +164,16 @@ export default class DailyReportService {
     return {
       response: true,
       message: "Detail daily report berhasil diperbarui! 😁",
-      data: updateDetailDailyReport,
+      data: detail_daily_report,
     };
   }
 
-  public static async evaluateDailyReport(
+  public static async putDailyReport(
     id_daily_report: string,
     catatan_evaluasi: string,
     status: string
   ) {
-    const evaluateDailyReport = await DailyReportRepository.evaluateDailyReport(
+    const daily_report = await DailyReportRepository.updateDailyReport(
       id_daily_report,
       catatan_evaluasi,
       status
@@ -153,14 +182,14 @@ export default class DailyReportService {
     return {
       response: true,
       message: "Evaluasi daily report berhasil disimpan! 😁",
-      data: evaluateDailyReport,
+      data: daily_report,
     };
   }
 
-  public static async getMahasiswaForPembimbingInstansi(
+  public static async getMahasiswaInstansiSaya(
     email_pembimbing_instansi: string
   ) {
-    const data = await DailyReportRepository.getPembimbingInstansi(
+    const data = await DailyReportRepository.findPembimbingInstansi(
       email_pembimbing_instansi
     );
 
@@ -168,27 +197,53 @@ export default class DailyReportService {
       throw new APIError("Pembimbing instansi tidak ditemukan! 😭", 404);
     }
 
-    const mahasiswa =
-      await DailyReportRepository.getMahasiswaForPembimbingInstansi(
-        email_pembimbing_instansi
-      );
+    const mahasiswa = await DailyReportRepository.findMahasiswaInstansi(
+      email_pembimbing_instansi
+    );
 
     return {
       response: true,
-      message: "Data mahasiswa bimbingan instansi berhasil diambil! 😁",
+      message: "Mahasiswa bimbingan instansi berhasil diambil! 😁",
       data: mahasiswa,
     };
   }
 
-  public static async getMahasiswaForDosenPembimbing(email: string) {
-    const dosen = await DailyReportRepository.getDosenPembimbing(email);
+  public static async getDetailMahasiswaInstansiSaya(
+    email: string,
+    nim: string
+  ) {
+    const data = await DailyReportRepository.findPembimbingInstansi(email);
+
+    if (!data) {
+      throw new APIError("Pembimbing instansi tidak ditemukan! 😭", 404);
+    }
+
+    const mahasiswa = await DailyReportRepository.findDetailMahasiswaInstansi(
+      email,
+      nim
+    );
+
+    if (!mahasiswa) {
+      throw new APIError(`Mahasiswa tidak ditemukan! 😭`, 404);
+    }
+
+    return {
+      response: true,
+      message: "Detail mahasiswa bimbingan berhasil diambil! 😁",
+      data: mahasiswa,
+    };
+  }
+
+  public static async getMahasiswaBimbinganSaya(email: string) {
+    const dosen = await DailyReportRepository.findDosenPembimbing(email);
 
     if (!dosen) {
       throw new APIError("Dosen pembimbing tidak ditemukan! 😭", 404);
     }
 
-    const mahasiswa =
-      await DailyReportRepository.getMahasiswaForDosenPembimbing(dosen.nip);
+    const mahasiswa = await DailyReportRepository.findMahasiswaBimbingan(
+      dosen.nip
+    );
 
     return {
       response: true,
@@ -197,7 +252,29 @@ export default class DailyReportService {
     };
   }
 
-  public static async createNilai(
+  public static async getDetailMahasiswaBimbinganSaya(
+    email: string,
+    nim: string
+  ) {
+    const dosen = await DailyReportRepository.findDosenPembimbing(email);
+
+    if (!dosen) {
+      throw new APIError("Dosen pembimbing tidak ditemukan! 😭", 404);
+    }
+
+    const mahasiswa = await DailyReportRepository.findDetailMahasiswaBimbingan(
+      dosen.nip,
+      nim
+    );
+
+    return {
+      response: true,
+      message: "Data mahasiswa bimbingan berhasil diambil! 😁",
+      data: mahasiswa,
+    };
+  }
+
+  public static async postNilai(
     email: string,
     nim: string,
     komponen_penilaian: {
@@ -210,8 +287,10 @@ export default class DailyReportService {
       masukan: string;
     }
   ) {
-    const dailyReportCount = await DailyReportRepository.countDailyReport(nim);
-    if (dailyReportCount <= 22) {
+    const daily_report_count = await DailyReportRepository.countDailyReport(
+      nim
+    );
+    if (daily_report_count <= 22) {
       throw new APIError(
         "Mahasiswa belum memenuhi syarat jumlah daily report (lebih dari 22)! 😡",
         400
@@ -240,9 +319,13 @@ export default class DailyReportService {
     };
   }
 
-  public static async getNilai(email: string) {
-    const { nim } = await DailyReportRepository.getNIM(email);
-    const nilai = await DailyReportRepository.getNilai(nim);
+  public static async getNilaiSaya(email: string) {
+    const mahasiswa = await DailyReportRepository.findMahasiswa(email);
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
+    }
+
+    const nilai = await DailyReportRepository.findNilai(mahasiswa.nim);
 
     if (!nilai) {
       throw new APIError("Nilai belum diberikan pembimbing instansi! 😭", 404);

@@ -16,7 +16,7 @@ export default class BimbinganKPRepository {
     });
   }
 
-  public static async getBimbingan(nim: string) {
+  public static async findBimbingan(nim: string) {
     return prisma.bimbingan.findMany({
       where: {
         nim: nim,
@@ -46,10 +46,11 @@ export default class BimbinganKPRepository {
     });
   }
 
-  public static async getMahasiswa(nip: string) {
+  public static async findDetailMahasiswaBimbingan(nip: string, nim: string) {
     return prisma.pendaftaran_kp.findMany({
       where: {
         nip_pembimbing: nip,
+        nim: nim,
       },
       select: {
         mahasiswa: {
