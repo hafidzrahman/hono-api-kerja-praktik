@@ -1,3 +1,4 @@
+import { jenis_dokumen, status_dokumen } from "../generated/prisma";
 import prisma from "../infrastructures/db.infrastructure";
 import { FindByEmailParamsInterface, FindByEmailReturnInterface, FindByNIMParamsInterface } from "../types/mahasiswa/repository.type";
 import { APIError } from "../utils/api-error.util";
@@ -54,17 +55,50 @@ export default class MahasiswaRepository {
         if (!result) {
             throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
         }
-    
         return result;
     }
 
     public static async countBimbinganByNIM(nim: string): Promise<number> {
-        const count = await prisma.bimbingan.count({
+        return await prisma.bimbingan.count({
             where: {
                 nim: nim
             }
         })
-        return count
     }
 
+    public static async cekDokumenSeminarKP(nim: string, pendaftaran_id: string) {
+        const tipeDokumen: jenis_dokumen[] = [
+            jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP,
+            jenis_dokumen.LAPORAN_TAMBAHAN_KP,
+            jenis_dokumen.FORM_KEHADIRAN_SEMINAR,
+            jenis_dokumen.ID_SURAT_UNDANGAN,
+            jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP
+        ];
+
+        const dokumen = await prisma.dokumen_seminar_kp.findMany({
+            where: {
+                nim: nim,
+                id_pendaftaran_kp: pendaftaran_id,
+                jenis_dokumen: {
+                    in: tipeDokumen
+                }
+            }
+        })
+
+        const statusDokumen = tipeDokumen.map(docType => {
+            const doc = dokumen.find(d => d.jenis_dokumen === docType);
+            return {
+                type: docType,
+                exists: !!doc,
+                validated: doc?.status === status_dokumen.Divalidasi
+            }
+        })
+
+        const allDokumenDivalidasi = statusDokumen.every(doc => doc.exists && doc.validated);
+
+        return {
+            allDokumenDivalidasi,
+            statusDokumen
+        }
+    }
 }
