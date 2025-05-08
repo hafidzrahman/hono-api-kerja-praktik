@@ -8,7 +8,6 @@ export default class BimbinganKPHandler {
     const { catatan_bimbingan, nim } = await c.req.json();
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
-
     if (!catatan_bimbingan || !nim) {
       throw new APIError("Data bimbingan tidak lengkap! 😭", 400);
     }
@@ -21,7 +20,6 @@ export default class BimbinganKPHandler {
 
   public static async getBimbinganSaya(c: Context) {
     const { email } = c.get("user");
-
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     return c.json(await BimbinganKPService.getBimbinganSaya(email));
