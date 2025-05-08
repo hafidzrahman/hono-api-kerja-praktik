@@ -34,3 +34,7 @@ export interface GetBerkasMahasiswa extends CommonResponse {
         suratPerpanjanganKP : pendaftaran_kp[] | null
     }
 }
+
+export interface getPendaftaranKPTerbaru extends CommonResponse {
+    data : pendaftaran_kp | null
+}

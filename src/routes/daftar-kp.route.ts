@@ -10,26 +10,43 @@ const daftarKPRoute = new Hono({router : new RegExpRouter()});
 
 // mahasiswa route
 
+daftarKPRoute.get("/show", async function (c : Context) {
+    const mahasiswa = await prisma.mahasiswa.findMany({})
+    const instansi = await prisma.instansi.findMany({})
+    const pendaftaranKP = await prisma.pendaftaran_kp.findMany({})
+    
+    return c.json({mahasiswa, instansi, pendaftaranKP})
+})
+
 daftarKPRoute.get("/test", async function (c : Context) {
 
-    // await prisma.mahasiswa.create({
-    //     data : {
-    //         nim : "123",
-    //         nama : "Olav",
-    //         email : "a@gmail.com",
-    //     }
-    // })
+    await prisma.pendaftaran_kp.deleteMany({})
+    await prisma.instansi.deleteMany({})
+    await prisma.mahasiswa.deleteMany({})
+    await prisma.dosen.deleteMany({})
+    await prisma.pembimbing_instansi.deleteMany({})
+    await prisma.tahun_ajaran.deleteMany({})
+    await prisma.ruangan.deleteMany({})
 
-    // await prisma.instansi.create({
-    //     data : {
-    //         id : "12432432-2222-2233-3333-333222222223",
-    //         nama : "Test",
-    //         alamat : "jl123",
-    //         jenis : "Pemerintahan",
-    //         nama_pj : "Olavlagi",
-    //         no_hp_pj : "480243"
-    //     }
-    // })
+
+    await prisma.mahasiswa.create({
+        data : {
+            nim : "123",
+            nama : "Olav",
+            email : "a@gmail.com",
+        }
+    })
+
+    await prisma.instansi.create({
+        data : {
+            id : "12432432-2222-2233-3333-333222222223",
+            nama : "Test",
+            alamat : "jl123",
+            jenis : "Pemerintahan",
+            nama_pj : "Olavlagi",
+            no_hp_pj : "480243"
+        }
+    })
 
     await prisma.tahun_ajaran.create({
         data : {
@@ -37,11 +54,17 @@ daftarKPRoute.get("/test", async function (c : Context) {
         }
     })
 
-    const pendaftaran_kp = await prisma.pendaftaran_kp.findMany({})
     const mahasiswa = await prisma.mahasiswa.findMany({})
     const instansi = await prisma.instansi.findMany({})
     
-    return c.json({pendaftaran_kp, mahasiswa, instansi})
+    return c.json({mahasiswa, instansi})
+})
+
+daftarKPRoute.get("/uji", async function(c : Context) {
+    const pendaftaran_kp = await prisma.pendaftaran_kp.findMany({})
+
+
+    return c.json({pendaftaran_kp})
 })
 
 daftarKPRoute.post("/pendaftaran-kp", DaftarKPHandler.createPermohonanPendaftaranKP);
@@ -60,10 +83,14 @@ daftarKPRoute.post("/unggah-surat-perpanjangan-kp", DaftarKPHandler.postSuratPer
 
 daftarKPRoute.get("/riwayat-pendaftaran-kp", DaftarKPHandler.getRiwayatPendaftaranKP);
 
+daftarKPRoute.get("/data-instansi", DaftarKPHandler.getDataInstansi)
+
+daftarKPRoute.get("/kp-aktif-mahasiswa", DaftarKPHandler.getKPTerbaruMahasiswa)
+
 // koordinator route
 
 daftarKPRoute.get("/berkas-mahasiswa", DaftarKPHandler.getBerkasMahasiswa);
 
-daftarKPRoute.post("/berkas-mahasiswa/:id", DaftarKPHandler.postBerkasMahasiswa);
+daftarKPRoute.post("/berkas-mahasiswa", DaftarKPHandler.postBerkasMahasiswa);
 
 export default daftarKPRoute;

@@ -4,9 +4,21 @@ import { APIError } from "../utils/api-error.util";
 
 export default class DaftarKPHandler {
 
+    public static async getKPTerbaruMahasiswa(c : Context) {
+         const {email} = c.get('user');
+        
+
+        if (!email) {
+            throw new APIError("Email tidak ditemukan")
+        }
+
+        return c.json(await DaftarKPService.getKPTerbaruMahasiswa(email))
+
+    }
+
     public static async createPermohonanPendaftaranKP(c : Context) {
-        // const {email} = c.get('user');
-        const email = "a@gmail.com"
+         const {email} = c.get('user');
+        
         const {tanggalMulai, tujuanSuratInstansi, idInstansi} = await c.req.json();
 
         if (!email) {
@@ -22,8 +34,13 @@ export default class DaftarKPHandler {
         
     }
 
+    public static async getDataInstansi(c : Context) {
+        return c.json(await DaftarKPService.getDataInstansi())
+    }
+
     public static async createPermohonanPendaftaranInstansi(c : Context) {
-        const {email} = c.get('user');
+         const {email} = c.get('user');
+        
         const {namaInstansi, alamatInstansi, namaPenanggungJawabInstansi, telpPenanggungJawabInstansi, jenisInstansi, longitude, latitude, profilSingkat} = await c.req.json();
 
         if (!email) {
@@ -36,18 +53,22 @@ export default class DaftarKPHandler {
     }
 
     public static async postSuratPengantarKP(c : Context) {
-        const {email} = c.get('user')
+         const {email} = c.get('user')
+        
         const {linkSuratPengantarKP} = await c.req.json()
 
         if (!email) {
             throw new APIError("Data email tidak ditemukan", 404)
+        } else if (!linkSuratPengantarKP) {
+            throw new APIError("Link surat tidak diisi", 404)
         }
 
         return c.json(await DaftarKPService.postSuratPengantarKP(email, linkSuratPengantarKP))
     }
 
     public static async postSuratBalasanKP(c : Context) {
-        const {email} = c.get('user')
+         const {email} = c.get('user')
+        
         const {linkSuratBalasanKP} = await c.req.json()
 
         if (!email) {
@@ -58,7 +79,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postIdPengajuanDosenPembimbingKP(c : Context) {
-        const {email} = c.get('user')
+         const {email} = c.get('user')
+        
         const {IdPengajuanDosenPembimbingKP} = await c.req.json()
 
         if (!email) {
@@ -69,7 +91,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postSuratPenunjukkanDosenPembimbingKP(c : Context) {
-        const {email} = c.get('user')
+         const {email} = c.get('user')
+        
         const {linkSuratPenunjukkanDosenPembimbingKP} = await c.req.json()
 
         if (!email) {
@@ -80,7 +103,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postSuratPerpanjanganKP(c : Context) {
-        const {email} = c.get('user')
+         const {email} = c.get('user')
+        
         const {linkSuratPerpanjanganKP} = await c.req.json()
 
         if (!email) {
@@ -95,7 +119,7 @@ export default class DaftarKPHandler {
     }
 
     public static async postBerkasMahasiswa(c : Context) {
-        const {id} = c.req.param('id') as any;
+        const {id} = await c.req.json() as any;
 
         if (!id) {
             throw new APIError("ID pendaftaran KP tidak ditemukan")
@@ -105,7 +129,8 @@ export default class DaftarKPHandler {
     }
 
     public static async getRiwayatPendaftaranKP(c : Context) {
-        const {email} = c.get('user');
+         const {email} = c.get('user');
+        
 
         if (!email) {
             throw new APIError("Data email tidak ditemukan", 404)

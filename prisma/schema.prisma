@@ -9,14 +9,14 @@ datasource db {
 }
 
 model bimbingan {
-  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tanggal_bimbingan DateTime?       @default(dbgenerated("CURRENT_DATE")) @db.Date
-  catatan_bimbingan String?         @db.VarChar(255)
-  nim               String?         @db.VarChar(11)
-  nip               String?         @db.VarChar(20)
-  
-  mahasiswa         mahasiswa?      @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
-  dosen_pembimbing  dosen?          @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tanggal_bimbingan DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
+  catatan_bimbingan String?   @db.VarChar(255)
+  nim               String?   @db.VarChar(11)
+  nip               String?   @db.VarChar(20)
+
+  mahasiswa        mahasiswa? @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
+  dosen_pembimbing dosen?     @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model daily_report {
@@ -28,29 +28,29 @@ model daily_report {
   longitude           Float?
   detail_daily_report detail_daily_report[]
   nim                 String?               @db.VarChar(11)
-  
-  mahasiswa           mahasiswa?            @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
+
+  mahasiswa mahasiswa? @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model detail_daily_report {
-  id               Int           @id @default(autoincrement())
-  waktu            DateTime      @db.Timestamp(6)
-  judul_agenda     String        @db.VarChar(255)
-  deskripsi_agenda String        @db.VarChar(255)
-  id_daily_report  String?       @db.Uuid
+  id               Int      @id @default(autoincrement())
+  waktu            DateTime @db.Timestamp(6)
+  judul_agenda     String   @db.VarChar(255)
+  deskripsi_agenda String   @db.VarChar(255)
+  id_daily_report  String?  @db.Uuid
 
-  daily_report     daily_report? @relation(fields: [id_daily_report], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  daily_report daily_report? @relation(fields: [id_daily_report], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model dosen {
-  nip         String      @id @db.VarChar(20)
-  nama        String      @db.VarChar(255)
-  no_hp       String?     @unique @db.VarChar(14)
-  email       String      @unique @db.VarChar(255)
-  id_telegram String?     @unique @db.VarChar(10)
-  bimbingan   bimbingan[]
-  nilai       nilai[]
-  pendaftaran_kp     pendaftaran_kp[]
+  nip            String           @id @db.VarChar(20)
+  nama           String           @db.VarChar(255)
+  no_hp          String?          @unique @db.VarChar(14)
+  email          String           @unique @db.VarChar(255)
+  id_telegram    String?          @unique @db.VarChar(10)
+  bimbingan      bimbingan[]
+  nilai          nilai[]
+  pendaftaran_kp pendaftaran_kp[]
 }
 
 model instansi {
@@ -123,22 +123,22 @@ model nilai {
   komponen_penilaian_pembimbing komponen_penilaian_pembimbing[]
   komponen_penilaian_penguji    komponen_penilaian_penguji[]
 
-  pembimbing_instansi           pembimbing_instansi?            @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
-  mahasiswa                     mahasiswa?                      @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
-  dosen                         dosen?                          @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
+  mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
+  dosen               dosen?               @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model pembimbing_instansi {
-  email       String    @id @db.VarChar(255)
-  id          String    @unique @db.VarChar(255)
-  nama        String?   @db.VarChar(255)
-  no_hp       String?   @db.VarChar(16)
-  jabatan     String?   @db.VarChar(40)
-  nilai       nilai[]
-  pendaftaran_kp     pendaftaran_kp[]
-  id_instansi String?   @db.Uuid
+  email          String           @id @db.VarChar(255)
+  id             String           @unique @db.VarChar(255)
+  nama           String?          @db.VarChar(255)
+  no_hp          String?          @db.VarChar(16)
+  jabatan        String?          @db.VarChar(40)
+  nilai          nilai[]
+  pendaftaran_kp pendaftaran_kp[]
+  id_instansi    String?          @db.Uuid
 
-  instansi    instansi? @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  instansi instansi? @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model pendaftaran_kp {
@@ -156,7 +156,7 @@ model pendaftaran_kp {
   id_surat_pengajuan_dospem    String?              @db.VarChar(25)
   email_pembimbing_instansi    String?              @db.VarChar(255)
   catatan_penolakan            String?              @db.VarChar(255)
-  level_akses                  Int                  @default(0)
+  level_akses                  Int                  @default(1)
   judul_kp                     String?              @db.VarChar(255)
   alasan_lanjut_kp             String?              @db.VarChar(255)
   id_tahun_ajaran              Int?
@@ -167,11 +167,11 @@ model pendaftaran_kp {
   dokumen_seminar_kp           dokumen_seminar_kp[]
   jadwal                       jadwal[]
 
-  instansi                     instansi?            @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  tahun_ajaran                 tahun_ajaran?        @relation(fields: [id_tahun_ajaran], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  mahasiswa                    mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
-  dosen_pembimbing             dosen?               @relation(fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
-  pembimbing_instansi          pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
+  instansi            instansi?            @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tahun_ajaran        tahun_ajaran?        @relation(fields: [id_tahun_ajaran], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
+  dosen_pembimbing    dosen?               @relation(fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model ruangan {

@@ -3,11 +3,22 @@ import { RepositoryPendaftaranInstansiInterface, RepositoryPendaftaranKPInterfac
 import MahasiswaHelper from "../helpers/mahasiswa.helper"
 import { APIError } from "../utils/api-error.util";
 import { pendaftaran_kp } from "../generated/prisma";
+import { getPendaftaranKPTerbaru } from "../types/daftar-kp/service.type";
 
 export default class DaftarKPRepository {
 
+    public static async getKPTerbaruMahasiswa(nim : string) : Promise<pendaftaran_kp | null> {
+        const data = await prisma.pendaftaran_kp.findFirst({
+            where : {
+                nim,
+                status : "Baru"
+            }
+        })
+
+        return data;
+    }
+
     public static async createPermomohonanKP({nim, idInstansi, tujuanSuratInstansi, tanggalMulai} : RepositoryPendaftaranKPInterface ) : Promise<void> {
-        console.log(MahasiswaHelper.getTahunAjaran())
         await prisma.pendaftaran_kp.create({
             data : {
                 nim,
@@ -44,6 +55,7 @@ export default class DaftarKPRepository {
             select : {
                 status : true,
                 tanggal_mulai : true,
+                level_akses : true,
                 instansi : {
                     select : {
                         nama : true
@@ -58,16 +70,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postSuratPengantarKP(nim : string, linkSuratPengantarKP : string) : Promise<void> {
-        const dataKPTerbaru = await prisma.pendaftaran_kp.findFirst({
-            where : {
-                nim
-            },
-            orderBy : {
-                tanggal_pengajuan : 'desc'
-            }
-            ,
-            take : 1
-        })
+        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -88,16 +91,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postSuratBalasanKP(nim : string, linkSuratBalasanKP : string) : Promise<void> {
-        const dataKPTerbaru = await prisma.pendaftaran_kp.findFirst({
-            where : {
-                nim
-            },
-            orderBy : {
-                tanggal_pengajuan : 'desc'
-            }
-            ,
-            take : 1
-        })
+        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -118,16 +112,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postIdPengajuanDosenPembimbingKP(nim : string, idPengajuanDosenPembimbingKP : string) : Promise<void> {
-        const dataKPTerbaru = await prisma.pendaftaran_kp.findFirst({
-            where : {
-                nim
-            },
-            orderBy : {
-                tanggal_pengajuan : 'desc'
-            }
-            ,
-            take : 1
-        })
+        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -148,16 +133,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postSuratPenunjukkanDosenPembimbing(nim : string, linkSuratPenunjukkanDosenPembimbingKP : string) : Promise<void> {
-        const dataKPTerbaru = await prisma.pendaftaran_kp.findFirst({
-            where : {
-                nim
-            },
-            orderBy : {
-                tanggal_pengajuan : 'desc'
-            }
-            ,
-            take : 1
-        })
+        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -177,20 +153,17 @@ export default class DaftarKPRepository {
 
     }
 
+    public static async getDataInstansi() {
+        const data = await prisma.instansi.findMany({})
+
+        return data
+    }
+
     // sementara pake surat + link dulu
     public static async postSuratPerpanjanganKP(nim : string, linkSuratPerpanjanganKP : string) : Promise<void> {
-        const dataKPTerbaru = await prisma.pendaftaran_kp.findFirst({
-            where : {
-                nim
-            },
-            orderBy : {
-                tanggal_pengajuan : 'desc'
-            }
-            ,
-            take : 1
-        })
+        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
 
-        // jika 0 berarti gagal, 11 berarti udh lulus pendaftaran
+        // jika 0 berarti gagal, 11 berarti sudah melakukan perpanjangan KP
 
         if (!dataKPTerbaru || !(dataKPTerbaru.level_akses === 9)) {
             throw new APIError("Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait")
@@ -277,6 +250,24 @@ export default class DaftarKPRepository {
                 level_akses : 10
             }
         })
+
+        return data
+    }
+
+    public static async getPendaftaranKPTerbaru(nim : string) {
+        const data = await prisma.pendaftaran_kp.findFirst({
+            where : {
+                nim,
+                level_akses : {
+                    not : 0
+                }
+            },
+            take : 1
+        })
+
+        if (!data) {
+            throw new APIError("Data pendaftaran KP tidak ditemukan", 404)
+        }
 
         return data
     }

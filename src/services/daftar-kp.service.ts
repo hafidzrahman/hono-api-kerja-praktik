@@ -3,11 +3,27 @@ import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import DaftarKPRepository from "../repositories/daftar-kp.repository";
 import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import { RepositoryRiwayatPendaftaranKPInterface } from "../types/daftar-kp/repository.type";
-import { CreatePermohonanPendaftaranKPInterface, CreatePermohonanPendaftaranInstansiInterface, GetRiwayatPendaftaranKP, GetBerkasMahasiswa } from "../types/daftar-kp/service.type";
+import { CreatePermohonanPendaftaranKPInterface, CreatePermohonanPendaftaranInstansiInterface, GetRiwayatPendaftaranKP, GetBerkasMahasiswa, getPendaftaranKPTerbaru } from "../types/daftar-kp/service.type";
 import { CommonResponse } from "../types/global.type";
 import { APIError } from "../utils/api-error.util";
 
 export default class DaftarKPService {
+
+    public static async getKPTerbaruMahasiswa(email : string) : Promise<getPendaftaranKPTerbaru> {
+        const dataMhs = await MahasiswaRepository.findByEmail({email})
+
+        if (!dataMhs || !dataMhs.nim) {
+            throw new APIError("Data mahasiswa tidak ditemukan", 404)
+        }
+
+        const data = await DaftarKPRepository.getKPTerbaruMahasiswa(dataMhs.nim);
+
+        return {
+            response : true,
+            message : "Data KP mahasiswa saat ini berhasil didapatkan",
+            data
+        }
+    }
 
     public static async createPermohonanPendaftaranKP({email, tanggalMulai, idInstansi, tujuanSuratInstansi} : CreatePermohonanPendaftaranKPInterface) : Promise<CommonResponse> {
         const dataMhs = await MahasiswaRepository.findByEmail({email})
@@ -146,6 +162,16 @@ export default class DaftarKPService {
         
     }
 
+    public static async getDataInstansi() {
+        const data = await DaftarKPRepository.getDataInstansi();
+
+        return {
+            response : true,
+            message : "Data instansi berhasil diambil",
+            data
+        }
+    }
+
     public static async postSuratPenunjukkanDosenPembimbingKP(email : string, linkSuratPenunjukkanDosenPembimbingKP : string) : Promise<CommonResponse> {
         const dataMhs = await MahasiswaRepository.findByEmail({email});
         
@@ -162,6 +188,8 @@ export default class DaftarKPService {
     }
 
     public static async postSuratPerpanjanganKP(email : string, linkSuratPerpanjanganKP : string) : Promise<CommonResponse> {
+        // [NOTE] Validasi dulu apakah fitur perpanjangan KP sudah dibuka oleh koordinator KP?
+        
         const dataMhs = await MahasiswaRepository.findByEmail({email});
         
         if (!dataMhs || !dataMhs.nim) {
