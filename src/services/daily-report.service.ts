@@ -21,6 +21,7 @@ export default class DailyReportService {
       data: {
         id: id,
         nim: nim,
+        level_akses: level_akses,
         access: level_akses >= 5,
       },
     };
