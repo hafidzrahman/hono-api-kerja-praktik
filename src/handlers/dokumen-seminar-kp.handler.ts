@@ -2,7 +2,7 @@ import { Context } from "hono";
 import { jenis_dokumen } from "../generated/prisma";
 import { createDokumenSeminarKpSchema, dokumenIdSchema, updateDokumenSeminarKpSchema } from "../validators/dokumen-seminar-kp.validator";
 import { errorResponse, handleZodError, successResponse } from "../helpers/response.helper";
-import { getNamaJenisDokumen } from "../helpers/dokumen-seminar-kp";
+import { getNamaDokumen } from "../helpers/dokumen-step.helper";
 import { ZodError } from "zod";
 import { APIError } from "../utils/api-error.util";
 import DokumenSeminarKpService from "../services/dokumen-seminar-kp.service";
@@ -27,15 +27,6 @@ export default class DokumenSeminarKPHandler {
         if (!gdriveLinkRegex.test(validatedData.link_path)) {
           return errorResponse(c, "Link harus dari Google Drive dengan format yang valid", null, 400);
         }
-        
-        if (validatedData.link_path.includes('file/d/')) {
-          const allowedExtensions = ['.pdf', '.doc', '.docx'];
-          const hasValidExtension = allowedExtensions.some(ext => validatedData.link_path.toLowerCase().includes(ext));
-          
-          if (!hasValidExtension) {
-            return errorResponse(c, "File harus berformat PDF, DOC, DOCX, XLS, XLSX, PPT, atau PPTX", null, 400);
-          }
-        }
       }
 
       const dokumen = await DokumenSeminarKpService.postDokumenSeminarKp(email, jenis, validatedData);
@@ -53,7 +44,7 @@ export default class DokumenSeminarKPHandler {
 
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await DokumenSeminarKpService.getDokumenSeminarKpSaya(email));
+    return c.json(await DokumenSeminarKpService.getDataSeminarKpSaya(email));
   }
 
   public static async getAllDokumenSeminarKP(c: Context) {
@@ -64,48 +55,43 @@ export default class DokumenSeminarKPHandler {
     return c.json(await DokumenSeminarKpService.getAllDokumenSeminarKP())
   }
 
-  public static async postTerimaDokumenSeminarKP(ctx: Context) {
-    try {
-      const { email } = ctx.get("user");
-      if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
-
-      const { id } = dokumenIdSchema.parse(ctx.req.param());
-      const body = await ctx.req.json();
-      const { komentar } = body;
-
-      const dokumen = await DokumenSeminarKpService.postTerimaDokumenSeminarKP(id, komentar);
-      const jenisDokumenName = getNamaJenisDokumen(dokumen.jenis_dokumen);
-
-      return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return handleZodError(ctx, error);
-      }
-      return errorResponse(ctx, error instanceof Error ? error.message : "Terjadi kesalahan saat memvalidasi dokumen", null, 400);
+  public static async getDokumenSeminarKPByNIM(c: Context) {
+    const nim = c.req.param("nim");
+    
+    if (!nim) {
+      throw new APIError("Waduh, NIM tidak ditemukan! 😭", 400);
     }
+  
+    return c.json(await DokumenSeminarKpService.getDokumenSeminarKPByNIM(nim));
+  }
+
+  public static async postTerimaDokumenSeminarKP(ctx: Context) {
+    const { email } = ctx.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+  
+    const body = await ctx.req.json();
+    const { id, komentar } = body;
+    const parsed = dokumenIdSchema.parse({ id });
+  
+    const dokumen = await DokumenSeminarKpService.postTerimaDokumenSeminarKP(parsed.id, komentar);
+    const jenisDokumenName = getNamaDokumen(dokumen.jenis_dokumen);
+  
+    return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
   }
 
   public static async postTolakDokumenSeminarKP(ctx: Context) {
-    try {
-      const { email } = ctx.get("user");
-      if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
-
-      const { id } = dokumenIdSchema.parse(ctx.req.param());
-      const body = await ctx.req.json();
-
-      if (!body.komentar) {
-        return errorResponse(ctx, "Komentar penolakan harus diisi", null, 400);
-      }
-
-      const dokumen = await DokumenSeminarKpService.postTolakDokumenSeminarKP(id, body.komentar);
-      const jenisDokumenName = getNamaJenisDokumen(dokumen.jenis_dokumen);
-
-      return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return handleZodError(ctx, error);
-      }
-      return errorResponse(ctx, error instanceof Error ? error.message : "Terjadi kesalahan saat menolak dokumen", null, 400);
-    }
+    const { email } = ctx.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+  
+    const body = await ctx.req.json();
+    const { id, komentar } = body;
+    if (!komentar) throw new APIError("Komentar penolakan harus diisi", 400);
+  
+    const parsed = dokumenIdSchema.parse({ id });
+  
+    const dokumen = await DokumenSeminarKpService.postTolakDokumenSeminarKP(parsed.id, komentar);
+    const jenisDokumenName = getNamaDokumen(dokumen.jenis_dokumen);
+  
+    return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);
   }
 }
