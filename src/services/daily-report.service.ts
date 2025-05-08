@@ -7,22 +7,26 @@ export default class DailyReportService {
     if (!mahasiswa) {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
-    const { nim } = mahasiswa;
-    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(nim);
+
+    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(
+      mahasiswa.nim
+    );
     if (!pendaftaran_kp) {
       throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
     }
-    const { id, level_akses } = pendaftaran_kp;
 
     return {
       response: true,
       message:
-        level_akses >= 5 ? "Sudah bisa diakses! 😁" : "Belum bisa diakses! 😡",
+        pendaftaran_kp.level_akses >= 5
+          ? "Sudah bisa diakses! 😁"
+          : "Belum bisa diakses! 😡",
       data: {
-        id: id,
-        nim: nim,
-        level_akses: level_akses,
-        access: level_akses >= 5,
+        id: pendaftaran_kp.id,
+        nama: mahasiswa.nama,
+        nim: mahasiswa.nim,
+        level_akses: pendaftaran_kp.level_akses,
+        access: pendaftaran_kp.level_akses >= 5,
       },
     };
   }
@@ -32,19 +36,25 @@ export default class DailyReportService {
     if (!mahasiswa) {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
-    const { nim } = mahasiswa;
-    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(nim);
+
+    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(
+      mahasiswa.nim
+    );
     if (!pendaftaran_kp) {
       throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
     }
-    const { email_pembimbing_instansi, nip_pembimbing } = pendaftaran_kp;
-    if (!email_pembimbing_instansi || !nip_pembimbing) {
-      throw new APIError(`Waduh, pembimbing tidak ditemukan nih! 😭`, 404);
+
+    if (
+      !pendaftaran_kp.email_pembimbing_instansi ||
+      !pendaftaran_kp.nip_pembimbing
+    ) {
+      throw new APIError(`Waduh, pembimbing kamu belum ada nih! 😭`, 404);
     }
+
     const daily_report = await DailyReportRepository.findDailyReport(
-      nim,
-      email_pembimbing_instansi,
-      nip_pembimbing
+      mahasiswa.nim,
+      pendaftaran_kp.email_pembimbing_instansi,
+      pendaftaran_kp.nip_pembimbing
     );
 
     return {
@@ -59,13 +69,12 @@ export default class DailyReportService {
     if (!mahasiswa) {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
-    const { nim } = mahasiswa;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const report = await DailyReportRepository.findDailyReportByDate(
-      nim,
+      mahasiswa.nim,
       today
     );
 
@@ -77,15 +86,19 @@ export default class DailyReportService {
     if (!mahasiswa) {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
-    const { nim } = mahasiswa;
-    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(nim);
+
+    const pendaftaran_kp = await DailyReportRepository.findPendaftaranKP(
+      mahasiswa.nim
+    );
     if (!pendaftaran_kp) {
       throw new APIError(`Waduh, mahasiswa belum mendaftar KP nih! 😭`, 404);
     }
+
     const { id_instansi } = pendaftaran_kp;
     if (!id_instansi) {
       throw new APIError(`Waduh, instansi belum ada nih! 😭`, 404);
     }
+
     const instansi = await DailyReportRepository.findInstansi(id_instansi);
     if (!instansi) {
       throw new APIError(`Waduh, instansi tidak ditemukan nih! 😭`, 404);
@@ -103,10 +116,9 @@ export default class DailyReportService {
     if (!mahasiswa) {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
-    const { nim } = mahasiswa;
 
     const daily_report = await DailyReportRepository.createDailyReport(
-      nim,
+      mahasiswa.nim,
       latitude,
       longitude
     );
@@ -312,8 +324,8 @@ export default class DailyReportService {
     if (!mahasiswa) {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan nih! 😭`, 404);
     }
-    const { nim } = mahasiswa;
-    const nilai = await DailyReportRepository.findNilai(nim);
+
+    const nilai = await DailyReportRepository.findNilai(mahasiswa.nim);
 
     if (!nilai) {
       throw new APIError("Nilai belum diberikan pembimbing instansi! 😭", 404);

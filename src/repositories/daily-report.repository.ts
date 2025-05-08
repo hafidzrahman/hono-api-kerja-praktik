@@ -28,6 +28,28 @@ export default class DailyReportRepository {
         nim: nim,
       },
       select: {
+        mahasiswa: {
+          select: {
+            nama: true,
+            nim: true,
+            daily_report: {
+              select: {
+                id: true,
+                tanggal_presensi: true,
+                status: true,
+                catatan_evaluasi: true,
+                detail_daily_report: {
+                  select: {
+                    id: true,
+                    waktu: true,
+                    judul_agenda: true,
+                    deskripsi_agenda: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         status: true,
         tanggal_mulai: true,
         tanggal_selesai: true,
@@ -50,28 +72,6 @@ export default class DailyReportRepository {
           },
           select: {
             nama: true,
-          },
-        },
-        mahasiswa: {
-          select: {
-            nama: true,
-            nim: true,
-            daily_report: {
-              select: {
-                id: true,
-                tanggal_presensi: true,
-                status: true,
-                catatan_evaluasi: true,
-                detail_daily_report: {
-                  select: {
-                    id: true,
-                    waktu: true,
-                    judul_agenda: true,
-                    deskripsi_agenda: true,
-                  },
-                },
-              },
-            },
           },
         },
       },
