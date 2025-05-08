@@ -1,6 +1,6 @@
 import { jenis_dokumen } from "../generated/prisma";
 import prisma from "../infrastructures/db.infrastructure";
-import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput, MahasiswaWithDokumen } from "../types/seminar-kp/dokumen-seminar-kp.type";
+import { CreateDokumenSeminarKPInput, UpdateDokumenSeminarKPInput, MahasiswaWithDokumen, SeminarKPSaya } from "../types/seminar-kp/dokumen-seminar-kp.type";
 
 export default class DokumenSeminarKpRepository {
   public static async createDokumen(jenis_dokumen: jenis_dokumen, input: CreateDokumenSeminarKPInput) {
@@ -37,6 +37,19 @@ export default class DokumenSeminarKpRepository {
             komentar: true,
             id_pendaftaran_kp: true
           }
+        },
+        pendaftaran_kp: {
+          select: {
+            id: true,
+            status: true,
+            id_tahun_ajaran: true,
+            tahun_ajaran: {
+              select: {
+                id: true,
+                nama: true
+              }
+            }
+          }
         }
       }
     });
@@ -45,7 +58,31 @@ export default class DokumenSeminarKpRepository {
   public static async getDokumenSeminarKPByNIM(nim: string): Promise<MahasiswaWithDokumen | null> {
     return await prisma.mahasiswa.findUnique({
       where: {
-        nim: nim, 
+        nim: nim
+      },
+      select: {
+        nim: true,
+        nama: true,
+        email: true,
+        dokumen_seminar_kp: {
+          select: {
+            id: true,
+            jenis_dokumen: true,
+            link_path: true,
+            tanggal_upload: true,
+            status: true,
+            komentar: true,
+            id_pendaftaran_kp: true
+          }
+        }
+      }
+    });
+  }
+
+  public static async getDataSeminarKPSaya(nim: string): Promise<SeminarKPSaya | null> {
+    return await prisma.mahasiswa.findUnique({
+      where: {
+        nim: nim,
       },
       select: {
         nim: true,
@@ -107,6 +144,18 @@ export default class DokumenSeminarKpRepository {
         },
         nilai: {
           select: {
+            komponen_penilaian_pembimbing: {
+              select: {
+                id: true,
+                catatan: true
+              }
+            },
+            komponen_penilaian_penguji: {
+              select: {
+                id: true,
+                catatan: true
+              }
+            },
             nilai_penguji: true,
             nilai_instansi: true,
             nilai_pembimbing: true,
@@ -125,7 +174,7 @@ export default class DokumenSeminarKpRepository {
     });
   }
 
-  async getDokumenSeminarKPByJenisAndNim(jenis_dokumen: jenis_dokumen, nim: string) {
+  public static async getDokumenSeminarKPByJenisAndNim(jenis_dokumen: jenis_dokumen, nim: string) {
     return await prisma.dokumen_seminar_kp.findFirst({
       where: {
         jenis_dokumen: jenis_dokumen,
