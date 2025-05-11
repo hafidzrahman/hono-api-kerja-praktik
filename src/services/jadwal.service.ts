@@ -1,231 +1,198 @@
-import { jadwal, status_jadwal } from "../generated/prisma";
-import JadwalSeminarKPRepository from "../repositories/jadwal-seminar-kp.repository";
+import { jadwal } from "../generated/prisma";
+import JadwalRepository from "../repositories/jadwal.repository";
 import MahasiswaService from "./mahasiswa.service";
-import DosenRepository from "../repositories/dosen.repository";
-import { CreateJadwalDto, UpdateJadwalDto, JadwalFilter, ScheduleConflict } from "../types/seminar-kp/jadwal-seminar-kp.type";
+import DosenService from "./dosen.service";
+import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
-import { checkConflictsSchema, createJadwalSchema, rescheduleJadwalSchema, updateJadwalSchema } from "../validators/jadwal-seminar-kp.validator";
+import { createDateTimeFromStrings, isEligibleForScheduling } from "../helpers/date.helper";
+import { CreateJadwalInput, JadwalWithRelations, LogJadwalInput, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
 
-export default class JadwalSeminarKPService {
-  public static async checkScheduleConflicts(
-    tanggal: Date, 
-    waktu_mulai: Date, 
-    waktu_selesai: Date, 
-    ruangan: string, 
-    excludeJadwalId?: string,
-    nim?: string
-  ): Promise<ScheduleConflict> {
+export default class JadwalService {
+  public static async postJadwal(data: CreateJadwalDto): Promise<jadwal> {
+    const tanggal = new Date(data.tanggal);
+    const waktu_mulai = createDateTimeFromStrings(data.tanggal, data.waktu_mulai);
 
-    checkConflictsSchema.parse({
+    const waktu_selesai = new Date(waktu_mulai);
+    waktu_selesai.setHours(waktu_selesai.getHours() + 1);
+
+    const isStudentEligible = await isEligibleForScheduling(data.id_pendaftaran_kp);
+    if (!isStudentEligible) {
+      throw new APIError(`Waduh, dokumen nya belum divalidasi ni! 😭`, 400);
+    }
+
+    const pendaftaran = await JadwalRepository.getPendaftaranKpById(data.id_pendaftaran_kp);
+    if (!pendaftaran) {
+      throw new APIError(`Waduh, pendaftaran KP tidak ditemukan! 😭`, 404);
+    }
+
+    if (!pendaftaran.nip_penguji) {
+      throw new APIError(`Waduh, Dosen penguji belum ditentukan`, 400);
+    }
+
+    await MahasiswaService.validateMahasiswaExists(data.nim);
+
+    const { hasConflict: studentHasConflict, conflicts: studentConflicts } = await MahasiswaService.cekJadwalKonflikMahasiswa(data.nim, tanggal, waktu_mulai, waktu_selesai);
+
+    if (studentHasConflict) {
+      throw new APIError(
+        `Jadwal mahasiswa konflik: ${studentConflicts.map((c) => `${new Date(c.tanggal).toLocaleDateString()} ${new Date(c.waktu_mulai).toLocaleTimeString()} - ${new Date(c.waktu_selesai).toLocaleTimeString()}`).join(", ")}`,
+        400
+      );
+    }
+
+    const { hasConflict: pengujiHasConflict, conflicts: pengujiConflicts } = await DosenService.cekJadwalKonflikDosen(pendaftaran.nip_penguji, tanggal, waktu_mulai, waktu_selesai);
+
+    if (pengujiHasConflict) {
+      throw new APIError(
+        `Jadwal dosen penguji konflik: ${pengujiConflicts.map((c) => `${new Date(c.tanggal).toLocaleDateString()} ${new Date(c.waktu_mulai).toLocaleTimeString()} - ${new Date(c.waktu_selesai).toLocaleTimeString()}`).join(", ")}`,
+        400
+      );
+    }
+
+    if (pendaftaran.nip_pembimbing) {
+      const { hasConflict: pembimbingHasConflict, conflicts: pembimbingConflicts } = await DosenService.cekJadwalKonflikDosen(pendaftaran.nip_pembimbing, tanggal, waktu_mulai, waktu_selesai);
+
+      if (pembimbingHasConflict) {
+        throw new APIError(
+          `Jadwal dosen pembimbing konflik: ${pembimbingConflicts.map((c) => `${new Date(c.tanggal).toLocaleDateString()} ${new Date(c.waktu_mulai).toLocaleTimeString()} - ${new Date(c.waktu_selesai).toLocaleTimeString()}`).join(", ")}`,
+          400
+        );
+      }
+    }
+
+    const isRoomAvailable = await JadwalRepository.checkRuanganAvailability(data.nama_ruangan, tanggal, waktu_mulai, waktu_selesai);
+
+    if (!isRoomAvailable) {
+      throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
+    }
+
+    const jadwalInput: CreateJadwalInput = {
       tanggal,
       waktu_mulai,
-      waktu_selesai,
-      nama_ruangan: ruangan,
-      excludeId: excludeJadwalId
-    })
-
-    const ruanganConflicts = await JadwalSeminarKPRepository.findConflictingSchedules(
-      tanggal, 
-      waktu_mulai, 
-      waktu_selesai, 
-      ruangan, 
-      excludeJadwalId
-    );
-
-    const dosenConflicts = await DosenRepository.findDosenConflicts(
-      tanggal, 
-      waktu_mulai, 
-      waktu_selesai, 
-      excludeJadwalId
-    );
-
-    let mahasiswaConflicts = []
-    let hasMahasiswaConflict = false;
-
-    if (nim) {
-      const mahasiswaResult = await MahasiswaService.cekJadwalKonflikMahasiswa(
-        nim,
-        tanggal,
-        waktu_mulai,
-        waktu_selesai
-      );
-
-      hasMahasiswaConflict = mahasiswaResult.hasConflict;
-      mahasiswaConflicts = mahasiswaResult.conflicts
-    }
-
-    const filteredDosenConflicts = dosenConflicts.filter(conflict => {
-      return true;
-    });
-
-    return {
-      hasRuanganConflict: ruanganConflicts.length > 0,
-      hasDosenConflict: filteredDosenConflicts.length > 0,
-      hasMahasiswaConflict: mahasiswaConflicts.length > 0,
-      conflictDetails: {
-        ruanganConflicts: ruanganConflicts,
-        dosenConflicts: filteredDosenConflicts,
-        mahasiswaConflicts: mahasiswaConflicts
-      },
+      nim: data.nim,
+      nama_ruangan: data.nama_ruangan,
+      id_pendaftaran_kp: data.id_pendaftaran_kp,
     };
+
+    const createdJadwal = await JadwalRepository.postJadwal(jadwalInput);
+
+    await JadwalRepository.logJadwalChanges({
+      log_type: "CREATE",
+      tanggal_baru: tanggal,
+      ruangan_baru: tanggal,
+      keterangan: `Pembuatan jadwal untuk NIM ${data.nim}`,
+    });
+
+    return createdJadwal;
   }
 
-  public static async createJadwal(data: CreateJadwalDto): Promise<jadwal> {
-    if (data.nim) {
-      const { eligible } = await MahasiswaService.verifikasiKelayakanSeminar(data.nim);
-
-      if (!eligible) {
-        throw new APIError(`Waduh, Mahasiswa belum memenuhi syarat seminar KP nih! 😭`, 401)
-      }
-    }
-
-    const validatedData = createJadwalSchema.parse(data);
-
-    await MahasiswaService.validateMahasiswaExists(validatedData.nim)
-
-    const conflicts = await this.checkScheduleConflicts(
-      validatedData.tanggal, 
-      data.waktu_mulai, 
-      data.waktu_selesai, 
-      data.nama_ruangan,
-      undefined,
-      validatedData.nim
-    );
-
-    if (conflicts.hasDosenConflict || conflicts.hasRuanganConflict || conflicts.hasMahasiswaConflict) {
-      throw new APIError(`Waduh, ada jadwal yang konflik nih! 😭`, 401);
-    }
-    return JadwalSeminarKPRepository.create(validatedData);
-  }
-
-  public static async getJadwal(id: string): Promise<jadwal | null> {
-    return JadwalSeminarKPRepository.findById(id);
-  }
-
-  public static async getAllJadwal(filter?: JadwalFilter): Promise<jadwal[]> {
-    return JadwalSeminarKPRepository.findAll(filter);
-  }
-
-  public static async updateJadwal(id: string, data: UpdateJadwalDto): Promise<jadwal> {
-    const validatedData = updateJadwalSchema.parse(data);
-
-    const existingJadwal = await JadwalSeminarKPRepository.findById(id);
+  public static async putJadwal(data: UpdateJadwalDto): Promise<jadwal> {
+    const existingJadwal = await JadwalRepository.getJadwalById(data.id);
     if (!existingJadwal) {
-      throw new APIError(`Waduh, Jadwal tidak ditemukan nih! 😭`);
+      throw new APIError("Jadwal tidak ditemukan", 404);
     }
 
-    if (data.nim && data.nim !== existingJadwal.nim) {
-      const { eligible } = await MahasiswaService.verifikasiKelayakanSeminar(data.nim);
-      if (!eligible) {
-        throw new APIError(`Waduh, Mahasiswa belum memenuhi syarat seminar KP nih! 😭`, 401)
+    let tanggal = existingJadwal.tanggal;
+    let waktu_mulai = existingJadwal.waktu_mulai;
+    let waktu_selesai = existingJadwal.waktu_selesai;
+
+    if (data.tanggal) {
+      tanggal = new Date(data.tanggal);
+    }
+
+    if (data.waktu_mulai) {
+      waktu_mulai = createDateTimeFromStrings(tanggal ? tanggal.toISOString().split("T")[0] : new Date().toISOString().split("T")[0], data.waktu_mulai);
+
+      waktu_selesai = new Date(waktu_mulai);
+      waktu_selesai.setHours(waktu_selesai.getHours() + 1);
+    }
+
+    if (!tanggal || !waktu_mulai || !waktu_selesai) {
+      throw new APIError("Invalid date or time", 400);
+    }
+
+    if (existingJadwal.nim) {
+      const { hasConflict: studentHasConflict, conflicts: studentConflicts } = await MahasiswaService.cekJadwalKonflikMahasiswa(existingJadwal.nim, tanggal, waktu_mulai, waktu_selesai);
+
+      if (studentHasConflict) {
+        const filteredConflicts = studentConflicts.filter((c) => c.id !== data.id);
+        if (filteredConflicts.length > 0) {
+          throw new APIError(
+            `Jadwal mahasiswa konflik: ${filteredConflicts.map((c) => `${new Date(c.tanggal).toLocaleDateString()} ${new Date(c.waktu_mulai).toLocaleTimeString()} - ${new Date(c.waktu_selesai).toLocaleTimeString()}`).join(", ")}`,
+            400
+          );
+        }
       }
     }
 
-    const nim = existingJadwal.nim;
+    if (existingJadwal.pendaftaran_kp) {
+      const nipPenguji = existingJadwal.pendaftaran_kp.nip_penguji;
+      if (nipPenguji) {
+        const { hasConflict: pengujiHasConflict, conflicts: pengujiConflicts } = await DosenService.cekJadwalKonflikDosen(nipPenguji, tanggal, waktu_mulai, waktu_selesai);
 
-    if (validatedData.tanggal || validatedData.waktu_mulai || validatedData.waktu_selesai || validatedData.nama_ruangan) {
-      const conflicts = await this.checkScheduleConflicts(
-        data.tanggal || existingJadwal.tanggal!,
-        data.waktu_mulai || existingJadwal.waktu_mulai!,
-        data.waktu_selesai || existingJadwal.waktu_selesai!,
-        data.nama_ruangan || existingJadwal.nama_ruangan!,
-        id,
-        nim as string
-      );
-
-      if (conflicts.hasDosenConflict || conflicts.hasRuanganConflict || conflicts.hasMahasiswaConflict) {
-        throw new APIError(`Waduh, ada jadwal yang konflik nih! 😭`, 401);
+        if (pengujiHasConflict) {
+          const filteredConflicts = pengujiConflicts.filter((c) => c.id !== data.id);
+          if (filteredConflicts.length > 0) {
+            throw new APIError(
+              `Jadwal dosen penguji konflik: ${filteredConflicts.map((c) => `${new Date(c.tanggal).toLocaleDateString()} ${new Date(c.waktu_mulai).toLocaleTimeString()} - ${new Date(c.waktu_selesai).toLocaleTimeString()}`).join(", ")}`,
+              400
+            );
+          }
+        }
       }
 
-      if (validatedData.tanggal !== existingJadwal.tanggal || validatedData.nama_ruangan !== existingJadwal.nama_ruangan) {
-        await JadwalSeminarKPRepository.createLogJadwal({
-          log_type: "UPDATE",
-          tanggal_lama: existingJadwal.tanggal,
-          tanggal_baru: validatedData.tanggal || existingJadwal.tanggal!,
-          ruangan_lama: existingJadwal.tanggal,
-          ruangan_baru: validatedData.tanggal || existingJadwal.tanggal!,
-          keterangan: "Jadwal Seminar KP Diperbarui",
-          id_jadwal_seminar: Number(id) || null,
-        });
+      const nipPembimbing = existingJadwal.pendaftaran_kp.nip_pembimbing;
+      if (nipPembimbing) {
+        const { hasConflict: pembimbingHasConflict, conflicts: pembimbingConflicts } = await DosenService.cekJadwalKonflikDosen(nipPembimbing, tanggal, waktu_mulai, waktu_selesai);
+
+        if (pembimbingHasConflict) {
+          const filteredConflicts = pembimbingConflicts.filter((c) => c.id !== data.id);
+          if (filteredConflicts.length > 0) {
+            throw new APIError(
+              `Jadwal dosen pembimbing konflik: ${filteredConflicts.map((c) => `${new Date(c.tanggal).toLocaleDateString()} ${new Date(c.waktu_mulai).toLocaleTimeString()} - ${new Date(c.waktu_selesai).toLocaleTimeString()}`).join(", ")}`,
+              400
+            );
+          }
+        }
       }
     }
 
-    if (validatedData.status === status_jadwal.Jadwal_Ulang) {
-      await JadwalSeminarKPRepository.createLogJadwal({
-        log_type: "RESCHEDULE",
-        tanggal_lama: existingJadwal.tanggal,
-        tanggal_baru: validatedData.tanggal || existingJadwal.tanggal!,
-        ruangan_lama: existingJadwal.tanggal,
-        ruangan_baru: validatedData.tanggal || existingJadwal.tanggal!,
-        keterangan: "Jadwal Seminar KP di Jadwalkan Ulang",
-        id_jadwal_seminar: Number(id) || null,
-      });
+    if (data.nama_ruangan || data.tanggal || data.waktu_mulai) {
+      const roomToCheck = data.nama_ruangan || existingJadwal.nama_ruangan;
+      if (roomToCheck) {
+        const isRoomAvailable = await JadwalRepository.checkRuanganAvailability(roomToCheck, tanggal, waktu_mulai, waktu_selesai, data.id);
+
+        if (!isRoomAvailable) {
+          throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
+        }
+      }
     }
 
-    return JadwalSeminarKPRepository.update(id, data);
-  }
+    const updateInput: UpdateJadwalInput = {
+      id: data.id,
+      tanggal: data.tanggal ? tanggal : undefined,
+      waktu_mulai: data.waktu_mulai ? waktu_mulai : undefined,
+      waktu_selesai: data.waktu_mulai ? waktu_selesai : undefined,
+      status: data.status,
+      nama_ruangan: data.nama_ruangan,
+    };
 
-  public static async deleteJadwal(id: string): Promise<jadwal> {
-    const existingJadwal = await JadwalSeminarKPRepository.findById(id);
-    if (!existingJadwal) {
-      throw new APIError(`Waduh, Jadwal tidak ditemukan nih! 😭`);
-    }
+    const updatedJadwal = await JadwalRepository.putJadwal(updateInput);
 
-    await JadwalSeminarKPRepository.createLogJadwal({
-      log_type: "DELETE",
+    await JadwalRepository.logJadwalChanges({
+      log_type: "UPDATE",
       tanggal_lama: existingJadwal.tanggal,
-      tanggal_baru: new Date(),
+      tanggal_baru: tanggal,
       ruangan_lama: existingJadwal.tanggal,
-      ruangan_baru: new Date(),
-      keterangan: "Jadwal sudah dihapus",
-      id_jadwal_seminar: Number(id) || null,
+      ruangan_baru: tanggal,
+      keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}`,
+      nip: existingJadwal.pendaftaran_kp?.nip_penguji || null,
     });
 
-    return JadwalSeminarKPRepository.delete(id);
+    return updatedJadwal;
   }
 
-  public static async completeJadwal(id: string): Promise<jadwal> {
-    const existingJadwal = await JadwalSeminarKPRepository.findById(id);
-    if (!existingJadwal) {
-      throw new APIError(`Waduh, Jadwal tidak ditemukan nih! 😭`);
-    }
-    return this.updateJadwal(
-      id, { 
-        nim: existingJadwal.nim || "", 
-        status: status_jadwal.Selesai 
-      }
-    );
-  }
-
-  public static async rescheduleJadwal(
-    id: string,
-    newData: {
-      tanggal: Date;
-      waktu_mulai: Date;
-      waktu_selesai: Date;
-      nama_ruangan: string;
-    }
-  ): Promise<jadwal> {
-    const existingJadwal = await JadwalSeminarKPRepository.findById(id);
-    if (!existingJadwal) {
-      throw new APIError(`Waduh, Jadwal tidak ditemukan nih! 😭`);
-    }
-
-    const validatedData = rescheduleJadwalSchema.parse(newData);
-
-    return this.updateJadwal(id, {
-      ...validatedData,
-      nim: existingJadwal.nim || "",
-      status: status_jadwal.Jadwal_Ulang,
-    });
-  }
-
-  public static async getJadwalByNIP(nip: string) {
-    if (!nip || nip.trim() === '') {
-      throw new APIError("Waduh, NIP dosen tidak ditemukan! 😭")
-    }
-
-    const jadwal = await JadwalSeminarKPRepository.findJadwalByNIP(nip)
-    return jadwal
+  public static async getRuanganOptions(): Promise<{ nama: string }[]> {
+    return JadwalRepository.getRuangans();
   }
 }
