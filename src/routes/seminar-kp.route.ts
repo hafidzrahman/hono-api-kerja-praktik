@@ -26,13 +26,8 @@ seminarKpRoute.post("/dokumen/validasi", SeminarKpHandler.postTerimaDokumenSemin
 seminarKpRoute.post("/dokumen/ditolak", SeminarKpHandler.postTolakDokumenSeminarKP);
 
 // endpoint jadwal seminar kp
-seminarKpRoute.post("/jadwal", JadwalSeminarKpHandler.createJadwal);
-seminarKpRoute.get("/jadwal", JadwalSeminarKpHandler.getAllJadwal);
-seminarKpRoute.get("/jadwal/:id", JadwalSeminarKpHandler.getJadwalById);
-seminarKpRoute.put("/jadwal/:id", JadwalSeminarKpHandler.updateJadwal);
-seminarKpRoute.delete("/jadwal/:id", JadwalSeminarKpHandler.deleteJadwal);
-seminarKpRoute.post("/jadwal/selesai/:id", JadwalSeminarKpHandler.completeJadwal);
-seminarKpRoute.post("/jadwal/jadwal-baru/:id", JadwalSeminarKpHandler.rescheduleJadwal);
+seminarKpRoute.post("/jadwal", JadwalSeminarKpHandler.postJadwal);
+seminarKpRoute.put("/jadwal", JadwalSeminarKpHandler.putJadwal);
 
 // endpoint nilai seminar kp
 seminarKpRoute.post("/nilai/dosen-pembimbing", nilaiSeminarKpHandler.createNilaiPembimbing);
