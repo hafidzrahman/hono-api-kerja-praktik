@@ -10,6 +10,7 @@ export interface CreateJadwalDto {
 }
 
 export interface UpdateJadwalDto {
+  nim: string;
   tanggal?: Date;
   waktu_mulai?: Date;
   waktu_selesai?: Date;
@@ -38,8 +39,10 @@ export interface JadwalFilter {
 export interface ScheduleConflict {
   hasDosenConflict: boolean;
   hasRuanganConflict: boolean;
+  hasMahasiswaConflict: boolean,
   conflictDetails?: {
     dosenConflicts?: Array<any>;
     ruanganConflicts?: Array<any>;
+    mahasiswaConflicts?: Array<any>;
   };
 }
