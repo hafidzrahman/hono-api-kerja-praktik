@@ -78,7 +78,7 @@ export default class JadwalService {
     await JadwalRepository.logJadwalChanges({
       log_type: "CREATE",
       tanggal_baru: tanggal,
-      ruangan_baru: tanggal,
+      ruangan_baru: data.nama_ruangan || "",
       keterangan: `Pembuatan jadwal untuk NIM ${data.nim}`,
     });
 
@@ -185,8 +185,8 @@ export default class JadwalService {
       log_type: "UPDATE",
       tanggal_lama: existingJadwal.tanggal,
       tanggal_baru: tanggal,
-      ruangan_lama: existingJadwal.tanggal,
-      ruangan_baru: tanggal,
+      ruangan_lama: existingJadwal.nama_ruangan,
+      ruangan_baru: data.nama_ruangan || "",
       keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}${data.nip_penguji ? ` dengan pembaruan dosen penguji ${data.nip_penguji}` : ''}`,
       nip: data.nip_penguji || existingJadwal.pendaftaran_kp?.nip_penguji || null,
     });
