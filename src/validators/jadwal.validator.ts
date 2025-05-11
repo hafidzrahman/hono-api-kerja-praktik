@@ -14,6 +14,7 @@ export const createJadwalSchema = z.object({
   nim: z.string().min(1, "NIM is required"),
   nama_ruangan: z.string().min(1, "Room name is required"),
   id_pendaftaran_kp: z.string().uuid("Invalid pendaftaran KP ID format"),
+  nip_penguji: z.string().min(1, "NIP dosen penguji is required"),
 });
 
 export const updateJadwalSchema = z.object({
@@ -24,6 +25,7 @@ export const updateJadwalSchema = z.object({
     .enum(["Menunggu", "Selesai", "Jadwal_Ulang"])
     .optional(),
   nama_ruangan: z.string().min(1, "Room name is required").optional(),
+  nip_penguji: z.string().min(1, "NIP dosen penguji is required").optional(),
 });
 
 export type CreateJadwalDto = z.infer<typeof createJadwalSchema>;

@@ -8,7 +8,7 @@ export default class JadwalRepository {
     const waktu_selesai = new Date(waktu_mulai);
     waktu_selesai.setHours(waktu_selesai.getHours() + 1);
 
-    return prisma.jadwal.create({
+    const jadwal = await prisma.jadwal.create({
       data: {
         tanggal: data.tanggal,
         waktu_mulai,
@@ -19,6 +19,17 @@ export default class JadwalRepository {
         id_pendaftaran_kp: data.id_pendaftaran_kp,
       },
     });
+
+    if (data.nip_penguji) {
+      await prisma.pendaftaran_kp.update({
+        where: { id: data.id_pendaftaran_kp },
+        data: {
+          nip_penguji: data.nip_penguji
+        }
+      });
+    }
+
+    return jadwal
   }
 
   public static async putJadwal(data: UpdateJadwalInput): Promise<jadwal> {
@@ -29,7 +40,7 @@ export default class JadwalRepository {
       waktu_selesai.setHours(waktu_selesai.getHours() + 1);
     }
 
-    return prisma.jadwal.update({
+    const jadwal = await prisma.jadwal.update({
       where: { id: data.id },
       data: {
         tanggal: data.tanggal,
@@ -39,6 +50,24 @@ export default class JadwalRepository {
         nama_ruangan: data.nama_ruangan,
       },
     });
+
+    if (data.nip_penguji) {
+      const jadwal = await prisma.jadwal.findUnique({
+        where: { id: data.id },
+        select: { id_pendaftaran_kp: true }
+      });
+
+      if (jadwal?.id_pendaftaran_kp) {
+        await prisma.pendaftaran_kp.update({
+          where: { id: jadwal.id_pendaftaran_kp },
+          data: {
+            nip_penguji: data.nip_penguji
+          }
+        });
+      }
+    }
+
+    return jadwal
   }
 
   public static async getJadwalById(id: string): Promise<JadwalWithRelations | null> {
@@ -101,6 +130,15 @@ export default class JadwalRepository {
         nama: true,
       },
     });
+  }
+
+  public static getDosens(): Promise<{nip: string, nama: string}[]> {
+    return prisma.dosen.findMany({
+      select: {
+        nip: true,
+        nama: true,
+      }
+    })
   }
 
   public static async checkRuanganAvailability(

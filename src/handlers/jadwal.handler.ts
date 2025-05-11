@@ -3,7 +3,7 @@ import JadwalService from "../services/jadwal.service";
 import { createJadwalSchema, updateJadwalSchema } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 
-export default class JadwalSeminarKPHandler {
+export default class JadwalHandler {
   public static async postJadwal(c: Context): Promise<Response> {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
@@ -40,5 +40,19 @@ export default class JadwalSeminarKPHandler {
     }
 
     return c.json(jadwal);
+  }
+
+  public static async getRuanganOptions(c: Context): Promise<Response> {
+    const { email } = c.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    return c.json( await JadwalService.getRuanganOptions)
+  }
+
+  public static async getDosenOptions(c: Context): Promise<Response> {
+    const { email } = c.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    return c.json(await JadwalService.getDosensOptions)
   }
 }

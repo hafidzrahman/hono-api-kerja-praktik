@@ -6,6 +6,7 @@ export interface CreateJadwalInput {
   nim: string;
   nama_ruangan: string;
   id_pendaftaran_kp: string;
+  nip_penguji: string;
 }
 
 export interface UpdateJadwalInput {
@@ -15,6 +16,7 @@ export interface UpdateJadwalInput {
   waktu_selesai?: Date;
   status?: status_jadwal;
   nama_ruangan?: string;
+  nip_penguji?: string
 }
 
 export interface JadwalWithRelations {
@@ -48,7 +50,6 @@ export interface JadwalWithRelations {
     nama: string;
   } | null;
 }
-
 
 export interface LogJadwalInput {
   log_type: string;
