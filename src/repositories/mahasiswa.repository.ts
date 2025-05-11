@@ -1,4 +1,4 @@
-import { jenis_dokumen, status_dokumen } from "../generated/prisma";
+import { jenis_dokumen, mahasiswa, status_dokumen } from "../generated/prisma";
 import prisma from "../infrastructures/db.infrastructure";
 import { FindByEmailParamsInterface, FindByEmailReturnInterface, FindByNIMParamsInterface } from "../types/mahasiswa/repository.type";
 import { APIError } from "../utils/api-error.util";
@@ -13,10 +13,10 @@ export default class MahasiswaRepository {
         })
     }
 
-    public static async findByNIM({nim}: FindByNIMParamsInterface): Promise<FindByEmailReturnInterface | null> {
+    public static async findByNIM({nim}: FindByNIMParamsInterface): Promise<mahasiswa | null> {
         return await prisma.mahasiswa.findUnique({
             where: {
-                nim: nim
+                nim
             }
         })
     }
@@ -100,5 +100,18 @@ export default class MahasiswaRepository {
             allDokumenDivalidasi,
             statusDokumen
         }
+    }
+
+    public static async getJadwalMahasiswa(nim: string, date: Date): Promise<any[]> {
+        return prisma.jadwal.findMany({
+            where: {
+                tanggal: date,
+                nim: nim
+            },
+            include: {
+                ruangan: true,
+                pendaftaran_kp: true
+            }
+        })
     }
 }
