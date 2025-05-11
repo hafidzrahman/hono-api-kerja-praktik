@@ -1,8 +1,12 @@
+import { mahasiswa } from "../generated/prisma";
+import { isTimeOverlapping } from "../helpers/date.helper";
 import MahasiswaRepository from "../repositories/mahasiswa.repository"
 import { APIError } from "../utils/api-error.util";
 
 export default class MahasiswaService {
-  public static async checkLevelAccess(email: string) {
+  public static async checkLevelAccess(
+    email: string
+  ) {
     const {nim} = await MahasiswaRepository.findNIMByEmail(email)
     const {id, level_akses} = await MahasiswaRepository.getPendaftaranKP(nim)
 
@@ -19,7 +23,9 @@ export default class MahasiswaService {
     }
   }
 
-  public static async checkSeminarDocumentsValidation(nim: string): Promise<{
+  public static async checkSeminarDocumentsValidation(
+    nim: string
+  ): Promise<{
     canScheduleSeminar: boolean;
     pendaftaranId: string;
     missingOrInvalidDocuments: string[];
@@ -44,7 +50,9 @@ export default class MahasiswaService {
     }
   }
 
-  public static async verifikasiKelayakanSeminar(nim: string): Promise<{
+  public static async verifikasiKelayakanSeminar(
+    nim: string
+  ): Promise<{
     eligible: boolean;
     pendaftaran_id: string | null;
     errors: string[]
@@ -58,7 +66,7 @@ export default class MahasiswaService {
         let pendaftaran_id = id;
         
         if (level_akses < 5) {
-          errors.push(`Insufficient access level: current level is ${level_akses}, required level is 5`);
+          throw new APIError(`Level Akses terlalu rendah, sekarang masih level ${level_akses}, harus mencapai level 5`)
         }
       } catch (err: any) {
         errors.push(err.message || "Could not verify KP registration status");
@@ -79,6 +87,42 @@ export default class MahasiswaService {
       };
     } catch (error: any) {
       throw new APIError(error.message || "Error verifying seminar eligibility");
+    }
+  }
+
+  public static async validateMahasiswaExists(nim: string): Promise<mahasiswa> {
+    const mahasiswa = await MahasiswaRepository.findByNIM({nim});
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, mahasiswa tidak ditemukan! 😭`, 404);
+    }
+    return mahasiswa
+  }
+
+  public static async cekJadwalKonflikMahasiswa(
+    nim: string,
+    tanggal: Date,
+    waktu_mulai: Date,
+    waktu_selesai: Date
+  ): Promise<{
+    hasConflict: boolean,
+    conflicts: any[]
+  }> {
+    await this.validateMahasiswaExists(nim)
+
+    const jadwal = await MahasiswaRepository.getJadwalMahasiswa(nim, tanggal);
+
+    const conflicts = jadwal.filter((jadwal) => {
+      return isTimeOverlapping(
+        waktu_mulai,
+        waktu_selesai,
+        jadwal.waktu_mulai,
+        jadwal.waktu_selesai
+      )
+    })
+
+    return {
+      hasConflict: conflicts.length > 0,
+      conflicts
     }
   }
 }
