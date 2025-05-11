@@ -80,16 +80,16 @@ export default class SeminarKpService {
 
     const { dokumen_seminar_kp, ...data_mahasiswa } = dokumen;
 
-    const { jadwal, ...data_mahasiswa_tanpa_jadwal } = data_mahasiswa;
+    const { jadwal, ...data_saya } = data_mahasiswa;
 
     return {
       response: true,
       message: "Berhasil mendapatkan data seminar KP!, 😁",
       data: {
-        ...data_mahasiswa_tanpa_jadwal,
-        steps_info: stepInfo,
+        ...data_saya,
+        ...dokumenDenganHitungMundur,
         dokumen_seminar_kp: dokumensByStep,
-        hitung_mundur_jadwal: dokumenDenganHitungMundur,
+        steps_info: stepInfo,
       },
     };
   }
