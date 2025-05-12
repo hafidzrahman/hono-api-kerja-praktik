@@ -5,7 +5,7 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import { createDateTimeFromStrings, isEligibleForScheduling } from "../helpers/date.helper";
-import { CreateJadwalInput, JadwalWithRelations, LogJadwalInput, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
 
 export default class JadwalService {
   public static async postJadwal(data: CreateJadwalDto): Promise<jadwal> {
