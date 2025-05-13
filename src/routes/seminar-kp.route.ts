@@ -32,5 +32,6 @@ seminarKpRoute.get("/ruangan", AuthMiddleware.JWTBearerTokenExtraction, JadwalSe
 
 seminarKpRoute.post("/nilai/penguji", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createNilaiPenguji)
 seminarKpRoute.post("/nilai/pembimbing", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createNilaiPembimbing)
+seminarKpRoute.get("/nilai", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.getAllNilai)
 
 export default seminarKpRoute;
