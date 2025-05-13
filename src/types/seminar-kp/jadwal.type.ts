@@ -57,7 +57,7 @@ export interface LogJadwalInput {
   tanggal_baru: Date;
   ruangan_lama?: string | null;
   ruangan_baru: string;
-  keterangan?: string;
-  id_jadwal_seminar?: number | null;
+  keterangan: string;
+  id_jadwal: string | null;
   nip?: string | null;
 }
