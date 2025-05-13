@@ -89,11 +89,11 @@ model log_jadwal {
   log_type          String?
   tanggal_lama      DateTime? @db.Date
   tanggal_baru      DateTime  @db.Date
-  ruangan_lama      DateTime? @db.Date
-  ruangan_baru      DateTime  @db.Date
+  ruangan_lama      String?   
+  ruangan_baru      String  
   keterangan        String?   @db.VarChar(255)
   created_at        DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
-  id_jadwal_seminar Int?
+  id_jadwal         String?   @db.Uuid
   nip               String?   @db.VarChar(20)
 }
 
