@@ -1,5 +1,5 @@
 import NilaiRepository from "../repositories/nilai.repository";
-import { NilaiPengujiInput, NilaiPembimbingInput } from "../types/seminar-kp/nilai-seminar-kp.type";
+import { NilaiPengujiInput, NilaiPembimbingInput } from "../types/seminar-kp/nilai.type";
 
 export default class NilaiService {
 
