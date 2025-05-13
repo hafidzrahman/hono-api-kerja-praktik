@@ -1,3 +1,5 @@
+import { validasiStepDokumen } from "./dokumen-step.helper";
+
 export const hitungMundur = (targetDate: Date | null): string | null => {
   if (!targetDate) return null;
   
@@ -56,5 +58,8 @@ export default class JadwalHelper {
     }
 
   }
-
 }
+
+export const isEligibleForScheduling = async (id_pendaftaran_kp: string): Promise<boolean> => {
+  return await validasiStepDokumen(3, id_pendaftaran_kp);
+};
