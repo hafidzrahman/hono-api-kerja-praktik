@@ -61,3 +61,8 @@ export interface LogJadwalInput {
   id_jadwal: string | null;
   nip?: string | null;
 }
+
+export interface JadwalSayaParams {
+  nip: string;
+  tahun_ajaran: number;
+}
