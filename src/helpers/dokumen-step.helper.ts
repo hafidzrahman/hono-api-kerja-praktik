@@ -1,28 +1,49 @@
-import { jenis_dokumen } from "../generated/prisma";
+import { jadwal, jenis_dokumen } from "../generated/prisma";
 import SeminarKpRepository from "../repositories/seminar-kp.repository";
 import JadwalSeminarKPRepository from "../repositories/jadwal.repository";
 import { APIError } from "../utils/api-error.util";
 
-const DOKUMEN_STEP_1: jenis_dokumen[] = [jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, jenis_dokumen.FORM_KEHADIRAN_SEMINAR, jenis_dokumen.LAPORAN_TAMBAHAN_KP];
+const STEP_1: jenis_dokumen[] = [jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, jenis_dokumen.FORM_KEHADIRAN_SEMINAR, jenis_dokumen.LAPORAN_TAMBAHAN_KP];
 
-const DOKUMEN_STEP_2: jenis_dokumen[] = [jenis_dokumen.ID_SURAT_UNDANGAN];
+const STEP_2: jenis_dokumen[] = [jenis_dokumen.ID_SURAT_UNDANGAN];
 
-const DOKUMEN_STEP_3: jenis_dokumen[] = [jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP];
+const STEP_3: jenis_dokumen[] = [jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP];
 
-const DOKUMEN_STEP_5: jenis_dokumen[] = [jenis_dokumen.BERITA_ACARA_SEMINAR, jenis_dokumen.LEMBAR_PENGESAHAN_KP, jenis_dokumen.DAFTAR_HADIR_SEMINAR, jenis_dokumen.REVISI_DAILY_REPORT, jenis_dokumen.REVISI_LAPORAN_TAMBAHAN];
+const STEP_5: jenis_dokumen[] = [jenis_dokumen.BERITA_ACARA_SEMINAR, jenis_dokumen.LEMBAR_PENGESAHAN_KP, jenis_dokumen.DAFTAR_HADIR_SEMINAR, jenis_dokumen.REVISI_DAILY_REPORT, jenis_dokumen.REVISI_LAPORAN_TAMBAHAN];
+
+export const cekJadwalSelesai = async (id_pendaftaran_kp: string): Promise<boolean> => {
+  const jadwal = await JadwalSeminarKPRepository.getJadwalByPendaftaranId(id_pendaftaran_kp);
+
+  if (!jadwal) {
+    return false;
+  }
+
+  const now = new Date();
+  const tanggalJadwal = jadwal.tanggal;
+
+  if (!tanggalJadwal || !jadwal.waktu_selesai) {
+    return false;
+  }
+
+  const tanggalSelesai = new Date(tanggalJadwal.getFullYear(), tanggalJadwal.getMonth(), tanggalJadwal.getDate(), jadwal.waktu_selesai.getHours(), jadwal.waktu_selesai.getMinutes());
+
+  return now > tanggalSelesai;
+};
 
 export const validasiStepDokumen = async (step: number, id_pendaftaran_kp: string): Promise<boolean> => {
   let dokumenList: jenis_dokumen[] = [];
   switch (step) {
     case 1:
-      dokumenList = DOKUMEN_STEP_1;
+      dokumenList = STEP_1;
       break;
     case 2:
-      dokumenList = DOKUMEN_STEP_2;
+      dokumenList = STEP_2;
       break;
     case 3:
-      dokumenList = DOKUMEN_STEP_3;
+      dokumenList = STEP_3;
       break;
+    case 5:
+      return await cekJadwalSelesai(id_pendaftaran_kp);
     default:
       return false;
   }
@@ -40,32 +61,24 @@ export const validasiStepDokumen = async (step: number, id_pendaftaran_kp: strin
 export const validasiStepAksesDokumen = async (jenis: jenis_dokumen, id_pendaftaran_kp: string): Promise<void> => {
   let currentStep = 1;
 
-  if (DOKUMEN_STEP_2.includes(jenis)) {
+  if (STEP_2.includes(jenis)) {
     currentStep = 2;
     if (!(await validasiStepDokumen(1, id_pendaftaran_kp))) {
       throw new APIError("Waduh, Berkas Pendaftaran kamu belum divalidasi nih! 😭", 403);
     }
-  } else if (DOKUMEN_STEP_3.includes(jenis)) {
+  } else if (STEP_3.includes(jenis)) {
     currentStep = 3;
     if (!(await validasiStepDokumen(2, id_pendaftaran_kp))) {
       throw new APIError("Waduh, ID Surat Undangan kamu belum divalidasi nih! 😭", 403);
     }
-  } else if (DOKUMEN_STEP_5.includes(jenis)) {
+  } else if (STEP_5.includes(jenis)) {
     currentStep = 5;
     if (!(await validasiStepDokumen(3, id_pendaftaran_kp))) {
       throw new APIError("Waduh, Surat Undangan kamu belum divalidasi nih! 😭", 403);
     }
 
-    const jadwal = await JadwalSeminarKPRepository.getJadwalByPendaftaranId(id_pendaftaran_kp);
-
-    if (!jadwal) {
-      throw new APIError("Waduh, kamu belum dapat jadwal nih! 😭", 403);
-    }
-
-    const jadwalSelesai = jadwal.tanggal && jadwal.tanggal < new Date() && new Date(`${jadwal.tanggal.toISOString().split("T")[0]}T${jadwal.waktu_selesai}`) < new Date();
-
-    if (!jadwalSelesai) {
-      throw new APIError("Waduh, Berkas Pasca Seminar kamu belum divalidasi nih! 😭", 403);
+    if (!(await cekJadwalSelesai(id_pendaftaran_kp))) {
+      throw new APIError("Waduh, Seminar KP kamu selesai nih! 😭", 403);
     }
   }
 };
@@ -75,35 +88,30 @@ export const stepAkses = async (step: number, id_pendaftaran_kp: string): Promis
     return true;
   }
 
+  if (step === 5) {
+    const isValidStep3 = await validasiStepDokumen(3, id_pendaftaran_kp);
+
+    const isJadwalSelesai = await cekJadwalSelesai(id_pendaftaran_kp);
+
+    return isValidStep3 && isJadwalSelesai;
+  }
+
   if (step > 1) {
     const isValid = await validasiStepDokumen(step - 1, id_pendaftaran_kp);
     return isValid === true;
-  }
-
-  if (step === 5) {
-    const jadwal = await JadwalSeminarKPRepository.getJadwalByPendaftaranId(id_pendaftaran_kp);
-
-    if (!jadwal) {
-      return false;
-    }
-
-    const jadwalSelesai = jadwal.tanggal && jadwal.tanggal < new Date() && new Date(`${jadwal.tanggal.toISOString().split("T")[0]}T${jadwal.waktu_selesai}`) < new Date();
-
-    const isValid = await validasiStepDokumen(3, id_pendaftaran_kp);
-    return jadwalSelesai && isValid === true;
   }
 
   return false;
 };
 
 export const getStepForDokumen = (jenis: jenis_dokumen): number => {
-  if (DOKUMEN_STEP_1.includes(jenis)) {
+  if (STEP_1.includes(jenis)) {
     return 1;
-  } else if (DOKUMEN_STEP_2.includes(jenis)) {
+  } else if (STEP_2.includes(jenis)) {
     return 2;
-  } else if (DOKUMEN_STEP_3.includes(jenis)) {
+  } else if (STEP_3.includes(jenis)) {
     return 3;
-  } else if (DOKUMEN_STEP_5.includes(jenis)) {
+  } else if (STEP_5.includes(jenis)) {
     return 5;
   }
 
