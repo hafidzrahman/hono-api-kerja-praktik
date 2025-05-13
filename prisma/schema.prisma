@@ -82,6 +82,7 @@ model jadwal {
   pendaftaran_kp    pendaftaran_kp? @relation(fields: [id_pendaftaran_kp], references: [id], onDelete: NoAction, onUpdate: NoAction)
   ruangan           ruangan?        @relation(fields: [nama_ruangan], references: [nama], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa         mahasiswa?      @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
+  nilai nilai[]
 }
 
 model log_jadwal {
@@ -130,6 +131,7 @@ model nilai {
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
   dosen               dosen?               @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  jadwal_seminar      jadwal?              @relation(fields: [id_jadwal_seminar], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model pembimbing_instansi {
@@ -216,6 +218,7 @@ model komponen_penilaian_pembimbing {
   bimbingan_sikap      Float?
   kualitas_laporan     Float?
   catatan              String?
+  created_at           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
   id_nilai             String? @db.Uuid
   nilai                nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -226,6 +229,7 @@ model komponen_penilaian_penguji {
   kemampuan_presentasi Float?
   kesesuaian_urgensi   Float?
   catatan              String?
+  created_at           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
   id_nilai             String? @db.Uuid
   nilai                nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
