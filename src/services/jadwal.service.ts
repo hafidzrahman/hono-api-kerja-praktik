@@ -4,8 +4,9 @@ import MahasiswaService from "./mahasiswa.service";
 import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
-import { createDateTimeFromStrings, isEligibleForScheduling } from "../helpers/date.helper";
+import { createDateTimeFromStrings } from "../helpers/date.helper";
 import { CreateJadwalInput, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
+import { isEligibleForScheduling } from "../helpers/jadwal.helper";
 
 export default class JadwalService {
   public static async postJadwal(data: CreateJadwalDto): Promise<jadwal> {
@@ -77,9 +78,13 @@ export default class JadwalService {
 
     await JadwalRepository.logJadwalChanges({
       log_type: "CREATE",
+      tanggal_lama: null,
       tanggal_baru: tanggal,
-      ruangan_baru: data.nama_ruangan || "",
-      keterangan: `Pembuatan jadwal untuk NIM ${data.nim}`,
+      ruangan_lama: null,
+      ruangan_baru: data.nama_ruangan,
+      keterangan: `Pembuatan jadwal baru untuk NIM ${data.nim}`,
+      id_jadwal: createdJadwal.id,
+      nip: data.nip_penguji
     });
 
     return createdJadwal;
@@ -180,7 +185,6 @@ export default class JadwalService {
     };
 
     const updatedJadwal = await JadwalRepository.putJadwal(updateInput);
-
     await JadwalRepository.logJadwalChanges({
       log_type: "UPDATE",
       tanggal_lama: existingJadwal.tanggal,
@@ -188,6 +192,7 @@ export default class JadwalService {
       ruangan_lama: existingJadwal.nama_ruangan,
       ruangan_baru: data.nama_ruangan || "",
       keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}${data.nip_penguji ? ` dengan pembaruan dosen penguji ${data.nip_penguji}` : ''}`,
+      id_jadwal: existingJadwal.id,
       nip: data.nip_penguji || existingJadwal.pendaftaran_kp?.nip_penguji || null,
     });
 
