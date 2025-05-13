@@ -8,6 +8,14 @@ export default class DosenService {
     return DosenRepository.findByNIP({nip})
   }
 
+  public static async getDosenByEmail(email: string): Promise<dosen>{
+    const dosen = await DosenRepository.findByEmail({email});
+    if (!dosen) {
+      throw new APIError(`Waduh, Dosen dengan email ${email} tidak ditemukan!`, 404);
+    }
+    return dosen;
+  }
+
   public static async validateDosenExists(nip: string): Promise<dosen> {
     const dosen = await DosenRepository.findByNIP({nip})
     if (!dosen) {
