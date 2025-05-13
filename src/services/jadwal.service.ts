@@ -5,8 +5,8 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import { createDateTimeFromStrings } from "../helpers/date.helper";
-import { CreateJadwalInput, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
-import { isEligibleForScheduling } from "../helpers/jadwal.helper";
+import { CreateJadwalInput, JadwalSayaParams, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
+import JadwalHelper from "../helpers/jadwal.helper";
 
 export default class JadwalService {
   public static async postJadwal(data: CreateJadwalDto): Promise<jadwal> {
@@ -16,7 +16,7 @@ export default class JadwalService {
     const waktu_selesai = new Date(waktu_mulai);
     waktu_selesai.setHours(waktu_selesai.getHours() + 1);
 
-    const isStudentEligible = await isEligibleForScheduling(data.id_pendaftaran_kp);
+    const isStudentEligible = await JadwalHelper.isEligibleForScheduling(data.id_pendaftaran_kp);
     if (!isStudentEligible) {
       throw new APIError(`Waduh, dokumen nya belum divalidasi ni! 😭`, 400);
     }
@@ -93,7 +93,7 @@ export default class JadwalService {
   public static async putJadwal(data: UpdateJadwalDto): Promise<jadwal> {
     const existingJadwal = await JadwalRepository.getJadwalById(data.id);
     if (!existingJadwal) {
-      throw new APIError("Jadwal tidak ditemukan", 404);
+      throw new APIError("Waduh, Jadwal tidak ditemukan", 404);
     }
 
     let tanggal = existingJadwal.tanggal;
@@ -205,5 +205,39 @@ export default class JadwalService {
 
   public static async getDosensOptions(): Promise<{nip: string, nama: string}[]> {
     return JadwalRepository.getDosens();
+  }
+
+  public static async getJadwalMahasiswaSaya(email: string) {
+    const dosen = await DosenService.getDosenByEmail(email)
+
+    if (!dosen) {
+      throw new APIError(`Waduh, Dosen tidak ditemukan! 😭`, 404);
+    }
+
+    const { statistics, jadwalHariIni, semuaJadwal, mahasiswaDinilaiMap } = await JadwalRepository.getJadwalMahasiswaSaya(dosen.nip);
+
+    const formattedJadwalHariIni = jadwalHariIni.map(jadwal => 
+      JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap)
+    );
+
+    const formattedSemuaJadwal = semuaJadwal.map(jadwal => 
+      JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap)
+    );
+
+    const resolvedSemuaJadwal = await Promise.all(formattedSemuaJadwal);
+    resolvedSemuaJadwal.sort((a, b) => {
+      if (!a.tanggal || !b.tanggal) return 0;
+      return new Date(a.tanggal).getTime() - new Date(b.tanggal).getTime();
+    });
+
+    return {
+      statistics,
+      jadwalHariIni: formattedJadwalHariIni,
+      semuaJadwal: formattedSemuaJadwal,
+    };
+  }
+
+  public static async getTahunAjaran() {
+    return JadwalRepository.getTahunAjaran()
   }
 }
