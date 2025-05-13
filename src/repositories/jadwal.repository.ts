@@ -112,13 +112,13 @@ export default class JadwalRepository {
     return prisma.log_jadwal.create({
       data: {
         log_type: data.log_type,
-        tanggal_lama: data.tanggal_lama,
+        tanggal_lama: data.tanggal_lama || null,
         tanggal_baru: data.tanggal_baru,
-        ruangan_lama: data.ruangan_lama,
+        ruangan_lama: data.ruangan_lama || null,
         ruangan_baru: data.ruangan_baru,
         keterangan: data.keterangan,
-        id_jadwal_seminar: data.id_jadwal_seminar,
-        nip: data.nip,
+        id_jadwal: data.id_jadwal,
+        nip: data.nip || null,
         created_at: new Date(),
       },
     });
