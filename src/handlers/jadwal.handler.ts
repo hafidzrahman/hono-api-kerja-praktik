@@ -21,19 +21,22 @@ export default class JadwalHandler {
 
     const id = c.req.param("id");
     if (!id) {
-      return c.json({
-        success: false,
-        message: "ID jadwal diperlukan",
-      },400);
+      return c.json(
+        {
+          success: false,
+          message: "ID jadwal diperlukan",
+        },
+        400
+      );
     }
 
-    const body = await c.req.json()
+    const body = await c.req.json();
     const data = updateJadwalSchema.parse({
       body,
-      id
-    })
+      id,
+    });
 
-    const jadwal = await JadwalService.putJadwal(data)
+    const jadwal = await JadwalService.putJadwal(data);
 
     if (!jadwal) {
       return c.json({ success: false, message: "Jadwal tidak ditemukan" }, 404);
@@ -42,17 +45,33 @@ export default class JadwalHandler {
     return c.json(jadwal);
   }
 
-  public static async getRuanganOptions(c: Context): Promise<Response> {
+  public static async getRuanganOptions(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json( await JadwalService.getRuanganOptions)
+    return c.json(await JadwalService.getRuanganOptions);
   }
 
-  public static async getDosenOptions(c: Context): Promise<Response> {
+  public static async getDosenOptions(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await JadwalService.getDosensOptions)
+    return c.json(await JadwalService.getDosensOptions);
+  }
+
+  public static async getJadwalMahasiswaSaya(c: Context) {
+    const { email } = c.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    const result = await JadwalService.getJadwalMahasiswaSaya(email);
+
+    return c.json(result);
+  }
+
+  public static async getTahunAjaran(c: Context) {
+    const { email } = c.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    return c.json(await JadwalService.getTahunAjaran);
   }
 }
