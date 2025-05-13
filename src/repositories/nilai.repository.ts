@@ -1,4 +1,6 @@
+import { tr } from "date-fns/locale";
 import prisma from "../infrastructures/db.infrastructure";
+import { APIError } from "../utils/api-error.util";
 
 export default class NilaiRepository {
   public static async createNilaiPenguji(
@@ -106,5 +108,104 @@ export default class NilaiRepository {
         nilai_akhir: nilaiAkhir,
       },
     });
+  }
+
+  public static async getTahunAjaranSekarang() {
+    return prisma.tahun_ajaran.findFirst({
+      orderBy: {
+        id: 'desc'
+      }
+    })
+  }
+
+  public static async getAllMahasiswaNilai() {
+    const tahunAjaranSekarang = await this.getTahunAjaranSekarang();
+
+    if (!tahunAjaranSekarang) {
+      throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
+    }
+
+    const mahasiswaData = await prisma.mahasiswa.findMany({
+      select: {
+        nim: true,
+        nama: true,
+        pendaftaran_kp: {
+          where: {
+            id_tahun_ajaran: tahunAjaranSekarang.id,
+          },
+          select: {
+            id: true,
+            status: true,
+            kelas_kp: true,
+            instansi: {
+              select: {
+                nama: true,
+              }
+            },
+            pembimbing_instansi: {
+              select: {
+                nama: true,
+              }
+            },
+            dosen_pembimbing: {
+              select: {
+                nama: true
+              }
+            },
+            dosen_penguji: {
+              select: {
+                nama: true
+              }
+            },
+            dokumen_seminar_kp: {
+              select: {
+                status: true
+              }
+            }
+          }
+        },
+        nilai: {
+          select: {
+            id: true,
+            nilai_instansi: true,
+            nilai_pembimbing: true,
+            nilai_penguji: true,
+            nilai_akhir: true,
+            komponen_penilaian_instansi: {
+              select: {
+                deliverables: true,
+                ketepatan_waktu: true,
+                kedisiplinan: true,
+                attitude: true,
+                kerjasama_tim: true,
+                inisiatif: true,
+                masukan: true,
+              }
+            },
+            komponen_penilaian_pembimbing: {
+              select: {
+                penyelesaian_masalah: true,
+                bimbingan_sikap: true,
+                kualitas_laporan: true,
+                catatan: true
+              }
+            },
+            komponen_penilaian_penguji: {
+              select: {
+                penguasaan_keilmuan: true,
+                kemampuan_presentasi: true,
+                kesesuaian_urgensi: true,
+                catatan: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    return {
+      mahasiswaData,
+      tahunAjaran: tahunAjaranSekarang
+    }
   }
 }
