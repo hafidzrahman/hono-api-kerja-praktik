@@ -4,7 +4,7 @@ import SeminarKpRepository from "../repositories/seminar-kp.repository";
 import { CreateDokumenSeminarKPInput } from "../types/seminar-kp/dokumen.type";
 import { APIError } from "../utils/api-error.util";
 import { getCurrentStep, getStepForDokumen, stepAkses, validasiStepAksesDokumen } from "../helpers/dokumen-step.helper";
-import JadwalHelper, { tambahHitungMundurJadwal } from "../helpers/jadwal.helper";
+import JadwalHelper from "../helpers/jadwal.helper";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 
 export default class SeminarKpService {
@@ -75,18 +75,14 @@ export default class SeminarKpService {
     };
 
     const dokumenDenganHitungMundur = {
-      jadwal: tambahHitungMundurJadwal(dokumen.jadwal),
+      jadwal: JadwalHelper.tambahHitungMundurJadwal(dokumen.jadwal),
     };
-
-    const { dokumen_seminar_kp, ...data_mahasiswa } = dokumen;
-
-    const { jadwal, ...data_saya } = data_mahasiswa;
 
     return {
       response: true,
       message: "Berhasil mendapatkan data seminar KP!, 😁",
       data: {
-        ...data_saya,
+        ...dokumen,
         ...dokumenDenganHitungMundur,
         dokumen_seminar_kp: dokumensByStep,
         steps_info: stepInfo,
