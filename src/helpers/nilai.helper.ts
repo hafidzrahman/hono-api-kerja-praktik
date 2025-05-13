@@ -1,91 +1,51 @@
-import { KomponenPenilaianInstansi, KomponenPenilaianPembimbing, KomponenPenilaianPenguji } from "../types/seminar-kp/nilai-seminar-kp.type";
-
-export const hitungNilaiInstansi = (komponenPenilaian: KomponenPenilaianInstansi): number => {
-  const { deliverables, ketepatan_waktu, kedisiplinan, attitude, kerjasama_tim, inisiatif } = komponenPenilaian;
-
-  // Bobot komponen penilaian instansi
-  const nilai = deliverables * 0.15 + ketepatan_waktu * 0.1 + kedisiplinan * 0.15 + attitude * 0.15 + kerjasama_tim * 0.25 + inisiatif * 0.2;
-
-  return Number(nilai.toFixed(2));
+export const validateNilaiInput = (nilai: number, fieldName: string) => {
+  if (nilai < 0 || nilai > 100) {
+    throw new Error(`${fieldName} harus bernilai antara 0 dan 100`);
+  }
+  return true;
 };
 
-export const hitungNilaiPembimbing = (komponenPenilaian: KomponenPenilaianPembimbing): number => {
-  const { penyelesaian_masalah, bimbingan_sikap, kualitas_laporan } = komponenPenilaian;
+export const calculateNilaiPenguji = (
+  penguasaanKeilmuan: number,
+  kemampuanPresentasi: number,
+  kesesuaianUrgensi: number
+) => {
+  validateNilaiInput(penguasaanKeilmuan, "Penguasaan Keilmuan");
+  validateNilaiInput(kemampuanPresentasi, "Kemampuan Presentasi");
+  validateNilaiInput(kesesuaianUrgensi, "Kesesuaian Urgensi");
 
-  // Bobot komponen penilaian pembimbing
-  const nilai = penyelesaian_masalah * 0.4 + bimbingan_sikap * 0.35 + kualitas_laporan * 0.25;
-
-  return Number(nilai.toFixed(2));
+  return (
+    penguasaanKeilmuan * 0.4 + 
+    kemampuanPresentasi * 0.2 + 
+    kesesuaianUrgensi * 0.4
+  );
 };
 
-export const hitungNilaiPenguji = (komponenPenilaian: KomponenPenilaianPenguji): number => {
-  const { penguasaan_keilmuan, kemampuan_presentasi, kesesuaian_urgensi } = komponenPenilaian;
+export const calculateNilaiPembimbing = (
+  penyelesaianMasalah: number,
+  bimbinganSikap: number,
+  kualitasLaporan: number
+) => {
+  validateNilaiInput(penyelesaianMasalah, "Penyelesaian Masalah");
+  validateNilaiInput(bimbinganSikap, "Bimbingan Sikap");
+  validateNilaiInput(kualitasLaporan, "Kualitas Laporan");
 
-  // Bobot komponen penilaian penguji
-  const nilai = penguasaan_keilmuan * 0.4 + kemampuan_presentasi * 0.2 + kesesuaian_urgensi * 0.4;
-
-  return Number(nilai.toFixed(2));
+  return (
+    penyelesaianMasalah * 0.4 + 
+    bimbinganSikap * 0.35 + 
+    kualitasLaporan * 0.25
+  );
 };
 
-export const hitungNilaiAkhir = (nilaiPembimbing?: number, nilaiPenguji?: number, nilaiInstansi?: number): number | null => {
-  // Pastikan semua nilai tersedia untuk menghitung nilai akhir
-  if (!nilaiPembimbing && !nilaiPenguji && !nilaiInstansi) {
+export const calculateNilaiAkhir = (
+  nilaiPenguji: number | null = 0,
+  nilaiPembimbing: number | null = 0,
+  nilaiInstansi: number | null = 0
+) => {
+  if (nilaiPenguji === null || nilaiPembimbing === null || nilaiInstansi === null) {
     return null;
   }
 
-  // Nilai awal
-  let nilaiAkhir = 0;
-  let pembagi = 0;
-
-  // Menambahkan komponen nilai yang tersedia dengan bobotnya
-  if (nilaiPembimbing !== undefined && nilaiPembimbing !== null) {
-    nilaiAkhir += nilaiPembimbing * 0.4;
-    pembagi += 0.4;
-  }
-
-  if (nilaiPenguji !== undefined && nilaiPenguji !== null) {
-    nilaiAkhir += nilaiPenguji * 0.2;
-    pembagi += 0.2;
-  }
-
-  if (nilaiInstansi !== undefined && nilaiInstansi !== null) {
-    nilaiAkhir += nilaiInstansi * 0.4;
-    pembagi += 0.4;
-  }
-
-  // Jika tidak ada nilai yang tersedia, kembalikan null
-  if (pembagi === 0) {
-    return null;
-  }
-
-  // Menyesuaikan nilai berdasarkan komponen yang tersedia
-  nilaiAkhir = nilaiAkhir / pembagi;
-
-  return Number(nilaiAkhir.toFixed(2));
-};
-
-export const validateKomponenPenilaianInstansi = (komponenPenilaian: KomponenPenilaianInstansi): boolean => {
-  const { deliverables, ketepatan_waktu, kedisiplinan, attitude, kerjasama_tim, inisiatif } = komponenPenilaian;
-
-  // Validasi rentang nilai (0-100)
-  return isValidNilai(deliverables) && isValidNilai(ketepatan_waktu) && isValidNilai(kedisiplinan) && isValidNilai(attitude) && isValidNilai(kerjasama_tim) && isValidNilai(inisiatif);
-};
-
-export const validateKomponenPenilaianPembimbing = (komponenPenilaian: KomponenPenilaianPembimbing): boolean => {
-  const { penyelesaian_masalah, bimbingan_sikap, kualitas_laporan } = komponenPenilaian;
-
-  // Validasi rentang nilai (0-100)
-  return isValidNilai(penyelesaian_masalah) && isValidNilai(bimbingan_sikap) && isValidNilai(kualitas_laporan);
-};
-
-export const validateKomponenPenilaianPenguji = (komponenPenilaian: KomponenPenilaianPenguji): boolean => {
-  const { penguasaan_keilmuan, kemampuan_presentasi, kesesuaian_urgensi } = komponenPenilaian;
-
-  // Validasi rentang nilai (0-100)
-  return isValidNilai(penguasaan_keilmuan) && isValidNilai(kemampuan_presentasi) && isValidNilai(kesesuaian_urgensi);
-};
-
-// Helper untuk validasi nilai (0-100)
-const isValidNilai = (nilai: number): boolean => {
-  return nilai >= 0 && nilai <= 100;
+  // Penguji: 20%, Pembimbing: 40%, Instansi: 40%
+  return nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4;
 };
