@@ -1,6 +1,6 @@
 import prisma from "../infrastructures/db.infrastructure";
 import { jadwal, log_jadwal, status_jadwal } from "../generated/prisma";
-import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelations } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelations, JadwalSayaParams } from "../types/seminar-kp/jadwal.type";
 
 export default class JadwalRepository {
   public static async postJadwal(data: CreateJadwalInput): Promise<jadwal> {
@@ -24,12 +24,12 @@ export default class JadwalRepository {
       await prisma.pendaftaran_kp.update({
         where: { id: data.id_pendaftaran_kp },
         data: {
-          nip_penguji: data.nip_penguji
-        }
+          nip_penguji: data.nip_penguji,
+        },
       });
     }
 
-    return jadwal
+    return jadwal;
   }
 
   public static async putJadwal(data: UpdateJadwalInput): Promise<jadwal> {
@@ -54,20 +54,20 @@ export default class JadwalRepository {
     if (data.nip_penguji) {
       const jadwal = await prisma.jadwal.findUnique({
         where: { id: data.id },
-        select: { id_pendaftaran_kp: true }
+        select: { id_pendaftaran_kp: true },
       });
 
       if (jadwal?.id_pendaftaran_kp) {
         await prisma.pendaftaran_kp.update({
           where: { id: jadwal.id_pendaftaran_kp },
           data: {
-            nip_penguji: data.nip_penguji
-          }
+            nip_penguji: data.nip_penguji,
+          },
         });
       }
     }
 
-    return jadwal
+    return jadwal;
   }
 
   public static async getJadwalById(id: string): Promise<JadwalWithRelations | null> {
@@ -132,22 +132,16 @@ export default class JadwalRepository {
     });
   }
 
-  public static getDosens(): Promise<{nip: string, nama: string}[]> {
+  public static getDosens(): Promise<{ nip: string; nama: string }[]> {
     return prisma.dosen.findMany({
       select: {
         nip: true,
         nama: true,
-      }
-    })
+      },
+    });
   }
 
-  public static async checkRuanganAvailability(
-    nama_ruangan: string,
-    tanggal: Date,
-    waktu_mulai: Date,
-    waktu_selesai: Date,
-    excludeJadwalId?: string
-  ): Promise<boolean> {
+  public static async checkRuanganAvailability(nama_ruangan: string, tanggal: Date, waktu_mulai: Date, waktu_selesai: Date, excludeJadwalId?: string): Promise<boolean> {
     const conflicts = await prisma.jadwal.findMany({
       where: {
         nama_ruangan,
@@ -177,46 +171,131 @@ export default class JadwalRepository {
         id_pendaftaran_kp: id_pendaftaran_kp,
       },
       include: {
-        ruangan: true
-      }
+        ruangan: true,
+      },
     });
   }
 
   public static async getPendaftaranKpById(id_pendaftaran_kp: string) {
     return await prisma.pendaftaran_kp.findFirst({
       where: {
-        id: id_pendaftaran_kp
-      }
-    })
-  }
-
-  public static async getPendaftaranKPById(id: string) {
-    return prisma.pendaftaran_kp.findUnique({
-      where: { id },
-      include: {
-        dosen_pembimbing: {
-          select: {
-            nip: true,
-            nama: true,
-            email: true,
-          },
-        },
-        dosen_penguji: {
-          select: {
-            nip: true,
-            nama: true,
-            email: true,
-          },
-        },
-        mahasiswa: {
-          select: {
-            nim: true,
-            nama: true,
-            email: true,
-          },
-        },
+        id: id_pendaftaran_kp,
       },
     });
   }
 
+  public static async getJadwalMahasiswaSaya(nip: string) {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    const jadwal = {
+      where: {
+        pendaftaran_kp: {
+          nip_penguji: nip,
+        },
+      },
+      include: {
+        pendaftaran_kp: {
+          include: {
+            mahasiswa: true,
+            dosen_pembimbing: {
+              select: {
+                nama: true,
+                nip: true,
+              },
+            },
+            pembimbing_instansi: {
+              select: {
+                nama: true,
+                email: true,
+              },
+            },
+            instansi: {
+              select: {
+                nama: true,
+                alamat: true,
+              },
+            },
+            tahun_ajaran: {
+              select: {
+                nama: true,
+              },
+            },
+          },
+        },
+        ruangan: true,
+      },
+    };
+
+    const allJadwal = await prisma.jadwal.findMany(jadwal);
+
+    const todayJadwal = await prisma.jadwal.findMany({
+      ...jadwal,
+      where: {
+        ...jadwal.where,
+        tanggal: currentDate,
+      },
+    });
+
+    const mahasiswaNimList = allJadwal.map(jadwal => jadwal.pendaftaran_kp?.mahasiswa?.nim).filter(Boolean) as string[];
+
+    const nilai = await prisma.nilai.findMany({
+      where: {
+        nim: {
+          in: mahasiswaNimList,
+        },
+        nip,
+      },
+      select: {
+        nim: true,
+        nilai_penguji: true,
+      },
+    });
+
+    const mahasiswaDinilaiMap = new Map();
+    nilai.forEach(nilai => {
+      if (nilai.nilai_penguji !== null && nilai.nim) {
+        mahasiswaDinilaiMap.set(nilai.nim, true);
+      }
+    });
+
+    const totalMahasiswa = allJadwal.length;
+    const mahasiswaDinilai = mahasiswaDinilaiMap.size;
+    const mahasiswaBelumDinilai = totalMahasiswa - mahasiswaDinilai;
+    const persentaseDinilai = totalMahasiswa ? Math.round((mahasiswaDinilai / totalMahasiswa) * 100) : 0;
+
+    return {
+      statistics: {
+        totalMahasiswa,
+        mahasiswaDinilai,
+        mahasiswaBelumDinilai,
+        persentaseDinilai,
+      },
+      jadwalHariIni: todayJadwal,
+      semuaJadwal: allJadwal,
+      mahasiswaDinilaiMap: Object.fromEntries(mahasiswaDinilaiMap),
+    };
+  }
+
+  public static async getTahunAjaran() {
+    return prisma.tahun_ajaran.findMany({
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+
+  public static async getAllJadwal() {
+    const jadwal = await prisma.jadwal.findMany({
+      include: {
+        mahasiswa: {
+          select: {
+            nim: true,
+            nama: true,
+            email: true
+          }
+        }
+      },
+    })
+  }
 }
