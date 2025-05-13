@@ -1,24 +1,22 @@
 import { validasiStepDokumen } from "./dokumen-step.helper";
 
-// export function formatDate(date: Date): string {
-//   return date.toISOString().split('T')[0];
-// }
-
-// export function formatTime(date: Date): string {
-//   return date.toISOString().split('T')[1].substring(0, 5);
-// }
-
-export function isTimeOverlapping(
+export const isTimeOverlapping = (
   start1: Date,
   end1: Date,
   start2: Date,
   end2: Date
-): boolean {
+): boolean => {
   return start1 < end2 && start2 < end1;
-}
+};
 
 export const parseDate = (dateString: string): Date => {
-  return new Date(dateString);
+  const date = new Date(dateString)
+  const jakartaOffset = 7 * 60;
+  const localOffset = date.getTimezoneOffset()
+
+  const totalOffsetMinutes = localOffset + jakartaOffset;
+  date.setMinutes(date.getMinutes() + totalOffsetMinutes);
+  return date;
 }
 
 export const parseTime = (dateString: string, timeString: string): Date => {
@@ -41,34 +39,49 @@ export const createDateTimeFromStrings = (dateStr: string, timeStr: string): Dat
   const [year, month, day] = dateStr.split("-").map(Number);
   const [hour, minute] = timeStr.split(":").map(Number);
   
-  return new Date(year, month - 1, day, hour, minute);
+  return new Date(year, month - 1, day, hour, minute, 0, 0);
 };
 
-export const isEligibleForScheduling = async (id_pendaftaran_kp: string): Promise<boolean> => {
-  return await validasiStepDokumen(3, id_pendaftaran_kp);
+export const preserveLocalTime = (dateTime: Date): Date => {
+  const year = dateTime.getFullYear();
+  const month = dateTime.getMonth();
+  const day = dateTime.getDate();
+  const hours = dateTime.getHours();
+  const minutes = dateTime.getMinutes();
+  
+  return new Date(year, month, day, hours, minutes, 0, 0);
 };
 
 export const formatDateTime = (date: Date): string => {
-  return date.toLocaleDateString("id-ID", {
+  const options: Intl.DateTimeFormatOptions = {
     day: "numeric",
     month: "long",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  });
+    timeZone: "Asia/Jakarta"
+  };
+  
+  return date.toLocaleDateString("id-ID", options);
 };
 
 export const formatDate = (date: Date): string => {
-  return date.toLocaleDateString("id-ID", {
+  const options: Intl.DateTimeFormatOptions = {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+    timeZone: "Asia/Jakarta"
+  };
+  
+  return date.toLocaleDateString("id-ID", options);
 };
 
 export const formatTime = (date: Date): string => {
-  return date.toLocaleTimeString("id-ID", {
+  const options: Intl.DateTimeFormatOptions = {
     hour: "2-digit",
     minute: "2-digit",
-  });
+    timeZone: "Asia/Jakarta"
+  };
+  
+  return date.toLocaleTimeString("id-ID", options);
 };
