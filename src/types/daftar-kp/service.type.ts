@@ -1,5 +1,5 @@
 import { CommonResponse } from "../global.type";
-import { jenis_instansi, pendaftaran_kp } from "../../generated/prisma";
+import { instansi, jenis_instansi, pendaftaran_kp } from "../../generated/prisma";
 import { RepositoryRiwayatPendaftaranKPInterface } from "./repository.type";
 
 export interface CreatePermohonanPendaftaranKPInterface {
@@ -35,6 +35,10 @@ export interface GetBerkasMahasiswa extends CommonResponse {
     }
 }
 
-export interface getPendaftaranKPTerbaru extends CommonResponse {
+export interface GetPendaftaranKPTerbaru extends CommonResponse {
     data : pendaftaran_kp | null
+}
+
+export interface GetPendingDataInstansi extends CommonResponse {
+    data : instansi[]
 }

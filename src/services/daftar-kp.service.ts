@@ -3,14 +3,72 @@ import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import DaftarKPRepository from "../repositories/daftar-kp.repository";
 import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import { RepositoryRiwayatPendaftaranKPInterface } from "../types/daftar-kp/repository.type";
-import { CreatePermohonanPendaftaranKPInterface, CreatePermohonanPendaftaranInstansiInterface, GetRiwayatPendaftaranKP, GetBerkasMahasiswa, getPendaftaranKPTerbaru } from "../types/daftar-kp/service.type";
+import { CreatePermohonanPendaftaranKPInterface, CreatePermohonanPendaftaranInstansiInterface, GetRiwayatPendaftaranKP, GetBerkasMahasiswa, GetPendaftaranKPTerbaru, GetPendingDataInstansi } from "../types/daftar-kp/service.type";
 import { CommonResponse } from "../types/global.type";
 import { APIError } from "../utils/api-error.util";
 
 export default class DaftarKPService {
 
-    public static async getKPTerbaruMahasiswa(email : string) : Promise<getPendaftaranKPTerbaru> {
-        const dataMhs = await MahasiswaRepository.findByEmail({email})
+    public static async postTolakBerkasMahasiswa(id : string, message : string = "") : Promise<CommonResponse> {
+        const dataKP = await DaftarKPRepository.getPendaftaranKPById(id)
+
+        if (!dataKP) {
+            throw new APIError("Data kerja praktek tidak ditemukan", 404);
+        } else if (dataKP.level_akses % 2 !== 0) {
+            throw new APIError("Level akses mahasiswa tidak memenuhi syarat")
+        }
+
+        await DaftarKPRepository.postTolakBerkasMahasiswa(dataKP.id, message);
+
+        return {
+            response : true,
+            message : "Berkas mahasiswa berhasil ditolak"
+        }
+    }
+
+    public static async deleteDataInstansi(id : string) : Promise<CommonResponse> {
+        const dataInstansi = await DaftarKPRepository.findInstansiById(id);
+
+        if (!dataInstansi) {
+            throw new APIError("Data instansi tidak ditemukan", 404)
+        }
+
+        await DaftarKPRepository.deleteDataInstansi(dataInstansi.id);
+
+        return {
+            response : true,
+            message : "Data instansi berhasil dihapus"
+        }
+    }
+
+    public static async postPendingDataInstansi(id : string) : Promise<CommonResponse> {
+        const dataInstansi = await DaftarKPRepository.findInstansiById(id);
+
+        if (!dataInstansi) {
+            throw new APIError("Data instansi tidak ditemukan", 404)
+        }
+
+        await DaftarKPRepository.postPendingDataInstansi(dataInstansi.id);
+
+        return {
+            response : true,
+            message : "Data instansi berhasil disimpan"
+        }
+    }
+
+    public static async getPendingDataInstansi() : Promise<GetPendingDataInstansi> {
+        const data = await DaftarKPRepository.getPendingDataInstansi();
+
+        return {
+            response : true,
+            message : "Data instansi berhasil didapatkan",
+            data
+        }
+
+    }
+
+    public static async getKPTerbaruMahasiswa(email : string) : Promise<GetPendaftaranKPTerbaru> {
+        const dataMhs = await MahasiswaRepository.findByEmail({email});
 
         if (!dataMhs || !dataMhs.nim) {
             throw new APIError("Data mahasiswa tidak ditemukan", 404)
@@ -209,6 +267,8 @@ export default class DaftarKPService {
 
         if (!dataKP) {
             throw new APIError("Data pendaftaran kerja praktek tidak ditemukan")
+        } else if (dataKP.level_akses % 2 !== 0) {
+            throw new APIError("Level akses mahasiswa tidak memenuhi syarat")
         }
 
         await DaftarKPRepository.postBerkasMahasiswa(dataKP.id, dataKP.level_akses)

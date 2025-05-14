@@ -2,16 +2,66 @@ import prisma from "../infrastructures/db.infrastructure";
 import { RepositoryPendaftaranInstansiInterface, RepositoryPendaftaranKPInterface, RepositoryRiwayatPendaftaranKPInterface } from "../types/daftar-kp/repository.type";
 import MahasiswaHelper from "../helpers/mahasiswa.helper"
 import { APIError } from "../utils/api-error.util";
-import { pendaftaran_kp } from "../generated/prisma";
-import { getPendaftaranKPTerbaru } from "../types/daftar-kp/service.type";
+import { instansi, pendaftaran_kp } from "../generated/prisma";
 
 export default class DaftarKPRepository {
+
+    public static async postTolakBerkasMahasiswa(id : string, message : string = "") : Promise<void> {
+        await prisma.pendaftaran_kp.update({
+            where : {
+                id
+            }, 
+            data : { // bagaimana kalau status kp tetap "baru", di front end kita cuma melihat catatan_penolakan saja, setelah diperbarui oleh mahasiswa, catatan_penolakan dikosongkan lagi
+                level_akses : {
+                    decrement : 1
+                },
+                catatan_penolakan : message
+            }
+        })
+    }
+
+    public static async deleteDataInstansi(id : string) : Promise<void> {
+        await prisma.instansi.delete({
+            where : {
+                id
+            }
+        })
+    }
+
+    public static async postPendingDataInstansi(id : string) : Promise<void> {
+        await prisma.instansi.update({
+            where : {
+                id
+            },
+            data : {
+                status : "Aktif"
+            }
+        })
+    }
+
+    public static async findInstansiById(id : string) : Promise<instansi | null> {
+        return await prisma.instansi.findUnique({
+            where : {
+                id
+            }
+        });
+    }
+
+    public static async getPendingDataInstansi() : Promise<instansi[]> {
+        const data = await prisma.instansi.findMany({
+            where : {
+                status : "Pending"
+            }
+        })
+
+        return data
+    }
 
     public static async getKPTerbaruMahasiswa(nim : string) : Promise<pendaftaran_kp | null> {
         const data = await prisma.pendaftaran_kp.findFirst({
             where : {
                 nim,
-                status : "Baru"
+                status : "Baru",
             }
         })
 
@@ -70,7 +120,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postSuratPengantarKP(nim : string, linkSuratPengantarKP : string) : Promise<void> {
-        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
+        const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -83,6 +133,7 @@ export default class DaftarKPRepository {
                 id : dataKPTerbaru.id
             },
             data : {
+                catatan_penolakan : null,
                 link_surat_pengantar : linkSuratPengantarKP,
                 level_akses : dataKPTerbaru.level_akses + 1
             }
@@ -91,7 +142,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postSuratBalasanKP(nim : string, linkSuratBalasanKP : string) : Promise<void> {
-        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
+        const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -104,6 +155,7 @@ export default class DaftarKPRepository {
                 id : dataKPTerbaru.id
             },
             data : {
+                catatan_penolakan : null,
                 link_surat_balasan : linkSuratBalasanKP,
                 level_akses : dataKPTerbaru.level_akses + 1
             }
@@ -112,7 +164,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postIdPengajuanDosenPembimbingKP(nim : string, idPengajuanDosenPembimbingKP : string) : Promise<void> {
-        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
+        const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -125,6 +177,7 @@ export default class DaftarKPRepository {
                 id : dataKPTerbaru.id
             },
             data : {
+                catatan_penolakan : null,
                 id_surat_pengajuan_dospem : idPengajuanDosenPembimbingKP,
                 level_akses : dataKPTerbaru.level_akses + 1
             }
@@ -133,7 +186,7 @@ export default class DaftarKPRepository {
     }
 
     public static async postSuratPenunjukkanDosenPembimbing(nim : string, linkSuratPenunjukkanDosenPembimbingKP : string) : Promise<void> {
-        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
+        const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim)
 
         // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
 
@@ -146,6 +199,7 @@ export default class DaftarKPRepository {
                 id : dataKPTerbaru.id
             },
             data : {
+                catatan_penolakan : null,
                 link_surat_penunjukan_dospem : linkSuratPenunjukkanDosenPembimbingKP,
                 level_akses : dataKPTerbaru.level_akses + 1
             }
@@ -154,14 +208,18 @@ export default class DaftarKPRepository {
     }
 
     public static async getDataInstansi() {
-        const data = await prisma.instansi.findMany({})
+        const data = await prisma.instansi.findMany({
+            where : {
+                status : "Aktif"
+            }
+        })
 
         return data
     }
 
     // sementara pake surat + link dulu
     public static async postSuratPerpanjanganKP(nim : string, linkSuratPerpanjanganKP : string) : Promise<void> {
-        const dataKPTerbaru = await DaftarKPRepository.getPendaftaranKPTerbaru(nim)
+        const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim)
 
         // jika 0 berarti gagal, 11 berarti sudah melakukan perpanjangan KP
 
@@ -174,6 +232,7 @@ export default class DaftarKPRepository {
                 id : dataKPTerbaru.id
             },
             data : {
+                catatan_penolakan : null,
                 link_surat_perpanjangan_kp : linkSuratPerpanjanganKP,
                 level_akses : dataKPTerbaru.level_akses + 1
             }
@@ -254,22 +313,22 @@ export default class DaftarKPRepository {
         return data
     }
 
-    public static async getPendaftaranKPTerbaru(nim : string) {
-        const data = await prisma.pendaftaran_kp.findFirst({
-            where : {
-                nim,
-                level_akses : {
-                    not : 0
-                }
-            },
-            take : 1
-        })
+    // public static async getPendaftaranKPTerbaru(nim : string) {
+    //     const data = await prisma.pendaftaran_kp.findFirst({
+    //         where : {
+    //             nim,
+    //             level_akses : {
+    //                 not : 0
+    //             }
+    //         },
+    //         take : 1
+    //     })
 
-        if (!data) {
-            throw new APIError("Data pendaftaran KP tidak ditemukan", 404)
-        }
+    //     if (!data) {
+    //         throw new APIError("Data pendaftaran KP tidak ditemukan", 404)
+    //     }
 
-        return data
-    }
+    //     return data
+    // }
 
 }

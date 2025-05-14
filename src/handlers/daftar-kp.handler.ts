@@ -4,8 +4,43 @@ import { APIError } from "../utils/api-error.util";
 
 export default class DaftarKPHandler {
 
+    public static async postTolakBerkasMahasiswa(c : Context) {
+        const {id, message} = await c.req.json();
+
+        if (!id) {
+            throw new APIError("Berkas mahasiswa berhasil ditolak");
+        }
+
+        return c.json(await DaftarKPService.postTolakBerkasMahasiswa(id, message))
+    }
+
+    public static async deleteDataInstansi(c : Context) {
+        const {id} = await c.req.json() as any
+
+        if (!id) {
+            throw new APIError("ID data instansi kosong")
+        }
+
+        return c.json(await DaftarKPService.deleteDataInstansi(id))
+    }
+
+    public static async postPendingDataInstansi(c : Context) {
+        const {id} = await c.req.json() as any
+
+        if (!id) {
+            throw new APIError("ID data instansi kosong")
+        }
+
+        return c.json(await DaftarKPService.postPendingDataInstansi(id))
+    }
+
+    public static async getPendingDataInstansi(c : Context) {
+        return c.json(await DaftarKPService.getPendingDataInstansi())
+    }
+
     public static async getKPTerbaruMahasiswa(c : Context) {
-         const {email} = c.get('user');
+          const {email} = c.get('user');
+        // const email = "a@gmail.com"
         
 
         if (!email) {
@@ -17,7 +52,8 @@ export default class DaftarKPHandler {
     }
 
     public static async createPermohonanPendaftaranKP(c : Context) {
-         const {email} = c.get('user');
+          const {email} = c.get('user');
+        // const email = "a@gmail.com"
         
         const {tanggalMulai, tujuanSuratInstansi, idInstansi} = await c.req.json();
 
@@ -39,7 +75,8 @@ export default class DaftarKPHandler {
     }
 
     public static async createPermohonanPendaftaranInstansi(c : Context) {
-         const {email} = c.get('user');
+           const {email} = c.get('user');
+        // const email = "a@gmail.com"
         
         const {namaInstansi, alamatInstansi, namaPenanggungJawabInstansi, telpPenanggungJawabInstansi, jenisInstansi, longitude, latitude, profilSingkat} = await c.req.json();
 
@@ -53,7 +90,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postSuratPengantarKP(c : Context) {
-         const {email} = c.get('user')
+          const {email} = c.get('user')
+        // const email = "a@gmail.com"
         
         const {linkSuratPengantarKP} = await c.req.json()
 
@@ -67,7 +105,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postSuratBalasanKP(c : Context) {
-         const {email} = c.get('user')
+          const {email} = c.get('user')
+        // const email = "a@gmail.com"
         
         const {linkSuratBalasanKP} = await c.req.json()
 
@@ -79,7 +118,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postIdPengajuanDosenPembimbingKP(c : Context) {
-         const {email} = c.get('user')
+          const {email} = c.get('user')
+        // const email = "a@gmail.com"
         
         const {IdPengajuanDosenPembimbingKP} = await c.req.json()
 
@@ -91,7 +131,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postSuratPenunjukkanDosenPembimbingKP(c : Context) {
-         const {email} = c.get('user')
+          const {email} = c.get('user')
+        // const email = "a@gmail.com"
         
         const {linkSuratPenunjukkanDosenPembimbingKP} = await c.req.json()
 
@@ -103,7 +144,8 @@ export default class DaftarKPHandler {
     }
 
     public static async postSuratPerpanjanganKP(c : Context) {
-         const {email} = c.get('user')
+          const {email} = c.get('user')
+        // const email = "a@gmail.com"
         
         const {linkSuratPerpanjanganKP} = await c.req.json()
 
@@ -129,7 +171,8 @@ export default class DaftarKPHandler {
     }
 
     public static async getRiwayatPendaftaranKP(c : Context) {
-         const {email} = c.get('user');
+           const {email} = c.get('user');
+        // const email = "a@gmail.com"
         
 
         if (!email) {
@@ -139,7 +182,7 @@ export default class DaftarKPHandler {
         return c.json(await DaftarKPService.getRiwayatPendaftaranKP(email))
     }
 
-    // public static async createPermohonan(c: Context) {
+    //  public static async createPermohonan(c: Context) {
     //     const { email } = c.get("user");
     //     const { tanggalMulaiStr, idInstansiStr, tujuanSuratInstansiStr } = await c.req.json();
 

@@ -44,7 +44,8 @@ daftarKPRoute.get("/test", async function (c : Context) {
             alamat : "jl123",
             jenis : "Pemerintahan",
             nama_pj : "Olavlagi",
-            no_hp_pj : "480243"
+            no_hp_pj : "480243",
+            status : "Aktif"
         }
     })
 
@@ -58,13 +59,6 @@ daftarKPRoute.get("/test", async function (c : Context) {
     const instansi = await prisma.instansi.findMany({})
     
     return c.json({mahasiswa, instansi})
-})
-
-daftarKPRoute.get("/uji", async function(c : Context) {
-    const pendaftaran_kp = await prisma.pendaftaran_kp.findMany({})
-
-
-    return c.json({pendaftaran_kp})
 })
 
 daftarKPRoute.post("/pendaftaran-kp", DaftarKPHandler.createPermohonanPendaftaranKP);
@@ -92,5 +86,13 @@ daftarKPRoute.get("/kp-aktif-mahasiswa", DaftarKPHandler.getKPTerbaruMahasiswa)
 daftarKPRoute.get("/berkas-mahasiswa", DaftarKPHandler.getBerkasMahasiswa);
 
 daftarKPRoute.post("/berkas-mahasiswa", DaftarKPHandler.postBerkasMahasiswa);
+
+daftarKPRoute.post("/tolak-berkas-mahasiswa", DaftarKPHandler.postTolakBerkasMahasiswa)
+
+daftarKPRoute.get("/pending-data-instansi", DaftarKPHandler.getPendingDataInstansi)
+
+daftarKPRoute.post("/pending-data-instansi", DaftarKPHandler.postPendingDataInstansi)
+
+daftarKPRoute.post("/delete-data-instansi", DaftarKPHandler.deleteDataInstansi)
 
 export default daftarKPRoute;
