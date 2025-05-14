@@ -1,6 +1,9 @@
 import prisma from "../infrastructures/db.infrastructure";
 import { jadwal, log_jadwal, status_jadwal } from "../generated/prisma";
-import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelations, JadwalSayaParams } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelations, JadwalSayaParams, DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
+import { APIError } from "../utils/api-error.util";
+import MahasiswaHelper from "../helpers/mahasiswa.helper";
+import JadwalHelper from "../helpers/jadwal.helper";
 
 export default class JadwalRepository {
   public static async postJadwal(data: CreateJadwalInput): Promise<jadwal> {
@@ -237,7 +240,7 @@ export default class JadwalRepository {
       },
     });
 
-    const mahasiswaNimList = allJadwal.map(jadwal => jadwal.pendaftaran_kp?.mahasiswa?.nim).filter(Boolean) as string[];
+    const mahasiswaNimList = allJadwal.map((jadwal) => jadwal.pendaftaran_kp?.mahasiswa?.nim).filter(Boolean) as string[];
 
     const nilai = await prisma.nilai.findMany({
       where: {
@@ -253,7 +256,7 @@ export default class JadwalRepository {
     });
 
     const mahasiswaDinilaiMap = new Map();
-    nilai.forEach(nilai => {
+    nilai.forEach((nilai) => {
       if (nilai.nilai_penguji !== null && nilai.nim) {
         mahasiswaDinilaiMap.set(nilai.nim, true);
       }
@@ -278,24 +281,82 @@ export default class JadwalRepository {
   }
 
   public static async getTahunAjaran() {
-    return prisma.tahun_ajaran.findMany({
+    return prisma.tahun_ajaran.findFirst({
       orderBy: {
-        id: 'desc',
+        id: "desc",
       },
     });
   }
 
-  public static async getAllJadwal() {
-    const jadwal = await prisma.jadwal.findMany({
-      include: {
-        mahasiswa: {
+  public static async getAllJadwalSeminar(tahunAjaranId: number = 1) {
+    const tahunAjaran = await prisma.tahun_ajaran.findUnique({
+      where: {
+        id: tahunAjaranId
+      }
+    });
+    if (!tahunAjaran) {
+      throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
+    }
+
+    const dataJadwal = await prisma.jadwal.findMany({
+      select: {
+        id: true,
+        mahasiswa: true,
+        ruangan: true,
+        status: true,
+        waktu_mulai: true,
+        waktu_selesai: true,
+        tanggal: true,
+        pendaftaran_kp: {
           select: {
-            nim: true,
-            nama: true,
-            email: true
+            instansi: true,
+            pembimbing_instansi: true,
+            status: true,
+            dosen_pembimbing: true,
+            dosen_penguji: true
           }
         }
       },
+      orderBy: {
+        tanggal: 'asc'
+      }
     })
+
+    const totalJadwalUlang = dataJadwal.filter(
+      (jadwal) => jadwal.status === 'Jadwal_Ulang'
+    ).length;
+
+    const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map(jadwal => {
+      return {
+        id: jadwal.id,
+        mahasiswa: {
+          nama: jadwal.mahasiswa?.nama || 'N/A',
+          nim: jadwal.mahasiswa?.nim || 'N/A',
+          semester: MahasiswaHelper.getSemesterByNIM(jadwal.mahasiswa?.nim || '')
+        },
+        status_kp: jadwal.pendaftaran_kp?.status || 'N/A',
+        ruangan: jadwal.ruangan?.nama || 'N/A',
+        jam: jadwal.waktu_mulai ? 
+          `${jadwal.waktu_mulai.getHours().toString().padStart(2, '0')}:${jadwal.waktu_mulai.getMinutes().toString().padStart(2, '0')}` : 
+          'N/A',
+        tanggal: jadwal.tanggal ? JadwalHelper.formatTanggal(jadwal.tanggal) : 'N/A',
+        dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || 'N/A',
+        dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || 'N/A',
+        instansi: jadwal.pendaftaran_kp?.instansi?.nama || 'N/A',
+        pembimbing_instansi: jadwal.pendaftaran_kp?.pembimbing_instansi?.nama || 'N/A',
+        status: jadwal.status || 'N/A'
+      };
+    });
+
+    return {
+      totalSeminar: dataJadwal.length,
+      totalSeminarMingguIni: JadwalHelper.jumlahJadwalMingguIni(dataJadwal),
+      totalJadwalUlang,
+      jadwalList: formattedJadwalList,
+      tahunAjaran: {
+        id: tahunAjaran.id,
+        nama: tahunAjaran.nama
+      }
+    }
   }
 }
