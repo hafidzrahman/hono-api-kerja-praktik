@@ -166,7 +166,7 @@ export default class StepHelper {
     return names[jenis];
   }
 
-  public static async getCurrentStep(documents: any[]): Promise<number> {
+  public static getCurrentStep(documents: any[]): number {
     const steps = documents.map((doc) => this.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen)).filter((step) => step !== undefined);
 
     if (steps.length === 0) return 1;
