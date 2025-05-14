@@ -25,7 +25,7 @@ export default class SeminarKpService {
       throw new APIError(`Waduh, anda perlu bimbingan kp 5 kali ni! 😭`);
     }
 
-    await validasiStepAksesDokumen(jenis_dokumen, input.id_pendaftaran_kp);
+    await StepHelper.validasiStepAksesDokumen(jenis_dokumen, input.id_pendaftaran_kp);
 
     const existingDokumen = await SeminarKpRepository.getDokumenSeminarKPByJenisAndPendaftaranId(jenis_dokumen, input.id_pendaftaran_kp);
 
