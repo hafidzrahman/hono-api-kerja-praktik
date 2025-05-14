@@ -34,7 +34,7 @@ export default class JadwalHelper {
     }));
   }
 
-  public static async formatWaktu(date: Date): Promise<string> {
+  public static formatWaktu(date: Date): string {
     const now = new Date();
     const diffInMilliseconds = now.getTime() - date.getTime();
 
