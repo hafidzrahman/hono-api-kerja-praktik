@@ -135,7 +135,7 @@ export default class JadwalRepository {
     });
   }
 
-  public static getDosens(): Promise<{ nip: string; nama: string }[]> {
+  public static async getDosens(): Promise<{ nip: string; nama: string }[]> {
     return prisma.dosen.findMany({
       select: {
         nip: true,

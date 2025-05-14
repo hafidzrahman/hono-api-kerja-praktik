@@ -4,7 +4,7 @@ import StepHelper from "./dokumen-step.helper";
 import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
 
 export default class JadwalHelper {
-  public static async hitungMundur(targetDate: Date | null): Promise<string | null> {
+  public static hitungMundur(targetDate: Date | null): string | null {
     if (!targetDate) return null;
 
     const today = new Date();
@@ -25,7 +25,7 @@ export default class JadwalHelper {
     }
   }
 
-  public static async tambahHitungMundurJadwal(jadwalArray: any[] | null | undefined) {
+  public static tambahHitungMundurJadwal(jadwalArray: any[] | null | undefined) {
     if (!jadwalArray || jadwalArray.length === 0) return [];
 
     return jadwalArray.map((jadwal) => ({
