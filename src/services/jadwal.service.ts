@@ -5,7 +5,7 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import { createDateTimeFromStrings } from "../helpers/date.helper";
-import { CreateJadwalInput, JadwalSayaParams, JadwalSeminarResponse, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
 
 export default class JadwalService {
@@ -18,7 +18,7 @@ export default class JadwalService {
 
     const isStudentEligible = await JadwalHelper.isEligibleForScheduling(data.id_pendaftaran_kp);
     if (!isStudentEligible) {
-      throw new APIError(`Waduh, dokumen nya belum divalidasi ni! 😭`, 400);
+      throw new APIError(`Waduh, dokumen nya belum divalidasi ni! 😭`, 404);
     }
 
     const pendaftaran = await JadwalRepository.getPendaftaranKpById(data.id_pendaftaran_kp);
