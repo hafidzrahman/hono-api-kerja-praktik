@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import StepHelper from "./dokumen-step.helper";
+import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
 
 export default class JadwalHelper {
   public static async hitungMundur(targetDate: Date | null): Promise<string | null> {
@@ -94,5 +95,91 @@ export default class JadwalHelper {
       statusJadwal: jadwal.status || "-",
       idPendaftaranKp: jadwal.pendaftaran_kp?.id || null,
     };
+  }
+
+  public static formatTanggal(date: Date): string {
+    const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    const hariName = hari[date.getDay()];
+    const tanggal = date.getDate();
+    const bulanName = bulan[date.getMonth()];
+    const tahun = date.getFullYear();
+
+    return `${hariName}, ${tanggal} ${bulanName} ${tahun}`;
+  }
+
+  public static tanggalMingguIni(date: Date): boolean {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    return date >= startOfWeek && date <= endOfWeek;
+  }
+
+  public static jumlahJadwalMingguIni(jadwalData: any[]): number {
+    return jadwalData.filter((jadwal) => jadwal.tanggal && this.tanggalMingguIni(jadwal.tanggal)).length;
+  }
+
+  public static parseTanggalString(tanggalStr: string): Date | null {
+    if (tanggalStr === "N/A") return null;
+
+    const parts = tanggalStr.split(", ")[1].split(" ");
+    const day = parseInt(parts[0]);
+
+    const monthMap: Record<string, number> = {
+      Januari: 0,
+      Februari: 1,
+      Maret: 2,
+      April: 3,
+      Mei: 4,
+      Juni: 5,
+      Juli: 6,
+      Agustus: 7,
+      September: 8,
+      Oktober: 9,
+      November: 10,
+      Desember: 11,
+    };
+
+    const month = monthMap[parts[1]];
+    const year = parseInt(parts[2]);
+
+    return new Date(year, month, day);
+  }
+
+  public static filterJadwalHariIni(jadwalList: DataJadwalSeminar[]): DataJadwalSeminar[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return jadwalList.filter((jadwal) => {
+      const jadwalDate = this.parseTanggalString(jadwal.tanggal);
+      if (!jadwalDate) return false;
+
+      return jadwalDate.getTime() === today.getTime();
+    });
+  }
+
+  public static filterJadwalMingguIni(jadwalList: DataJadwalSeminar[]): DataJadwalSeminar[] {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    return jadwalList.filter((jadwal) => {
+      const jadwalDate = this.parseTanggalString(jadwal.tanggal);
+      if (!jadwalDate) return false;
+
+      return jadwalDate >= startOfWeek && jadwalDate <= endOfWeek;
+    });
   }
 }
