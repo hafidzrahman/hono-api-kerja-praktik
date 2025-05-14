@@ -82,7 +82,7 @@ model jadwal {
   pendaftaran_kp    pendaftaran_kp? @relation(fields: [id_pendaftaran_kp], references: [id], onDelete: NoAction, onUpdate: NoAction)
   ruangan           ruangan?        @relation(fields: [nama_ruangan], references: [nama], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa         mahasiswa?      @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
-  nilai nilai[]
+  nilai             nilai?     
 }
 
 model log_jadwal {
@@ -123,10 +123,10 @@ model nilai {
   nim                           String?                         @db.VarChar(11)
   nip                           String?                         @db.VarChar(20)
   email_pembimbing_instansi     String?                         @db.VarChar(255)
-  id_jadwal_seminar             String?                         @db.Uuid
-  komponen_penilaian_instansi   komponen_penilaian_instansi[]
-  komponen_penilaian_pembimbing komponen_penilaian_pembimbing[]
-  komponen_penilaian_penguji    komponen_penilaian_penguji[]
+  id_jadwal_seminar             String?                         @unique @db.Uuid
+  komponen_penilaian_instansi   komponen_penilaian_instansi?
+  komponen_penilaian_pembimbing komponen_penilaian_pembimbing?
+  komponen_penilaian_penguji    komponen_penilaian_penguji?
 
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
@@ -208,7 +208,7 @@ model komponen_penilaian_instansi {
   kerjasama_tim   Float?
   inisiatif       Float?
   masukan         String?
-  id_nilai        String? @db.Uuid
+  id_nilai        String? @unique @db.Uuid
   nilai           nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -219,7 +219,7 @@ model komponen_penilaian_pembimbing {
   kualitas_laporan     Float?
   catatan              String?
   created_at           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
-  id_nilai             String? @db.Uuid
+  id_nilai             String? @unique @db.Uuid
   nilai                nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -230,7 +230,7 @@ model komponen_penilaian_penguji {
   kesesuaian_urgensi   Float?
   catatan              String?
   created_at           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
-  id_nilai             String? @db.Uuid
+  id_nilai             String? @unique @db.Uuid
   nilai                nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
