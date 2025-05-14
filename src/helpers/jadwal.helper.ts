@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { validasiStepDokumen } from "./dokumen-step.helper";
+import StepHelper from "./dokumen-step.helper";
 
 export default class JadwalHelper {
   public static async hitungMundur(targetDate: Date | null): Promise<string | null> {
@@ -60,7 +60,7 @@ export default class JadwalHelper {
   }
 
   public static async isEligibleForScheduling(id_pendaftaran_kp: string): Promise<boolean> {
-    return await validasiStepDokumen(3, id_pendaftaran_kp);
+    return await StepHelper.validasiStepDokumen(3, id_pendaftaran_kp);
   }
 
   public static async formatJadwalData(jadwal: any, mahasiswaDinilaiMap: Record<string, boolean>) {
