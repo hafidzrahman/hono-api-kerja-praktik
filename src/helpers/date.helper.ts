@@ -1,3 +1,5 @@
+import { fromZonedTime } from "date-fns-tz";
+
 export const isTimeOverlapping = (
   start1: Date,
   end1: Date,
@@ -13,7 +15,7 @@ export const parseDate = (dateString: string): Date => {
   const localOffset = date.getTimezoneOffset()
 
   const totalOffsetMinutes = localOffset + jakartaOffset;
-  date.setMinutes(date.getMinutes() + totalOffsetMinutes);
+  date.setMinutes(date.getMinutes() - totalOffsetMinutes);
   return date;
 }
 
@@ -37,7 +39,11 @@ export const createDateTimeFromStrings = (dateStr: string, timeStr: string): Dat
   const [year, month, day] = dateStr.split("-").map(Number);
   const [hour, minute] = timeStr.split(":").map(Number);
   
-  return new Date(year, month - 1, day, hour, minute, 0, 0);
+  const localDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`;
+
+  const jakartaDate = fromZonedTime(localDateStr, 'Asia/Jakarta');
+
+  return jakartaDate;
 };
 
 export const preserveLocalTime = (dateTime: Date): Date => {
