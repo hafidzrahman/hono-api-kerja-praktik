@@ -66,3 +66,36 @@ export interface JadwalSayaParams {
   nip: string;
   tahun_ajaran: number;
 }
+
+export interface DataJadwalSeminar {
+  id: string;
+  mahasiswa: {
+    nama: string,
+    nim: string,
+    semester?: number,
+  }
+  status_kp: string;
+  ruangan: string;
+  jam: string;
+  tanggal: string;
+  dosen_penguji: string;
+  dosen_pembimbing: string;
+  instansi: string;
+  pembimbing_instansi: string;
+  status: string
+}
+
+export interface JadwalSeminarResponse {
+  total_seminar: number;
+  total_seminar_minggu_ini: number;
+  total_jadwal_ulang: number;
+  jadwal: {
+    semua: DataJadwalSeminar[],
+    minggu_ini: DataJadwalSeminar[],
+    hari_ini: DataJadwalSeminar[]
+  }
+  tahun_ajaran?: {
+    id: number;
+    nama: string
+  }
+}
