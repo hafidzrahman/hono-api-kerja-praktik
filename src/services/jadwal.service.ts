@@ -5,7 +5,7 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import { createDateTimeFromStrings } from "../helpers/date.helper";
-import { CreateJadwalInput, JadwalSayaParams, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, JadwalSayaParams, JadwalSeminarResponse, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
 
 export default class JadwalService {
@@ -239,5 +239,32 @@ export default class JadwalService {
 
   public static async getTahunAjaran() {
     return JadwalRepository.getTahunAjaran()
+  }
+
+  public static async getAllJadwalSeminar(tahunAjaranId: number): Promise<JadwalSeminarResponse> {
+    if (!tahunAjaranId) {
+      const tahunAjaranSekarang = await JadwalRepository.getTahunAjaran()
+      if (!tahunAjaranSekarang) {
+        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan`)
+      }
+      tahunAjaranId = tahunAjaranSekarang.id
+    }
+
+    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId)
+
+    const hariIni = JadwalHelper.filterJadwalHariIni(jadwalList);
+    const mingguIni = JadwalHelper.filterJadwalMingguIni(jadwalList);
+
+    return {
+      total_seminar: totalSeminar,
+      total_seminar_minggu_ini: totalSeminarMingguIni,
+      total_jadwal_ulang: totalJadwalUlang,
+      jadwal: {
+        semua: jadwalList,
+        hari_ini: hariIni,
+        minggu_ini: mingguIni,
+      },
+      tahun_ajaran: { ...tahunAjaran, nama: tahunAjaran.nama ?? "Unknown" }
+    }
   }
 }
