@@ -3,7 +3,7 @@ import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import SeminarKpRepository from "../repositories/seminar-kp.repository";
 import { CreateDokumenSeminarKPInput } from "../types/seminar-kp/dokumen.type";
 import { APIError } from "../utils/api-error.util";
-import { getCurrentStep, getStepForDokumen, stepAkses, validasiStepAksesDokumen } from "../helpers/dokumen-step.helper";
+import StepHelper from "../helpers/dokumen-step.helper";
 import JadwalHelper from "../helpers/jadwal.helper";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 
@@ -60,18 +60,18 @@ export default class SeminarKpService {
 
     const stepInfo = {
       step1_accessible: true,
-      step2_accessible: await stepAkses(2, id_pendaftaran_kp),
-      step3_accessible: await stepAkses(3, id_pendaftaran_kp),
-      step4_accessible: await stepAkses(4, id_pendaftaran_kp),
-      step5_accessible: await stepAkses(5, id_pendaftaran_kp),
-      step6_accessible: await stepAkses(6, id_pendaftaran_kp),
+      step2_accessible: await StepHelper.stepAkses(2, id_pendaftaran_kp),
+      step3_accessible: await StepHelper.stepAkses(3, id_pendaftaran_kp),
+      step4_accessible: await StepHelper.stepAkses(4, id_pendaftaran_kp),
+      step5_accessible: await StepHelper.stepAkses(5, id_pendaftaran_kp),
+      step6_accessible: await StepHelper.stepAkses(6, id_pendaftaran_kp),
     };
 
     const dokumensByStep = {
-      step1: dokumen.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
-      step2: dokumen.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
-      step3: dokumen.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
-      step5: dokumen.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
+      step1: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
+      step2: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
+      step3: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
+      step5: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
     };
 
     const dokumenDenganHitungMundur = {
@@ -120,10 +120,10 @@ export default class SeminarKpService {
       }
 
       const dokumensByStep = {
-        step1: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
-        step2: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
-        step3: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
-        step5: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
+        step1: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
+        step2: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
+        step3: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
+        step5: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
       };
 
       let latestStatus = "Terkirim";
@@ -140,7 +140,7 @@ export default class SeminarKpService {
       else if (latestStatus === "Divalidasi") stats.status.divalidasi++;
       else if (latestStatus === "Ditolak") stats.status.ditolak++;
 
-      const currentStep = getCurrentStep(mahasiswa.dokumen_seminar_kp);
+      const currentStep = StepHelper.getCurrentStep(mahasiswa.dokumen_seminar_kp);
       stats.step[`step${currentStep}` as keyof typeof stats.step]++;
 
       const lastSubmissionTime =
@@ -196,10 +196,10 @@ export default class SeminarKpService {
     }
 
     const dokumensByStep = {
-      step1: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
-      step2: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
-      step3: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
-      step5: mahasiswa.dokumen_seminar_kp.filter((doc) => getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
+      step1: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
+      step2: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
+      step3: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
+      step5: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
     };
 
     const { dokumen_seminar_kp, ...data_mahasiswa } = mahasiswa;
