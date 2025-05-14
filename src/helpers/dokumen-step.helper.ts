@@ -55,7 +55,7 @@ export default class StepHelper {
         dokumenList = STEP_3;
         break;
       case 5:
-        return await this.cekJadwalSelesai(id_pendaftaran_kp);
+        dokumenList = STEP_5;
       default:
         return false;
     }
@@ -100,6 +100,14 @@ export default class StepHelper {
       return true;
     }
 
+    if (step === 6) {
+      const isValidStep3 = await this.validasiStepDokumen(3, id_pendaftaran_kp);
+      const isValidStep5 = await this.validasiStepDokumen(5, id_pendaftaran_kp)
+      const isJadwalSelesai = await this.cekJadwalSelesai(id_pendaftaran_kp)
+
+      return isValidStep3 && isValidStep5 && isJadwalSelesai;
+    }
+
     if (step === 5) {
       const isValidStep3 = await this.validasiStepDokumen(3, id_pendaftaran_kp);
 
@@ -132,11 +140,18 @@ export default class StepHelper {
 
   public static async mapPathToJenisDokumen(path: string): Promise<jenis_dokumen | null> {
     const mapping: Record<string, jenis_dokumen> = {
+      //pendaftaran-step1
       "surat-keterangan-selesai-kp": jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP,
       "laporan-tambahan-kp": jenis_dokumen.LAPORAN_TAMBAHAN_KP,
       "form-kehadiran-seminar": jenis_dokumen.FORM_KEHADIRAN_SEMINAR,
+      
+      //pendaftaran-step2
       "id-surat-undangan": jenis_dokumen.ID_SURAT_UNDANGAN,
+      
+      //pendaftaran-step3
       "surat-undangan-seminar-kp": jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP,
+      
+      //pasca-seminar-step5
       "berita-acara-seminar": jenis_dokumen.BERITA_ACARA_SEMINAR,
       "daftar-hadir-seminar": jenis_dokumen.DAFTAR_HADIR_SEMINAR,
       "lembar-pengesahan-kp": jenis_dokumen.LEMBAR_PENGESAHAN_KP,
