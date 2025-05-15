@@ -17,9 +17,6 @@ const STEP_5: jenis_dokumen[] = [
   jenis_dokumen.BERITA_ACARA_SEMINAR,
   jenis_dokumen.LEMBAR_PENGESAHAN_KP,
   jenis_dokumen.DAFTAR_HADIR_SEMINAR,
-  jenis_dokumen.REVISI_DAILY_REPORT,
-  jenis_dokumen.REVISI_LAPORAN_TAMBAHAN,
-  jenis_dokumen.SISTEM_KP_FINAL,
 ];
 
 export default class StepHelper {
@@ -155,7 +152,6 @@ export default class StepHelper {
       "berita-acara-seminar": jenis_dokumen.BERITA_ACARA_SEMINAR,
       "daftar-hadir-seminar": jenis_dokumen.DAFTAR_HADIR_SEMINAR,
       "lembar-pengesahan-kp": jenis_dokumen.LEMBAR_PENGESAHAN_KP,
-      "revisi-daily-report": jenis_dokumen.REVISI_DAILY_REPORT,
       "revisi-laporan-tambahan": jenis_dokumen.REVISI_LAPORAN_TAMBAHAN,
       "sistem-kp-final": jenis_dokumen.SISTEM_KP_FINAL,
     };
@@ -173,7 +169,6 @@ export default class StepHelper {
       [jenis_dokumen.BERITA_ACARA_SEMINAR]: "Berita Acara Seminar",
       [jenis_dokumen.DAFTAR_HADIR_SEMINAR]: "Daftar Hadir Seminar",
       [jenis_dokumen.LEMBAR_PENGESAHAN_KP]: "Lembar Pengesahan KP",
-      [jenis_dokumen.REVISI_DAILY_REPORT]: "Revisi Daily Report",
       [jenis_dokumen.REVISI_LAPORAN_TAMBAHAN]: "Revisi Laporan Tambahan",
       [jenis_dokumen.SISTEM_KP_FINAL]: "Sistem KP Final",
     };
