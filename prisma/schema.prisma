@@ -78,7 +78,7 @@ model jadwal {
   status            status_jadwal?
   nim               String?         @db.VarChar(11)
   nama_ruangan      String?         @db.VarChar(10)
-  id_pendaftaran_kp String?         @db.Uuid
+  id_pendaftaran_kp String?         @unique @db.Uuid
   pendaftaran_kp    pendaftaran_kp? @relation(fields: [id_pendaftaran_kp], references: [id], onDelete: NoAction, onUpdate: NoAction)
   ruangan           ruangan?        @relation(fields: [nama_ruangan], references: [nama], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa         mahasiswa?      @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
@@ -171,7 +171,7 @@ model pendaftaran_kp {
   nip_pembimbing               String?              @db.VarChar(20)
   nip_penguji                  String?              @db.VarChar(20)
   dokumen_seminar_kp           dokumen_seminar_kp[]
-  jadwal                       jadwal[]
+  jadwal                       jadwal?
 
   instansi            instansi?            @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tahun_ajaran        tahun_ajaran?        @relation(fields: [id_tahun_ajaran], references: [id], onDelete: NoAction, onUpdate: NoAction)
