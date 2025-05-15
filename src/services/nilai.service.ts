@@ -1,3 +1,4 @@
+import { unknown } from "zod";
 import { status_dokumen } from "../generated/prisma";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import NilaiRepository from "../repositories/nilai.repository";
@@ -67,111 +68,113 @@ export default class NilaiService {
     return NilaiRepository.getNilaiById(id);
   }
 
-  public static async getAllNilai(): Promise<AllNilaiResponse> {
-    const { mahasiswaData, tahunAjaran } = await NilaiRepository.getAllMahasiswaNilai();
+  public static async getAllNilai(tahunAjaranId: number = 0): Promise<AllNilaiResponse> {
+    const { mahasiswaData, tahunAjaran } = await NilaiRepository.getAllMahasiswaNilai(tahunAjaranId);
 
-    const detailMahasiswa: DetailMahasiswaNilai[] = mahasiswaData.map((mahasiswa) => {
-      const pendaftaranKp = mahasiswa.pendaftaran_kp[0];
+    const detailMahasiswa: DetailMahasiswaNilai[] = mahasiswaData
+      .map((mahasiswa) => {
+        const pendaftaranKp = mahasiswa.pendaftaran_kp[0];
 
-      if (!pendaftaranKp) {
-        return null
-      }
-
-      let nilaiInstansi = undefined;
-      let nilaiPembimbing = undefined;
-      let nilaiPenguji = undefined;
-      let nilaiAkhir = undefined;
-      let komponenNilaiInstansi = undefined;
-      let komponenNilaiPembimbing = undefined;
-      let komponenNilaiPenguji = undefined;
-
-      const nilaiData = mahasiswa.nilai[0];
-
-      if (nilaiData) {
-        nilaiInstansi = nilaiData.nilai_instansi ? Number(nilaiData.nilai_instansi) : undefined;
-        nilaiPembimbing = nilaiData.nilai_pembimbing ? Number(nilaiData.nilai_pembimbing) : undefined;
-        nilaiPenguji = nilaiData.nilai_penguji ? Number(nilaiData.nilai_penguji) : undefined;
-        nilaiAkhir = nilaiData.nilai_akhir ? Number(nilaiData.nilai_akhir) : undefined;
-
-        if (nilaiData.komponen_penilaian_instansi.length > 0) {
-          const komponen = nilaiData.komponen_penilaian_instansi[0];
-          komponenNilaiInstansi = {
-            deliverables: komponen.deliverables ? Number(komponen.deliverables) : undefined,
-            ketepatan_waktu: komponen.ketepatan_waktu ? Number(komponen.ketepatan_waktu) : undefined,
-            kedisiplinan: komponen.kedisiplinan ? Number(komponen.kedisiplinan) : undefined,
-            attitude: komponen.attitude ? Number(komponen.attitude) : undefined,
-            kerjasama_tim: komponen.kerjasama_tim ? Number(komponen.kerjasama_tim) : undefined,
-            inisiatif: komponen.inisiatif ? Number(komponen.inisiatif) : undefined,
-            masukan: komponen.masukan || undefined,
-          };
+        if (!pendaftaranKp) {
+          return null;
         }
 
-        if (nilaiData.komponen_penilaian_pembimbing.length > 0) {
-          const komponen = nilaiData.komponen_penilaian_pembimbing[0];
-          komponenNilaiPembimbing = {
-            penyelesaian_masalah: komponen.penyelesaian_masalah ? Number(komponen.penyelesaian_masalah) : undefined,
-            bimbingan_sikap: komponen.bimbingan_sikap ? Number(komponen.bimbingan_sikap) : undefined,
-            kualitas_laporan: komponen.kualitas_laporan ? Number(komponen.kualitas_laporan) : undefined,
-            catatan: komponen.catatan || undefined,
-          };
+        let nilaiInstansi = undefined;
+        let nilaiPembimbing = undefined;
+        let nilaiPenguji = undefined;
+        let nilaiAkhir = undefined;
+        let komponenNilaiInstansi = undefined;
+        let komponenNilaiPembimbing = undefined;
+        let komponenNilaiPenguji = undefined;
+
+        const nilaiData = mahasiswa.nilai[0];
+
+        if (nilaiData) {
+          nilaiInstansi = nilaiData.nilai_instansi ? Number(nilaiData.nilai_instansi) : undefined;
+          nilaiPembimbing = nilaiData.nilai_pembimbing ? Number(nilaiData.nilai_pembimbing) : undefined;
+          nilaiPenguji = nilaiData.nilai_penguji ? Number(nilaiData.nilai_penguji) : undefined;
+          nilaiAkhir = nilaiData.nilai_akhir ? Number(nilaiData.nilai_akhir) : undefined;
+
+          if (nilaiData.komponen_penilaian_instansi.length > 0) {
+            const komponen = nilaiData.komponen_penilaian_instansi[0];
+            komponenNilaiInstansi = {
+              deliverables: komponen.deliverables ? Number(komponen.deliverables) : undefined,
+              ketepatan_waktu: komponen.ketepatan_waktu ? Number(komponen.ketepatan_waktu) : undefined,
+              kedisiplinan: komponen.kedisiplinan ? Number(komponen.kedisiplinan) : undefined,
+              attitude: komponen.attitude ? Number(komponen.attitude) : undefined,
+              kerjasama_tim: komponen.kerjasama_tim ? Number(komponen.kerjasama_tim) : undefined,
+              inisiatif: komponen.inisiatif ? Number(komponen.inisiatif) : undefined,
+              masukan: komponen.masukan || undefined,
+            };
+          }
+
+          if (nilaiData.komponen_penilaian_pembimbing.length > 0) {
+            const komponen = nilaiData.komponen_penilaian_pembimbing[0];
+            komponenNilaiPembimbing = {
+              penyelesaian_masalah: komponen.penyelesaian_masalah ? Number(komponen.penyelesaian_masalah) : undefined,
+              bimbingan_sikap: komponen.bimbingan_sikap ? Number(komponen.bimbingan_sikap) : undefined,
+              kualitas_laporan: komponen.kualitas_laporan ? Number(komponen.kualitas_laporan) : undefined,
+              catatan: komponen.catatan || undefined,
+            };
+          }
+
+          if (nilaiData.komponen_penilaian_penguji.length > 0) {
+            const komponen = nilaiData.komponen_penilaian_penguji[0];
+            komponenNilaiPenguji = {
+              penguasaan_keilmuan: komponen.penguasaan_keilmuan ? Number(komponen.penguasaan_keilmuan) : undefined,
+              kemampuan_presentasi: komponen.kemampuan_presentasi ? Number(komponen.kemampuan_presentasi) : undefined,
+              kesesuaian_urgensi: komponen.kesesuaian_urgensi ? Number(komponen.kesesuaian_urgensi) : undefined,
+              catatan: komponen.catatan || undefined,
+            };
+          }
         }
 
-        if (nilaiData.komponen_penilaian_penguji.length > 0) {
-          const komponen = nilaiData.komponen_penilaian_penguji[0];
-          komponenNilaiPenguji = {
-            penguasaan_keilmuan: komponen.penguasaan_keilmuan ? Number(komponen.penguasaan_keilmuan) : undefined,
-            kemampuan_presentasi: komponen.kemampuan_presentasi ? Number(komponen.kemampuan_presentasi) : undefined,
-            kesesuaian_urgensi: komponen.kesesuaian_urgensi ? Number(komponen.kesesuaian_urgensi) : undefined,
-            catatan: komponen.catatan || undefined,
-          };
+        let statusNilai = StatusNilai.NILAI_BELUM_VALID;
+
+        const hasAllNilai = nilaiInstansi !== undefined && nilaiPembimbing !== undefined && nilaiPenguji !== undefined;
+
+        if (hasAllNilai) {
+          const allDocumentsValidated = pendaftaranKp?.dokumen_seminar_kp.every((doc) => doc.status === status_dokumen.Divalidasi);
+
+          if (allDocumentsValidated) {
+            statusNilai = StatusNilai.NILAI_APPROVE;
+          } else {
+            statusNilai = StatusNilai.NILAI_VALID;
+          }
         }
-      }
 
-      let statusNilai = StatusNilai.NILAI_BELUM_VALID;
+        return {
+          nim: mahasiswa.nim,
+          nama: mahasiswa.nama,
+          kelas: pendaftaranKp?.kelas_kp || undefined,
+          statusNilai,
+          statusDaftarKp: pendaftaranKp?.status || undefined,
+          semester: MahasiswaHelper.getSemesterByNIM(mahasiswa.nim).toString(),
+          instansi: pendaftaranKp?.instansi?.nama || undefined,
+          pembimbingInstansi: pendaftaranKp?.pembimbing_instansi?.nama || undefined,
+          dosenPembimbing: pendaftaranKp?.dosen_pembimbing?.nama || undefined,
+          dosenPenguji: pendaftaranKp?.dosen_penguji?.nama || undefined,
+          nilaiInstansi,
+          nilaiPembimbing,
+          nilaiPenguji,
+          nilaiAkhir,
+          komponenNilaiInstansi,
+          komponenNilaiPembimbing,
+          komponenNilaiPenguji,
+        };
+      })
+      .filter((mahasiswa): mahasiswa is DetailMahasiswaNilai => mahasiswa !== null);
 
-      const hasAllNilai = nilaiInstansi !== undefined && nilaiPembimbing !== undefined && nilaiPenguji !== undefined;
-
-      if (hasAllNilai) {
-        const allDocumentsValidated = pendaftaranKp?.dokumen_seminar_kp.every((doc) => doc.status === status_dokumen.Divalidasi);
-
-        if (allDocumentsValidated) {
-          statusNilai = StatusNilai.NILAI_APPROVE;
-        } else {
-          statusNilai = StatusNilai.NILAI_VALID;
-        }
-      }
-
-      return {
-        nim: mahasiswa.nim,
-        nama: mahasiswa.nama,
-        kelas: pendaftaranKp?.kelas_kp || undefined,
-        statusNilai,
-        statusDaftarKp: pendaftaranKp?.status || undefined,
-        semester: MahasiswaHelper.getSemesterByNIM(mahasiswa.nim).toString(),
-        instansi: pendaftaranKp?.instansi?.nama || undefined,
-        pembimbingInstansi: pendaftaranKp?.pembimbing_instansi?.nama || undefined,
-        dosenPembimbing: pendaftaranKp?.dosen_pembimbing?.nama || undefined,
-        dosenPenguji: pendaftaranKp?.dosen_penguji?.nama || undefined,
-        nilaiInstansi,
-        nilaiPembimbing,
-        nilaiPenguji,
-        nilaiAkhir,
-        komponenNilaiInstansi,
-        komponenNilaiPembimbing,
-        komponenNilaiPenguji,
-      };
-    }).filter((mahasiswa): mahasiswa is DetailMahasiswaNilai => mahasiswa !== null);
-
-    const jumlahNilaiBelumValid = detailMahasiswa.filter(m => m.statusNilai === StatusNilai.NILAI_BELUM_VALID).length;
-    const jumlahNilaiValid = detailMahasiswa.filter(m => m.statusNilai === StatusNilai.NILAI_VALID).length;
-    const jumlahNilaiApprove = detailMahasiswa.filter(m => m.statusNilai === StatusNilai.NILAI_APPROVE).length;
+    const jumlahNilaiBelumValid = detailMahasiswa.filter((m) => m.statusNilai === StatusNilai.NILAI_BELUM_VALID).length;
+    const jumlahNilaiValid = detailMahasiswa.filter((m) => m.statusNilai === StatusNilai.NILAI_VALID).length;
+    const jumlahNilaiApprove = detailMahasiswa.filter((m) => m.statusNilai === StatusNilai.NILAI_APPROVE).length;
 
     return {
-      tahunAjaran: tahunAjaran.nama || '',
-      jumlahNilaiBelumValid,
-      jumlahNilaiValid,
-      jumlahNilaiApprove,
-      detailMahasiswa
+      tahun_ajaran: { ...tahunAjaran },
+      jumlah_nilai_belum_valid: jumlahNilaiBelumValid,
+      jumlah_nilai_valid: jumlahNilaiValid,
+      jumlah_nilai_approve: jumlahNilaiApprove,
+      detail_mahasiswa: detailMahasiswa,
     };
   }
 }

@@ -1,19 +1,8 @@
-import { tr } from "date-fns/locale";
 import prisma from "../infrastructures/db.infrastructure";
 import { APIError } from "../utils/api-error.util";
 
 export default class NilaiRepository {
-  public static async createNilaiPenguji(
-    id: string,
-    penguasaanKeilmuan: number,
-    kemampuanPresentasi: number,
-    kesesuaianUrgensi: number,
-    catatan: string | null,
-    nilaiPenguji: number,
-    nim: string,
-    nip: string,
-    idJadwalSeminar?: string
-  ) {
+  public static async createNilaiPenguji(id: string, penguasaanKeilmuan: number, kemampuanPresentasi: number, kesesuaianUrgensi: number, catatan: string | null, nilaiPenguji: number, nim: string, nip: string, idJadwalSeminar?: string) {
     const nilai = await prisma.nilai.upsert({
       where: { id },
       update: {
@@ -43,17 +32,7 @@ export default class NilaiRepository {
     return nilai;
   }
 
-  public static async createNilaiPembimbing(
-    id: string,
-    penyelesaianMasalah: number,
-    bimbinganSikap: number,
-    kualitasLaporan: number,
-    catatan: string | null,
-    nilaiPembimbing: number,
-    nim: string,
-    nip: string,
-    idJadwalSeminar?: string
-  ) {
+  public static async createNilaiPembimbing(id: string, penyelesaianMasalah: number, bimbinganSikap: number, kualitasLaporan: number, catatan: string | null, nilaiPembimbing: number, nim: string, nip: string, idJadwalSeminar?: string) {
     const nilai = await prisma.nilai.upsert({
       where: { id },
       update: {
@@ -113,16 +92,29 @@ export default class NilaiRepository {
   public static async getTahunAjaranSekarang() {
     return prisma.tahun_ajaran.findFirst({
       orderBy: {
-        id: 'desc'
-      }
-    })
+        id: "desc",
+      },
+    });
   }
 
-  public static async getAllMahasiswaNilai() {
-    const tahunAjaranSekarang = await this.getTahunAjaranSekarang();
+  public static async getAllMahasiswaNilai(tahunAjaranId: number = 1) {
+    let tahunAjaranSekarang;
 
-    if (!tahunAjaranSekarang) {
-      throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
+    if (tahunAjaranId > 0) {
+      tahunAjaranSekarang = await prisma.tahun_ajaran.findUnique({
+        where: {
+          id: tahunAjaranId,
+        },
+      });
+
+      if (!tahunAjaranSekarang) {
+        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
+      }
+    } else {
+      tahunAjaranSekarang = await this.getTahunAjaranSekarang();
+      if (!tahunAjaranSekarang) {
+        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
+      }
     }
 
     const mahasiswaData = await prisma.mahasiswa.findMany({
@@ -140,29 +132,29 @@ export default class NilaiRepository {
             instansi: {
               select: {
                 nama: true,
-              }
+              },
             },
             pembimbing_instansi: {
               select: {
                 nama: true,
-              }
+              },
             },
             dosen_pembimbing: {
               select: {
-                nama: true
-              }
+                nama: true,
+              },
             },
             dosen_penguji: {
               select: {
-                nama: true
-              }
+                nama: true,
+              },
             },
             dokumen_seminar_kp: {
               select: {
-                status: true
-              }
-            }
-          }
+                status: true,
+              },
+            },
+          },
         },
         nilai: {
           select: {
@@ -180,32 +172,32 @@ export default class NilaiRepository {
                 kerjasama_tim: true,
                 inisiatif: true,
                 masukan: true,
-              }
+              },
             },
             komponen_penilaian_pembimbing: {
               select: {
                 penyelesaian_masalah: true,
                 bimbingan_sikap: true,
                 kualitas_laporan: true,
-                catatan: true
-              }
+                catatan: true,
+              },
             },
             komponen_penilaian_penguji: {
               select: {
                 penguasaan_keilmuan: true,
                 kemampuan_presentasi: true,
                 kesesuaian_urgensi: true,
-                catatan: true
-              }
-            }
-          }
-        }
-      }
-    })
+                catatan: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     return {
       mahasiswaData,
-      tahunAjaran: tahunAjaranSekarang
-    }
+      tahunAjaran: tahunAjaranSekarang,
+    };
   }
 }

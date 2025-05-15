@@ -83,7 +83,10 @@ export default class NilaiHandler {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const allNilai = await NilaiService.getAllNilai();
+    const tahunAjaranIdParam = c.req.query('tahun_ajaran_id')
+    const tahunAjaranId = tahunAjaranIdParam ? parseInt(tahunAjaranIdParam) : 0
+
+    const allNilai = await NilaiService.getAllNilai(tahunAjaranId);
     return c.json(allNilai)
   }
 }
