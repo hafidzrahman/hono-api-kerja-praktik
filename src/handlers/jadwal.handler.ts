@@ -45,18 +45,17 @@ export default class JadwalHandler {
     return c.json(jadwal);
   }
 
-  public static async getRuanganOptions(c: Context) {
+  public static async getAllRuangan(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
-
-    return c.json(await JadwalService.getRuanganOptions);
+    return c.json(await JadwalService.getAllRuangan());
   }
 
-  public static async getDosenOptions(c: Context) {
+  public static async getAllDosen(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await JadwalService.getDosensOptions);
+    return c.json(await JadwalService.getAllDosen());
   }
 
   public static async getJadwalMahasiswaSaya(c: Context) {
