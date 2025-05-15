@@ -199,12 +199,14 @@ export default class JadwalService {
     return updatedJadwal;
   }
 
-  public static async getRuanganOptions(): Promise<{ nama: string }[]> {
-    return JadwalRepository.getRuangans();
+  public static async getAllRuangan() {
+    const ruangan = await JadwalRepository.getAllRuangan()
+    return ruangan
   }
 
-  public static async getDosensOptions(): Promise<{nip: string, nama: string}[]> {
-    return JadwalRepository.getDosens();
+  public static async getAllDosen() {
+    const dosen = await JadwalRepository.getAllDosen();
+    return dosen
   }
 
   public static async getJadwalMahasiswaSaya(email: string) {
