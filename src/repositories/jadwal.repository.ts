@@ -49,7 +49,7 @@ export default class JadwalRepository {
         tanggal: data.tanggal,
         waktu_mulai: data.waktu_mulai,
         waktu_selesai,
-        status: data.status,
+        status: "Jadwal_Ulang" as status_jadwal,
         nama_ruangan: data.nama_ruangan,
       },
     });
@@ -127,21 +127,23 @@ export default class JadwalRepository {
     });
   }
 
-  public static async getRuangans(): Promise<{ nama: string }[]> {
-    return prisma.ruangan.findMany({
+  public static getAllRuangan() {
+    const ruangan = prisma.ruangan.findMany({
       select: {
-        nama: true,
-      },
-    });
+        nama: true
+      }
+    })
+    return ruangan
   }
 
-  public static async getDosens(): Promise<{ nip: string; nama: string }[]> {
-    return prisma.dosen.findMany({
+  public static getAllDosen() {
+    const dosen = prisma.dosen.findMany({
       select: {
         nip: true,
         nama: true,
       },
     });
+    return dosen
   }
 
   public static async checkRuanganAvailability(nama_ruangan: string, tanggal: Date, waktu_mulai: Date, waktu_selesai: Date, excludeJadwalId?: string): Promise<boolean> {
