@@ -61,7 +61,7 @@ export default class JadwalHelper {
   }
 
   public static async isEligibleForScheduling(id_pendaftaran_kp: string): Promise<boolean> {
-    return await StepHelper.validasiStepDokumen(3, id_pendaftaran_kp);
+    return await StepHelper.validasiStepDokumen(1, id_pendaftaran_kp);
   }
 
   public static async formatJadwalData(jadwal: any, mahasiswaDinilaiMap: Record<string, boolean>) {
