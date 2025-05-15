@@ -163,20 +163,6 @@ export default class SeminarKpRepository {
                 no_hp: true,
               },
             },
-            jadwal: {
-              select: {
-                id: true,
-                tanggal: true,
-                waktu_mulai: true,
-                waktu_selesai: true,
-                status: true,
-                ruangan: {
-                  select: {
-                    nama: true
-                  }
-                }
-              }
-            }
           },
         },
         dokumen_seminar_kp: {
