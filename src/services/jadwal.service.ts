@@ -26,7 +26,7 @@ export default class JadwalService {
       throw new APIError(`Waduh, pendaftaran KP tidak ditemukan! 😭`, 404);
     }
 
-    await DosenService.validateDosenExists(data.nip_penguji);
+    await DosenService.getDosenByNIP(data.nip_penguji);
 
     await MahasiswaService.validateMahasiswaExists(data.nim);
 
@@ -116,7 +116,7 @@ export default class JadwalService {
     }
 
     if (data.nip_penguji) {
-      await DosenService.validateDosenExists(data.nip_penguji);
+      await DosenService.getDosenByNIP(data.nip_penguji);
     }
 
     if (existingJadwal.nim) {
