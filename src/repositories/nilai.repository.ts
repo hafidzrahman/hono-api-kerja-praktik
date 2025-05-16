@@ -3,6 +3,13 @@ import { APIError } from "../utils/api-error.util";
 
 export default class NilaiRepository {
   public static async createNilaiPenguji(id: string, penguasaanKeilmuan: number, kemampuanPresentasi: number, kesesuaianUrgensi: number, catatan: string | null, nilaiPenguji: number, nim: string, nip: string, idJadwalSeminar?: string) {
+    const dosen = await prisma.dosen.findUnique({
+      where: { nip },
+    });
+
+    if (!dosen) {
+      throw new APIError(`Waduh, Dosen dengan NIP ${nip} tidak ditemukan`, 404);
+    }
     const nilai = await prisma.nilai.upsert({
       where: { id },
       update: {
@@ -33,6 +40,14 @@ export default class NilaiRepository {
   }
 
   public static async createNilaiPembimbing(id: string, penyelesaianMasalah: number, bimbinganSikap: number, kualitasLaporan: number, catatan: string | null, nilaiPembimbing: number, nim: string, nip: string, idJadwalSeminar?: string) {
+    const dosen = await prisma.dosen.findUnique({
+      where: { nip },
+    });
+
+    if (!dosen) {
+      throw new APIError(`Waduh, Dosen dengan NIP ${nip} tidak ditemukan`, 404);
+    }
+
     const nilai = await prisma.nilai.upsert({
       where: { id },
       update: {
@@ -93,6 +108,29 @@ export default class NilaiRepository {
     return prisma.tahun_ajaran.findFirst({
       orderBy: {
         id: "desc",
+      },
+    });
+  }
+
+  public static async getJadwalById(id: string) {
+    return prisma.jadwal.findUnique({
+      where: { id },
+      select: {
+        tanggal: true,
+        waktu_mulai: true,
+        waktu_selesai: true,
+        status: true,
+      },
+    });
+  }
+
+  public static async getDosenByEmail(email: string) {
+    return prisma.dosen.findFirst({
+      where: { email },
+      select: {
+        nip: true,
+        nama: true,
+        email: true,
       },
     });
   }
