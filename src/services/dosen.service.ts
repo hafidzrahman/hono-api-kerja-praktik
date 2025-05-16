@@ -12,20 +12,12 @@ export default class DosenService {
     return dosen;
   }
 
-  public static async getDosenByEmail(email: string): Promise<dosen>{
+  public static async getDosenByEmail(email: string){
     const dosen = await DosenRepository.findByEmail({email});
     if (!dosen) {
       throw new APIError(`Waduh, Dosen dengan email ${email} tidak ditemukan!`, 404);
     }
     return dosen;
-  }
-
-  public static async validateDosenExists(nip: string): Promise<dosen> {
-    const dosen = await DosenRepository.findByNIP({nip})
-    if (!dosen) {
-      throw new APIError(`Waduh, dosen dengan NIP ${nip} tidak ditemukan! 😭`, 404);
-    }
-    return dosen
   }
 
   public static async cekJadwalKonflikDosen(
@@ -37,7 +29,7 @@ export default class DosenService {
     hasConflict: boolean,
     conflicts: any[]
   }> {
-    await this.validateDosenExists(nip)
+    await this.getDosenByNIP(nip)
 
     const jadwal = await DosenRepository.getJadwalDosen(nip, tanggal);
 
