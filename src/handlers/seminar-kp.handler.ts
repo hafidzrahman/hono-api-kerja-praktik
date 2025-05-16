@@ -66,7 +66,7 @@ export default class SeminarKPHandler {
     const parsed = dokumenIdSchema.parse({ id });
 
     const dokumen = await SeminarKpService.postTerimaDokumenSeminarKP(parsed.id, komentar);
-    const jenisDokumenName = StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
+    const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
 
     return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
   }
@@ -82,7 +82,7 @@ export default class SeminarKPHandler {
     const parsed = dokumenIdSchema.parse({ id });
 
     const dokumen = await SeminarKpService.postTolakDokumenSeminarKP(parsed.id, komentar);
-    const jenisDokumenName = StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
+    const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
 
     return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);
   }
