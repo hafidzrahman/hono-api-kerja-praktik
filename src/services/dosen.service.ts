@@ -4,8 +4,12 @@ import { APIError } from "../utils/api-error.util";
 import { isTimeOverlapping } from "../helpers/date.helper";
 
 export default class DosenService {
-  public static async getDosenByNIP(nip: string): Promise<dosen | null> {
-    return DosenRepository.findByNIP({nip})
+  public static async getDosenByNIP(nip: string){
+    const dosen = await DosenRepository.findByNIP(nip)
+    if (!dosen) {
+      throw new APIError(`Waduh, Dosen dengan NIP ${nip} tidak ditemukan! 😭`, 404);
+    }
+    return dosen;
   }
 
   public static async getDosenByEmail(email: string): Promise<dosen>{
