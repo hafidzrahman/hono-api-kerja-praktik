@@ -3,9 +3,30 @@ import { status_dokumen } from "../generated/prisma";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import NilaiRepository from "../repositories/nilai.repository";
 import { NilaiPengujiInput, NilaiPembimbingInput, AllNilaiResponse, DetailMahasiswaNilai, StatusNilai } from "../types/seminar-kp/nilai.type";
+import { APIError } from "../utils/api-error.util";
+import NilaiHelper from "../helpers/nilai.helper";
 
 export default class NilaiService {
-  public static async createNilaiPenguji(input: NilaiPengujiInput, id?: string) {
+  public static async createNilaiPenguji(input: NilaiPengujiInput, id?: string, email?: string) {
+    if (input.idJadwalSeminar) {
+      const jadwal = await NilaiRepository.getJadwalById(input.idJadwalSeminar);
+      if (!jadwal) {
+        throw new APIError(`Waduh, Jadwal tidak ditemukan ni! 😭`, 404);
+      }
+
+      if (!NilaiHelper.canInputNilai(jadwal.waktu_mulai)) {
+        throw new APIError(`Waduh, Nilai penguji tidak bisa diinput setelah seminar dimulai! 😭`, 400);
+      }
+    }
+
+    if (email) {
+      const dosen = await NilaiRepository.getDosenByEmail(email);
+      if (!dosen) {
+        throw new APIError(`Waduh, Email Dosen tidak ditemukan ni! 😭`, 404);
+      }
+      input.nip = dosen.nip;
+    }
+
     if (input.penguasaanKeilmuan > 100 || input.kemampuanPresentasi > 100 || input.kesesuaianUrgensi > 100) {
       throw new Error("Komponen nilai tidak boleh lebih dari 100");
     }
@@ -28,7 +49,26 @@ export default class NilaiService {
     return nilai;
   }
 
-  public static async createNilaiPembimbing(input: NilaiPembimbingInput, id?: string) {
+  public static async createNilaiPembimbing(input: NilaiPembimbingInput, id?: string, email?: string) {
+    if (input.idJadwalSeminar) {
+      const jadwal = await NilaiRepository.getJadwalById(input.idJadwalSeminar);
+      if (!jadwal) {
+        throw new APIError(`Waduh, Jadwal tidak ditemukan ni! 😭`, 404);
+      }
+
+      if (!NilaiHelper.canInputNilai(jadwal.waktu_mulai)) {
+        throw new APIError(`Waduh, Nilai penguji tidak bisa diinput setelah seminar dimulai! 😭`, 400);
+      }
+    }
+
+    if (email) {
+      const dosen = await NilaiRepository.getDosenByEmail(email);
+      if (!dosen) {
+        throw new APIError(`Waduh, Email Dosen tidak ditemukan ni! 😭`, 404);
+      }
+      input.nip = dosen.nip;
+    }
+
     if (input.penyelesaianMasalah > 100 || input.bimbinganSikap > 100 || input.kualitasLaporan > 100) {
       throw new Error("Komponen nilai tidak boleh lebih dari 100");
     }
@@ -83,6 +123,7 @@ export default class NilaiService {
         let nilaiPembimbing = undefined;
         let nilaiPenguji = undefined;
         let nilaiAkhir = undefined;
+        let nilaiHuruf = undefined;
         let komponenNilaiInstansi = undefined;
         let komponenNilaiPembimbing = undefined;
         let komponenNilaiPenguji = undefined;
@@ -94,6 +135,8 @@ export default class NilaiService {
           nilaiPembimbing = nilaiData.nilai_pembimbing ? Number(nilaiData.nilai_pembimbing) : undefined;
           nilaiPenguji = nilaiData.nilai_penguji ? Number(nilaiData.nilai_penguji) : undefined;
           nilaiAkhir = nilaiData.nilai_akhir ? Number(nilaiData.nilai_akhir) : undefined;
+
+          nilaiHuruf = NilaiHelper.getNilaiHuruf(nilaiAkhir)
 
           if (nilaiData.komponen_penilaian_instansi.length > 0) {
             const komponen = nilaiData.komponen_penilaian_instansi[0];
@@ -158,6 +201,7 @@ export default class NilaiService {
           nilaiPembimbing,
           nilaiPenguji,
           nilaiAkhir,
+          nilaiHuruf,
           komponenNilaiInstansi,
           komponenNilaiPembimbing,
           komponenNilaiPenguji,
