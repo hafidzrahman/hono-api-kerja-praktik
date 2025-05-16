@@ -4,7 +4,7 @@ import { APIError } from "../utils/api-error.util";
 export default class NilaiHelper {
   public static async validateNilaiInput(nilai: number, fieldName: string) {
     if (nilai < 0 || nilai > 100) {
-      throw new APIError(`${fieldName} harus bernilai antara 0 dan 100`);
+      throw new APIError(`Waduh, ${fieldName} harus bernilai antara 0 dan 100! 😭`, 400);
     }
     return true;
   }
@@ -49,5 +49,26 @@ export default class NilaiHelper {
   public static async formatNilai(nilai: Number | undefined): Promise<string | undefined> {
     if (nilai === undefined) return undefined
     return nilai.toFixed(2)
+  }
+
+  public static getNilaiHuruf(nilai: number | null | undefined): string {
+    if (nilai === null || nilai === undefined) return "-";
+
+    if (nilai >= 85) return 'A';
+    if (nilai >= 80) return 'A-';
+    if (nilai >= 75) return 'B+';
+    if (nilai >= 70) return 'B';
+    if (nilai >= 65) return 'B-';
+    if (nilai >= 60) return 'C+';
+    if (nilai >= 55) return 'C';
+    if (nilai >= 50) return 'D';
+    return 'E';
+  }
+
+  public static canInputNilai(waktuMulai: Date | null): boolean {
+    if (!waktuMulai) return false;
+    
+    const now = new Date();
+    return now > waktuMulai;
   }
 }
