@@ -3,7 +3,6 @@ import prisma from "../infrastructures/db.infrastructure";
 import { FindByEmailParamsInterface, FindByEmailReturnInterface, FindByNIPParamsInterface } from "../types/dosen/repository.type";
 
 export default class DosenRepository {
-
   public static async findByEmail({ email }: FindByEmailParamsInterface): Promise<FindByEmailReturnInterface | null> {
     return await prisma.dosen.findUnique({
       where: {
@@ -12,10 +11,10 @@ export default class DosenRepository {
     });
   }
 
-  public static async findByNIP({nip}: FindByNIPParamsInterface): Promise<dosen | null> {
+  public static async findByNIP(nip: string) {
     return await prisma.dosen.findUnique({
       where: {
-        nip: nip,
+        nip,
       },
     });
   }
@@ -49,22 +48,21 @@ export default class DosenRepository {
         OR: [
           {
             pendaftaran_kp: {
-              nip_pembimbing: nip
-            }
+              nip_pembimbing: nip,
+            },
           },
           {
             pendaftaran_kp: {
-              nip_penguji: nip
-            }
-          }
-        ]
+              nip_penguji: nip,
+            },
+          },
+        ],
       },
       include: {
         ruangan: true,
         pendaftaran_kp: true,
-        mahasiswa: true
-      }
-    })
+        mahasiswa: true,
+      },
+    });
   }
-
 }
