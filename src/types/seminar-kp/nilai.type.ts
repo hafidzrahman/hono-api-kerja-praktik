@@ -45,6 +45,7 @@ export interface DetailMahasiswaNilai {
   nilaiPembimbing?: number;
   nilaiPenguji?: number;
   nilaiAkhir?: number;
+  nilaiHuruf?: string;
   komponenNilaiInstansi?: KomponenNilaiInstansi;
   komponenNilaiPembimbing?: KomponenNilaiPembimbing;
   komponenNilaiPenguji?: KomponenNilaiPenguji;
