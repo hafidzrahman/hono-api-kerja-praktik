@@ -3,13 +3,32 @@ import { APIError } from "../utils/api-error.util";
 
 export default class NilaiRepository {
   public static async createNilaiPenguji(id: string, penguasaanKeilmuan: number, kemampuanPresentasi: number, kesesuaianUrgensi: number, catatan: string | null, nilaiPenguji: number, nim: string, nip: string, idJadwalSeminar?: string) {
+
     const dosen = await prisma.dosen.findUnique({
       where: { nip },
     });
 
     if (!dosen) {
-      throw new APIError(`Waduh, Dosen dengan NIP ${nip} tidak ditemukan`, 404);
+      throw new APIError(`Waduh, Dosen dengan NIP ${nip} tidak ditemukan! 😭`, 404);
     }
+
+    const pendaftaranKp = await prisma.pendaftaran_kp.findFirst({
+      where: {
+        nim,
+      },
+      select: {
+        nip_penguji: true,
+      }
+    });
+
+    if (!pendaftaranKp) {
+      throw new APIError(`Waduh, Mahasiswa dengan NIM ${nim} belum mendaftara KP ni! 😭`, 404);
+    }
+
+    if (pendaftaranKp.nip_penguji !== nip) {
+      throw new APIError(`Waduh, Dosen dengan NIP ${nip} bukan penguji untuk mahasiswa ini! 😭`, 403);
+    }
+
     const nilai = await prisma.nilai.upsert({
       where: { id },
       update: {
@@ -46,6 +65,23 @@ export default class NilaiRepository {
 
     if (!dosen) {
       throw new APIError(`Waduh, Dosen dengan NIP ${nip} tidak ditemukan`, 404);
+    }
+
+    const pendaftaranKp = await prisma.pendaftaran_kp.findFirst({
+      where: {
+        nim,
+      },
+      select: {
+        nip_pembimbing: true,
+      }
+    });
+
+    if (!pendaftaranKp) {
+      throw new APIError(`Waduh, Mahasiswa dengan NIM ${nim} belum mendaftara KP ni! 😭`, 404);
+    }
+
+    if (pendaftaranKp.nip_pembimbing !== nip) {
+      throw new APIError(`Waduh, Dosen dengan NIP ${nip} bukan pembimbing untuk mahasiswa ini! 😭`, 403);
     }
 
     const nilai = await prisma.nilai.upsert({
@@ -237,5 +273,20 @@ export default class NilaiRepository {
       mahasiswaData,
       tahunAjaran: tahunAjaranSekarang,
     };
+  }
+
+  public static async getPendaftaranKpDosen(nim: string, email?: string) {
+    const dosen = email ? await this.getDosenByEmail(email) : null;
+    const nip = dosen?.nip;
+
+    return prisma.pendaftaran_kp.findFirst({
+      where: {
+        nim,
+      },
+      select: {
+        nip_pembimbing: true,
+        nip_penguji: true,
+      }
+    });
   }
 }
