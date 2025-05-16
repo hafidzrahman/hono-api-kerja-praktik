@@ -4,14 +4,14 @@ import MahasiswaService from "./mahasiswa.service";
 import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
-import { createDateTimeFromStrings } from "../helpers/date.helper";
+import DateHelper from "../helpers/date.helper";
 import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
 
 export default class JadwalService {
   public static async postJadwal(data: CreateJadwalDto): Promise<jadwal> {
     const tanggal = new Date(data.tanggal);
-    const waktu_mulai = createDateTimeFromStrings(data.tanggal, data.waktu_mulai);
+    const waktu_mulai = DateHelper.createDateTimeFromStrings(data.tanggal, data.waktu_mulai);
 
     const waktu_selesai = new Date(waktu_mulai);
     waktu_selesai.setHours(waktu_selesai.getHours() + 1);
@@ -105,7 +105,7 @@ export default class JadwalService {
     }
 
     if (data.waktu_mulai) {
-      waktu_mulai = createDateTimeFromStrings(tanggal ? tanggal.toISOString().split("T")[0] : new Date().toISOString().split("T")[0], data.waktu_mulai);
+      waktu_mulai = DateHelper.createDateTimeFromStrings(tanggal ? tanggal.toISOString().split("T")[0] : new Date().toISOString().split("T")[0], data.waktu_mulai);
 
       waktu_selesai = new Date(waktu_mulai);
       waktu_selesai.setHours(waktu_selesai.getHours() + 1);

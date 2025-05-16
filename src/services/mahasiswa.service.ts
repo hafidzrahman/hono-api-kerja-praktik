@@ -1,5 +1,5 @@
 import { mahasiswa } from "../generated/prisma";
-import { isTimeOverlapping } from "../helpers/date.helper";
+import DateHelper from "../helpers/date.helper";
 import MahasiswaRepository from "../repositories/mahasiswa.repository"
 import { APIError } from "../utils/api-error.util";
 
@@ -112,7 +112,7 @@ export default class MahasiswaService {
     const jadwal = await MahasiswaRepository.getJadwalMahasiswa(nim, tanggal);
 
     const conflicts = jadwal.filter((jadwal) => {
-      return isTimeOverlapping(
+      return DateHelper.isTimeOverlapping(
         waktu_mulai,
         waktu_selesai,
         jadwal.waktu_mulai,

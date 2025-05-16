@@ -1,7 +1,7 @@
 import { dosen } from "../generated/prisma";
 import DosenRepository from "../repositories/dosen.repository";
 import { APIError } from "../utils/api-error.util";
-import { isTimeOverlapping } from "../helpers/date.helper";
+import DateHelper from "../helpers/date.helper";
 
 export default class DosenService {
   public static async getDosenByNIP(nip: string){
@@ -34,7 +34,7 @@ export default class DosenService {
     const jadwal = await DosenRepository.getJadwalDosen(nip, tanggal);
 
     const conflicts = jadwal.filter((jadwal) => {
-      return isTimeOverlapping(
+      return DateHelper.isTimeOverlapping(
         waktu_mulai,
         waktu_selesai,
         jadwal.waktu_mulai,
