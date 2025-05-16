@@ -24,7 +24,26 @@ export default class NilaiService {
       if (!dosen) {
         throw new APIError(`Waduh, Email Dosen tidak ditemukan ni! 😭`, 404);
       }
+
+      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      if (!pendaftaranKp) {
+        throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
+      }
+
+      if (pendaftaranKp.nip_penguji !== dosen.nip) {
+        throw new APIError(`Waduh, Anda bukan penguji untuk mahasiswa ini`, 403);
+      }
+
       input.nip = dosen.nip;
+    } else {
+      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      if (!pendaftaranKp) {
+        throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
+      }
+
+      if (pendaftaranKp.nip_penguji !== input.nip) {
+        throw new APIError(`Waduh, Dosen dengan NIP ${input.nip} bukan penguji untuk mahasiswa ini`, 403);
+      }
     }
 
     if (input.penguasaanKeilmuan > 100 || input.kemampuanPresentasi > 100 || input.kesesuaianUrgensi > 100) {
@@ -66,7 +85,26 @@ export default class NilaiService {
       if (!dosen) {
         throw new APIError(`Waduh, Email Dosen tidak ditemukan ni! 😭`, 404);
       }
+
+      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      if (!pendaftaranKp) {
+        throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
+      }
+
+      if (pendaftaranKp.nip_pembimbing !== dosen.nip) {
+        throw new APIError(`Waduh, Anda bukan pembimbing untuk mahasiswa ini`, 403);
+      }
+
       input.nip = dosen.nip;
+    } else {
+      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      if (!pendaftaranKp) {
+        throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
+      }
+
+      if (pendaftaranKp.nip_pembimbing !== input.nip) {
+        throw new APIError(`Waduh, Dosen dengan NIP ${input.nip} bukan pembimbing untuk mahasiswa ini`, 403);
+      }
     }
 
     if (input.penyelesaianMasalah > 100 || input.bimbinganSikap > 100 || input.kualitasLaporan > 100) {
@@ -136,7 +174,7 @@ export default class NilaiService {
           nilaiPenguji = nilaiData.nilai_penguji ? Number(nilaiData.nilai_penguji) : undefined;
           nilaiAkhir = nilaiData.nilai_akhir ? Number(nilaiData.nilai_akhir) : undefined;
 
-          nilaiHuruf = NilaiHelper.getNilaiHuruf(nilaiAkhir)
+          nilaiHuruf = NilaiHelper.getNilaiHuruf(nilaiAkhir);
 
           if (nilaiData.komponen_penilaian_instansi.length > 0) {
             const komponen = nilaiData.komponen_penilaian_instansi[0];
