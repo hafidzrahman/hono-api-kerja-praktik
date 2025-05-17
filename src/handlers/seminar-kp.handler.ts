@@ -17,13 +17,13 @@ export default class SeminarKPHandler {
 
     if (jenis === jenis_dokumen.ID_SURAT_UNDANGAN) {
       if (validatedData.link_path.length > 10) {
-        return errorResponse(c, "ID Surat Undangan tidak boleh lebih dari 10 karakter", null, 400);
+        throw new APIError("ID Surat Undangan tidak boleh lebih dari 10 karakter", 400);
       }
     } else {
       const gdriveLinkRegex = /^https:\/\/drive\.google\.com\/(file\/d\/|drive\/folders\/|open\?id=)([a-zA-Z0-9_-]+)(\/?|\?usp=sharing|\&authuser=0)/;
 
       if (!gdriveLinkRegex.test(validatedData.link_path)) {
-        return errorResponse(c, "Link harus dari Google Drive dengan format yang valid", null, 400);
+        throw new APIError("Link harus dari Google Drive dengan format yang valid", 400);
       }
     }
 
@@ -57,25 +57,25 @@ export default class SeminarKPHandler {
     return c.json(await SeminarKpService.getDokumenSeminarKPByNIM(nim));
   }
 
-  public static async postTerimaDokumenSeminarKP(ctx: Context) {
-    const { email } = ctx.get("user");
+  public static async postTerimaDokumenSeminarKP(c: Context) {
+    const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const body = await ctx.req.json();
+    const body = await c.req.json();
     const { id, komentar } = body;
     const parsed = dokumenIdSchema.parse({ id });
 
     const dokumen = await SeminarKpService.postTerimaDokumenSeminarKP(parsed.id, komentar);
     const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
 
-    return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
+    return successResponse(c, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
   }
 
-  public static async postTolakDokumenSeminarKP(ctx: Context) {
-    const { email } = ctx.get("user");
+  public static async postTolakDokumenSeminarKP(c: Context) {
+    const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const body = await ctx.req.json();
+    const body = await c.req.json();
     const { id, komentar } = body;
     if (!komentar) throw new APIError("Komentar penolakan harus diisi", 400);
 
@@ -84,6 +84,6 @@ export default class SeminarKPHandler {
     const dokumen = await SeminarKpService.postTolakDokumenSeminarKP(parsed.id, komentar);
     const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
 
-    return successResponse(ctx, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);
+    return successResponse(c, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);
   }
 }
