@@ -21,13 +21,7 @@ export default class JadwalHandler {
 
     const id = c.req.param("id");
     if (!id) {
-      return c.json(
-        {
-          success: false,
-          message: "ID jadwal diperlukan",
-        },
-        400
-      );
+      throw new APIError("Waduh, ID jadwal diperlukan! 😭", 400);
     }
 
     const body = await c.req.json();
@@ -39,7 +33,7 @@ export default class JadwalHandler {
     const jadwal = await JadwalService.putJadwal(data);
 
     if (!jadwal) {
-      return c.json({ success: false, message: "Jadwal tidak ditemukan" }, 404);
+      throw new APIError("Waduh, Jadwal tidak ditemukan! 😭", 404);
     }
 
     return c.json(jadwal);
