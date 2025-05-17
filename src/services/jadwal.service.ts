@@ -99,20 +99,26 @@ export default class JadwalService {
     let tanggal = existingJadwal.tanggal;
     let waktu_mulai = existingJadwal.waktu_mulai;
     let waktu_selesai = existingJadwal.waktu_selesai;
+    let nama_ruangan = existingJadwal.nama_ruangan;
 
     if (data.tanggal) {
       tanggal = new Date(data.tanggal);
     }
 
     if (data.waktu_mulai) {
-      waktu_mulai = DateHelper.createDateTimeFromStrings(tanggal ? tanggal.toISOString().split("T")[0] : new Date().toISOString().split("T")[0], data.waktu_mulai);
+      const tanggalStr = tanggal ? tanggal.toISOString().split("T")[0] : new Date().toISOString().split("T")[0];
+      waktu_mulai = DateHelper.createDateTimeFromStrings(tanggalStr, data.waktu_mulai);
 
       waktu_selesai = new Date(waktu_mulai);
       waktu_selesai.setHours(waktu_selesai.getHours() + 1);
     }
 
-    if (!tanggal || !waktu_mulai || !waktu_selesai) {
-      throw new APIError("Invalid date or time", 400);
+    if (data.nama_ruangan) {
+      nama_ruangan = data.nama_ruangan;
+    }
+
+    if (!tanggal || !waktu_mulai || !waktu_selesai || !nama_ruangan) {
+      throw new APIError("Waduh, Tanggal dan waktu mulai harus diisi", 400);
     }
 
     if (data.nip_penguji) {
@@ -163,34 +169,36 @@ export default class JadwalService {
       }
     }
 
-    if (data.nama_ruangan || data.tanggal || data.waktu_mulai) {
-      const roomToCheck = data.nama_ruangan || existingJadwal.nama_ruangan;
-      if (roomToCheck) {
-        const isRoomAvailable = await JadwalRepository.checkRuanganAvailability(roomToCheck, tanggal, waktu_mulai, waktu_selesai, data.id);
+    const isRoomAvailable = await JadwalRepository.checkRuanganAvailability(
+      nama_ruangan, 
+      tanggal, 
+      waktu_mulai, 
+      waktu_selesai, 
+      data.id
+    );
 
-        if (!isRoomAvailable) {
-          throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
-        }
-      }
+    if (!isRoomAvailable) {
+      throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
     }
 
     const updateInput: UpdateJadwalInput = {
       id: data.id,
-      tanggal: data.tanggal ? tanggal : undefined,
-      waktu_mulai: data.waktu_mulai ? waktu_mulai : undefined,
-      waktu_selesai: data.waktu_mulai ? waktu_selesai : undefined,
+      tanggal: tanggal,
+      waktu_mulai: waktu_mulai,
+      waktu_selesai: waktu_selesai,
       status: data.status,
-      nama_ruangan: data.nama_ruangan,
+      nama_ruangan: nama_ruangan,
       nip_penguji: data.nip_penguji,
     };
 
     const updatedJadwal = await JadwalRepository.putJadwal(updateInput);
+
     await JadwalRepository.logJadwalChanges({
       log_type: "UPDATE",
       tanggal_lama: existingJadwal.tanggal,
       tanggal_baru: tanggal,
       ruangan_lama: existingJadwal.nama_ruangan,
-      ruangan_baru: data.nama_ruangan || "",
+      ruangan_baru: nama_ruangan || "Unknown",
       keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}${data.nip_penguji ? ` dengan pembaruan dosen penguji ${data.nip_penguji}` : ""}`,
       id_jadwal: existingJadwal.id,
       nip: data.nip_penguji || existingJadwal.pendaftaran_kp?.nip_penguji || null,
