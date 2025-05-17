@@ -16,7 +16,7 @@ export default class NilaiHandler {
         NilaiHelper.validateNilaiInput(body.kemampuanPresentasi, "Kemampuan Presentasi");
         NilaiHelper.validateNilaiInput(body.kesesuaianUrgensi, "Kesesuaian Urgensi");
       } catch (error: any) {
-        return c.json({ error: error.message }, 400);
+        throw new APIError(error.message, 400);
       }
 
       const inputData = {
@@ -48,7 +48,7 @@ export default class NilaiHandler {
         NilaiHelper.validateNilaiInput(body.bimbinganSikap, "Bimbingan Sikap");
         NilaiHelper.validateNilaiInput(body.kualitasLaporan, "Kualitas Laporan");
       } catch (error: any) {
-        return c.json({ error: error.message }, 400);
+        throw new APIError(error.message, 400);
       }
 
       const inputData = {
