@@ -36,22 +36,30 @@ export default class JadwalRepository {
   }
 
   public static async putJadwal(data: UpdateJadwalInput): Promise<jadwal> {
-    let waktu_selesai = data.waktu_selesai;
-    if (data.waktu_mulai && !data.waktu_selesai) {
-      const waktu_mulai = new Date(data.waktu_mulai);
-      waktu_selesai = new Date(waktu_mulai);
-      waktu_selesai.setHours(waktu_selesai.getHours() + 1);
+    if (!data.id) {
+      throw new APIError("Waduh, ID jadwal diperlukan! 😭", 400);
     }
+
+    const existingJadwal = await prisma.jadwal.findUnique({
+      where: {
+        id: data.id,
+      },
+    });
+
+    if (!existingJadwal) {
+      throw new APIError("Waduh, Jadwal tidak ditemukan! 😭", 404);
+    }
+
+    const updateData: any = {
+      tanggal: data.tanggal || existingJadwal.tanggal,
+      waktu_mulai: data.waktu_mulai || existingJadwal.waktu_mulai,
+      waktu_selesai: data.waktu_selesai || existingJadwal.waktu_selesai,
+      nama_ruangan: data.nama_ruangan || existingJadwal.nama_ruangan,
+    };
 
     const jadwal = await prisma.jadwal.update({
       where: { id: data.id },
-      data: {
-        tanggal: data.tanggal,
-        waktu_mulai: data.waktu_mulai,
-        waktu_selesai,
-        status: "Jadwal_Ulang" as status_jadwal,
-        nama_ruangan: data.nama_ruangan,
-      },
+      data: updateData,
     });
 
     if (data.nip_penguji) {
@@ -130,10 +138,10 @@ export default class JadwalRepository {
   public static getAllRuangan() {
     const ruangan = prisma.ruangan.findMany({
       select: {
-        nama: true
-      }
-    })
-    return ruangan
+        nama: true,
+      },
+    });
+    return ruangan;
   }
 
   public static getAllDosen() {
@@ -143,7 +151,7 @@ export default class JadwalRepository {
         nama: true,
       },
     });
-    return dosen
+    return dosen;
   }
 
   public static async checkRuanganAvailability(nama_ruangan: string, tanggal: Date, waktu_mulai: Date, waktu_selesai: Date, excludeJadwalId?: string): Promise<boolean> {
@@ -293,8 +301,8 @@ export default class JadwalRepository {
   public static async getAllJadwalSeminar(tahunAjaranId: number = 1) {
     const tahunAjaran = await prisma.tahun_ajaran.findUnique({
       where: {
-        id: tahunAjaranId
-      }
+        id: tahunAjaranId,
+      },
     });
     if (!tahunAjaran) {
       throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
@@ -315,38 +323,34 @@ export default class JadwalRepository {
             pembimbing_instansi: true,
             status: true,
             dosen_pembimbing: true,
-            dosen_penguji: true
-          }
-        }
+            dosen_penguji: true,
+          },
+        },
       },
       orderBy: {
-        tanggal: 'asc'
-      }
-    })
+        tanggal: "asc",
+      },
+    });
 
-    const totalJadwalUlang = dataJadwal.filter(
-      (jadwal) => jadwal.status === 'Jadwal_Ulang'
-    ).length;
+    const totalJadwalUlang = dataJadwal.filter((jadwal) => jadwal.status === "Jadwal_Ulang").length;
 
-    const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map(jadwal => {
+    const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map((jadwal) => {
       return {
         id: jadwal.id,
         mahasiswa: {
-          nama: jadwal.mahasiswa?.nama || 'N/A',
-          nim: jadwal.mahasiswa?.nim || 'N/A',
-          semester: MahasiswaHelper.getSemesterByNIM(jadwal.mahasiswa?.nim || '')
+          nama: jadwal.mahasiswa?.nama || "N/A",
+          nim: jadwal.mahasiswa?.nim || "N/A",
+          semester: MahasiswaHelper.getSemesterByNIM(jadwal.mahasiswa?.nim || ""),
         },
-        status_kp: jadwal.pendaftaran_kp?.status || 'N/A',
-        ruangan: jadwal.ruangan?.nama || 'N/A',
-        jam: jadwal.waktu_mulai ? 
-          `${jadwal.waktu_mulai.getHours().toString().padStart(2, '0')}:${jadwal.waktu_mulai.getMinutes().toString().padStart(2, '0')}` : 
-          'N/A',
-        tanggal: jadwal.tanggal ? JadwalHelper.formatTanggal(jadwal.tanggal) : 'N/A',
-        dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || 'N/A',
-        dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || 'N/A',
-        instansi: jadwal.pendaftaran_kp?.instansi?.nama || 'N/A',
-        pembimbing_instansi: jadwal.pendaftaran_kp?.pembimbing_instansi?.nama || 'N/A',
-        status: jadwal.status || 'N/A'
+        status_kp: jadwal.pendaftaran_kp?.status || "N/A",
+        ruangan: jadwal.ruangan?.nama || "N/A",
+        jam: jadwal.waktu_mulai ? `${jadwal.waktu_mulai.getHours().toString().padStart(2, "0")}:${jadwal.waktu_mulai.getMinutes().toString().padStart(2, "0")}` : "N/A",
+        tanggal: jadwal.tanggal ? JadwalHelper.formatTanggal(jadwal.tanggal) : "N/A",
+        dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || "N/A",
+        dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || "N/A",
+        instansi: jadwal.pendaftaran_kp?.instansi?.nama || "N/A",
+        pembimbing_instansi: jadwal.pendaftaran_kp?.pembimbing_instansi?.nama || "N/A",
+        status: jadwal.status || "N/A",
       };
     });
 
@@ -357,8 +361,8 @@ export default class JadwalRepository {
       jadwalList: formattedJadwalList,
       tahunAjaran: {
         id: tahunAjaran.id,
-        nama: tahunAjaran.nama
-      }
-    }
+        nama: tahunAjaran.nama,
+      },
+    };
   }
 }
