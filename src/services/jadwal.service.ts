@@ -84,7 +84,7 @@ export default class JadwalService {
       ruangan_baru: data.nama_ruangan,
       keterangan: `Pembuatan jadwal baru untuk NIM ${data.nim}`,
       id_jadwal: createdJadwal.id,
-      nip: data.nip_penguji
+      nip: data.nip_penguji,
     });
 
     return createdJadwal;
@@ -181,7 +181,7 @@ export default class JadwalService {
       waktu_selesai: data.waktu_mulai ? waktu_selesai : undefined,
       status: data.status,
       nama_ruangan: data.nama_ruangan,
-      nip_penguji: data.nip_penguji
+      nip_penguji: data.nip_penguji,
     };
 
     const updatedJadwal = await JadwalRepository.putJadwal(updateInput);
@@ -191,7 +191,7 @@ export default class JadwalService {
       tanggal_baru: tanggal,
       ruangan_lama: existingJadwal.nama_ruangan,
       ruangan_baru: data.nama_ruangan || "",
-      keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}${data.nip_penguji ? ` dengan pembaruan dosen penguji ${data.nip_penguji}` : ''}`,
+      keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}${data.nip_penguji ? ` dengan pembaruan dosen penguji ${data.nip_penguji}` : ""}`,
       id_jadwal: existingJadwal.id,
       nip: data.nip_penguji || existingJadwal.pendaftaran_kp?.nip_penguji || null,
     });
@@ -200,31 +200,23 @@ export default class JadwalService {
   }
 
   public static async getAllRuangan() {
-    const ruangan = await JadwalRepository.getAllRuangan()
-    return ruangan
+    const ruangan = await JadwalRepository.getAllRuangan();
+    return ruangan;
   }
 
   public static async getAllDosen() {
     const dosen = await JadwalRepository.getAllDosen();
-    return dosen
+    return dosen;
   }
 
   public static async getJadwalMahasiswaSaya(email: string) {
-    const dosen = await DosenService.getDosenByEmail(email)
-
-    if (!dosen) {
-      throw new APIError(`Waduh, Dosen tidak ditemukan! 😭`, 404);
-    }
+    const dosen = await DosenService.getDosenByEmail(email);
 
     const { statistics, jadwalHariIni, semuaJadwal, mahasiswaDinilaiMap } = await JadwalRepository.getJadwalMahasiswaSaya(dosen.nip);
 
-    const formattedJadwalHariIni = jadwalHariIni.map(jadwal => 
-      JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap)
-    );
+    const formattedJadwalHariIni = jadwalHariIni.map((jadwal) => JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap));
 
-    const formattedSemuaJadwal = semuaJadwal.map(jadwal => 
-      JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap)
-    );
+    const formattedSemuaJadwal = semuaJadwal.map((jadwal) => JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap));
 
     const resolvedSemuaJadwal = await Promise.all(formattedSemuaJadwal);
     resolvedSemuaJadwal.sort((a, b) => {
@@ -240,19 +232,19 @@ export default class JadwalService {
   }
 
   public static async getTahunAjaran() {
-    return JadwalRepository.getTahunAjaran()
+    return JadwalRepository.getTahunAjaran();
   }
 
   public static async getAllJadwalSeminar(tahunAjaranId: number): Promise<JadwalSeminarResponse> {
     if (!tahunAjaranId) {
-      const tahunAjaranSekarang = await JadwalRepository.getTahunAjaran()
+      const tahunAjaranSekarang = await JadwalRepository.getTahunAjaran();
       if (!tahunAjaranSekarang) {
-        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan`)
+        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan`);
       }
-      tahunAjaranId = tahunAjaranSekarang.id
+      tahunAjaranId = tahunAjaranSekarang.id;
     }
 
-    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId)
+    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
 
     const hariIni = JadwalHelper.filterJadwalHariIni(jadwalList);
     const mingguIni = JadwalHelper.filterJadwalMingguIni(jadwalList);
@@ -266,7 +258,7 @@ export default class JadwalService {
         hari_ini: hariIni,
         minggu_ini: mingguIni,
       },
-      tahun_ajaran: { ...tahunAjaran, nama: tahunAjaran.nama ?? "Unknown" }
-    }
+      tahun_ajaran: { ...tahunAjaran, nama: tahunAjaran.nama ?? "Unknown" },
+    };
   }
 }
