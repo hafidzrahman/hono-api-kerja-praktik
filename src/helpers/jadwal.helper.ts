@@ -92,6 +92,7 @@ export default class JadwalHelper {
       judul_kp: jadwal.pendaftaran_kp?.judul_kp || "-",
       lokasi_kp: jadwal.pendaftaran_kp?.instansi?.nama ? `${jadwal.pendaftaran_kp.instansi.nama}, ${jadwal.pendaftaran_kp.instansi.alamat}` : "-",
       status_jadwal: jadwal.status || "-",
+      id_nilai: jadwal.nilai.id || null,
       id_pendaftaran_kp: jadwal.pendaftaran_kp?.id || null,
     };
   }
