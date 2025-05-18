@@ -125,4 +125,31 @@ export default class MahasiswaService {
       conflicts
     }
   }
+
+  public static async validasiPersyaratanSeminarKp(nim: string) {
+      const pendaftaranKp = await MahasiswaRepository.getPendaftaranKP(nim)
+
+      const masihTerdaftarKP = pendaftaranKp && 
+                              ['Baru', 'Lanjut'].includes(pendaftaranKp.status || '') && 
+                              pendaftaranKp.tanggal_selesai &&
+                              new Date(pendaftaranKp.tanggal_selesai) >= new Date();
+  
+      const jumlahBimbingan = await MahasiswaRepository.countBimbinganByNIM(nim);
+      const cukupBimbingan = jumlahBimbingan >= 5;
+  
+      const dailyReports = await MahasiswaRepository.getDailyReportsByNIM(nim);
+      const semuaDailyReportDisetujui = dailyReports.length > 0 && 
+                                      dailyReports.every(report => report.status === 'Disetujui');
+  
+      const nilai = await MahasiswaRepository.getNilaiByNIM(nim);
+      const sudahNilaiInstansi = nilai && nilai.nilai_instansi !== null;
+  
+      return {
+        masih_terdaftar_kp: masihTerdaftarKP,
+        minimal_lima_bimbingan: jumlahBimbingan,
+        daily_report_sudah_approve: semuaDailyReportDisetujui,
+        sudah_mendapat_nilai_instansi: sudahNilaiInstansi,
+        semua_syarat_terpenuhi: masihTerdaftarKP && cukupBimbingan && semuaDailyReportDisetujui && sudahNilaiInstansi
+      }
+    }
 }
