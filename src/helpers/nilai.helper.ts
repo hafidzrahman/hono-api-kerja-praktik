@@ -33,7 +33,7 @@ export default class NilaiHelper {
     return nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4;  
   }
 
-  public static async formatStatusNilai(status: StatusNilai): Promise<string> {
+  public static formatStatusNilai(status: StatusNilai): string {
     switch (status) {
       case StatusNilai.NILAI_BELUM_VALID:
         return 'Nilai Belum Valid';
@@ -44,11 +44,6 @@ export default class NilaiHelper {
       default:
         return 'Unknown';
     }
-  }
-
-  public static async formatNilai(nilai: Number | undefined): Promise<string | undefined> {
-    if (nilai === undefined) return undefined
-    return nilai.toFixed(2)
   }
 
   public static getNilaiHuruf(nilai: number | null | undefined): string {
