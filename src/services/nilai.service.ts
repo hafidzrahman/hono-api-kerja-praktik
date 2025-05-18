@@ -46,7 +46,7 @@ export default class NilaiService {
         throw new APIError(`Waduh, Dosen tersebut bukan penguji untuk mahasiswa ini`, 403);
       }
 
-      nipPenguji = pendaftaranKp.nip_penguji
+      nipPenguji = pendaftaranKp.nip_penguji;
     }
 
     const nilaiPenguji = await NilaiHelper.calculateNilaiPenguji(input.penguasaanKeilmuan, input.kemampuanPresentasi, input.kesesuaianUrgensi);
@@ -79,7 +79,7 @@ export default class NilaiService {
       }
     }
 
-    let nipPembimbing: string
+    let nipPembimbing: string;
 
     if (email) {
       const dosen = await NilaiRepository.getDosenByEmail(email);
@@ -130,17 +130,28 @@ export default class NilaiService {
 
   public static async updateNilaiAkhir(id: string) {
     const nilai = await NilaiRepository.getNilaiById(id);
-    if (!nilai) return null;
-
-    if (nilai.nilai_penguji && nilai.nilai_pembimbing && nilai.nilai_instansi) {
-      const nilaiAkhir = await NilaiHelper.calculateNilaiAkhir(nilai.nilai_penguji, nilai.nilai_pembimbing, nilai.nilai_instansi);
-
-      if (nilaiAkhir != null) {
-        await NilaiRepository.updateNilaiAkhir(id, nilaiAkhir);
-      }
+    if (!nilai) {
+      throw new APIError(`Waduh, Nilai tidak ditemukan ni! 😭`, 404);
     }
 
-    return nilai;
+    const nilaiPenguji = nilai.nilai_penguji ?? 0;
+    const nilaiPembimbing = nilai.nilai_pembimbing ?? 0;
+    const nilaiInstansi = nilai.nilai_instansi ?? 0;
+
+    const nilaiAkhir = await NilaiHelper.calculateNilaiAkhir(
+      nilaiPenguji, 
+      nilaiPembimbing, 
+      nilaiInstansi
+    );
+
+    if (nilaiAkhir != null) {
+      await NilaiRepository.updateNilaiAkhir(id, nilaiAkhir)
+    }
+
+    return {
+      nilai,
+      nilaiAkhir
+    };
   }
 
   public static async getNilaiById(id: string) {
@@ -225,7 +236,7 @@ export default class NilaiService {
           }
         }
 
-        const formattedStatusNilai = NilaiHelper.formatStatusNilai(statusNilai)
+        const formattedStatusNilai = NilaiHelper.formatStatusNilai(statusNilai);
 
         return {
           nim: mahasiswa.nim,
