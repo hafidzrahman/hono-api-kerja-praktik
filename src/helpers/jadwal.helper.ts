@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import StepHelper from "./dokumen-step.helper";
+import { fromZonedTime } from "date-fns-tz";
+import DateHelper from "./date.helper";
 import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
 
 export default class JadwalHelper {
@@ -64,7 +66,7 @@ export default class JadwalHelper {
     return await StepHelper.validasiStepDokumen(1, id_pendaftaran_kp);
   }
 
-  public static async formatJadwalData(jadwal: any, mahasiswaDinilaiMap: Record<string, boolean>) {
+  public static formatJadwalData(jadwal: any, mahasiswaDinilaiMap: Record<string, boolean>) {
     const nim = jadwal.pendaftaran_kp?.mahasiswa?.nim;
     const isPenilaianCompleted = nim ? !!mahasiswaDinilaiMap[nim] : false;
 
@@ -78,14 +80,18 @@ export default class JadwalHelper {
       }
     }
 
+    const tanggalJkt = jadwal.tanggal ? DateHelper.toJakartaTime(new Date(jadwal.tanggal)) : null
+    const waktuMulaiJkt = jadwal.waktu_mulai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_mulai)) : null
+    const waktuSelesaiJkt = jadwal.waktu_selesai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_selesai)) : null
+
     return {
       id: jadwal.id,
       nim: nim || "-",
       nama: jadwal.pendaftaran_kp?.mahasiswa?.nama || "-",
       ruangan: jadwal.ruangan?.nama || "-",
-      tanggal: jadwal.tanggal ? format(new Date(jadwal.tanggal), "EEEE, MMMM dd yyyy", { locale: id }) : "-",
-      waktuMulai: jadwal.waktu_mulai ? format(new Date(jadwal.waktu_mulai), "HH:mm") : "-",
-      waktuSelesai: jadwal.waktu_selesai ? format(new Date(jadwal.waktu_selesai), "HH:mm") : "-",
+      tanggal: tanggalJkt ? format(tanggalJkt, "EEEE, MMMM dd yyyy", { locale: id }) : "-",
+      waktuMulai: waktuMulaiJkt ? format(waktuMulaiJkt, "HH:mm") : "-",
+      waktuSelesai: waktuSelesaiJkt? format(waktuSelesaiJkt, "HH:mm") : "-",
       status: isPenilaianCompleted ? "Dinilai" : "Belum Dinilai",
       semester: semester || "-",
       dosenPembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || "-",
@@ -98,13 +104,15 @@ export default class JadwalHelper {
   }
 
   public static formatTanggal(date: Date): string {
+    const waktuJakarta = DateHelper.toJakartaTime(date)
+
     const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-    const hariName = hari[date.getDay()];
-    const tanggal = date.getDate();
-    const bulanName = bulan[date.getMonth()];
-    const tahun = date.getFullYear();
+    const hariName = hari[waktuJakarta.getDay()];
+    const tanggal = waktuJakarta.getDate();
+    const bulanName = bulan[waktuJakarta.getMonth()];
+    const tahun = waktuJakarta.getFullYear();
 
     return `${hariName}, ${tanggal} ${bulanName} ${tahun}`;
   }
