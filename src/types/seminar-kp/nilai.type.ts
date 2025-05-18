@@ -33,22 +33,22 @@ export interface KomponenNilaiPenguji {
 export interface DetailMahasiswaNilai {
   nim: string;
   nama: string;
-  kelas?: string;
+  kelas: string;
   statusNilai: StatusNilai;
-  statusDaftarKp?: status_pendaftaran;
-  semester?: string;
-  instansi?: string;
-  pembimbingInstansi?: string;
-  dosenPembimbing?: string;
-  dosenPenguji?: string;
-  nilaiInstansi?: number;
-  nilaiPembimbing?: number;
-  nilaiPenguji?: number;
-  nilaiAkhir?: number;
-  nilaiHuruf?: string;
-  komponenNilaiInstansi?: KomponenNilaiInstansi;
-  komponenNilaiPembimbing?: KomponenNilaiPembimbing;
-  komponenNilaiPenguji?: KomponenNilaiPenguji;
+  statusDaftarKp: status_pendaftaran;
+  semester: string;
+  instansi: string;
+  pembimbingInstansi: string;
+  dosenPembimbing: string;
+  dosenPenguji: string;
+  nilaiInstansi: number;
+  nilaiPembimbing: number;
+  nilaiPenguji: number;
+  nilaiAkhir: number;
+  nilaiHuruf: string;
+  komponenNilaiInstansi: KomponenNilaiInstansi;
+  komponenNilaiPembimbing: KomponenNilaiPembimbing;
+  komponenNilaiPenguji: KomponenNilaiPenguji;
 }
 
 export interface AllNilaiResponse {
