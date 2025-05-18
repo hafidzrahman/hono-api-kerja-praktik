@@ -32,8 +32,8 @@ export default class NilaiService {
       if (pendaftaranKp.nip_penguji !== dosen.nip) {
         throw new APIError(`Waduh, Anda bukan penguji untuk mahasiswa ini`, 403);
       }
-
-      input.nip = dosen.nip;
+      
+      dosen.nip;
     } else {
       const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
       if (!pendaftaranKp) {
@@ -45,11 +45,7 @@ export default class NilaiService {
       }
     }
 
-    if (input.penguasaanKeilmuan > 100 || input.kemampuanPresentasi > 100 || input.kesesuaianUrgensi > 100) {
-      throw new Error("Komponen nilai tidak boleh lebih dari 100");
-    }
-
-    const nilaiPenguji = input.penguasaanKeilmuan * 0.4 + input.kemampuanPresentasi * 0.2 + input.kesesuaianUrgensi * 0.4;
+    const nilaiPenguji = await NilaiHelper.calculateNilaiPenguji(input.penguasaanKeilmuan, input.kemampuanPresentasi, input.kesesuaianUrgensi);
 
     const nilai = await NilaiRepository.createNilaiPenguji(
       id || crypto.randomUUID(),
@@ -106,11 +102,7 @@ export default class NilaiService {
       }
     }
 
-    if (input.penyelesaianMasalah > 100 || input.bimbinganSikap > 100 || input.kualitasLaporan > 100) {
-      throw new Error("Komponen nilai tidak boleh lebih dari 100");
-    }
-
-    const nilaiPembimbing = input.penyelesaianMasalah * 0.4 + input.bimbinganSikap * 0.35 + input.kualitasLaporan * 0.25;
+    const nilaiPembimbing = await NilaiHelper.calculateNilaiPembimbing(input.penyelesaianMasalah, input.bimbinganSikap, input.kualitasLaporan);
 
     const nilai = await NilaiRepository.createNilaiPembimbing(
       id || crypto.randomUUID(),
@@ -133,8 +125,11 @@ export default class NilaiService {
     if (!nilai) return null;
 
     if (nilai.nilai_penguji && nilai.nilai_pembimbing && nilai.nilai_instansi) {
-      const nilaiAkhir = nilai.nilai_penguji * 0.2 + nilai.nilai_pembimbing * 0.4 + nilai.nilai_instansi * 0.4;
-      await NilaiRepository.updateNilaiAkhir(id, nilaiAkhir);
+      const nilaiAkhir = await NilaiHelper.calculateNilaiAkhir(nilai.nilai_penguji, nilai.nilai_pembimbing, nilai.nilai_instansi);
+
+      if (nilaiAkhir != null) {
+        await NilaiRepository.updateNilaiAkhir(id, nilaiAkhir);
+      }
     }
 
     return nilai;
@@ -152,7 +147,7 @@ export default class NilaiService {
         const pendaftaranKp = mahasiswa.pendaftaran_kp[0];
 
         if (!pendaftaranKp) {
-          return null
+          return null;
         }
 
         let nilaiInstansi: number | undefined = undefined;
@@ -213,8 +208,7 @@ export default class NilaiService {
         const hasAllNilai = nilaiInstansi !== undefined && nilaiPembimbing !== undefined && nilaiPenguji !== undefined;
 
         if (hasAllNilai) {
-          const dokumenSeminarKp = pendaftaranKp?.dokumen_seminar_kp || [];
-          const allDocumentsValidated = dokumenSeminarKp.length > 0 && dokumenSeminarKp.every((doc) => doc.status === status_dokumen.Divalidasi);
+          const allDocumentsValidated = pendaftaranKp?.dokumen_seminar_kp.every((doc) => doc.status === status_dokumen.Divalidasi);
 
           if (allDocumentsValidated) {
             statusNilai = StatusNilai.NILAI_APPROVE;
@@ -223,32 +217,34 @@ export default class NilaiService {
           }
         }
 
+        const formattedStatusNilai = NilaiHelper.formatStatusNilai(statusNilai)
+
         return {
           nim: mahasiswa.nim,
           nama: mahasiswa.nama,
           kelas: pendaftaranKp?.kelas_kp || undefined,
-          statusNilai,
-          statusDaftarKp: pendaftaranKp?.status || undefined,
+          status_nilai: formattedStatusNilai,
+          status_daftar_kp: pendaftaranKp?.status || undefined,
           semester: MahasiswaHelper.getSemesterByNIM(mahasiswa.nim).toString(),
           instansi: pendaftaranKp?.instansi?.nama || undefined,
-          pembimbingInstansi: pendaftaranKp?.pembimbing_instansi?.nama || undefined,
-          dosenPembimbing: pendaftaranKp?.dosen_pembimbing?.nama || undefined,
-          dosenPenguji: pendaftaranKp?.dosen_penguji?.nama || undefined,
-          nilaiInstansi,
-          nilaiPembimbing,
-          nilaiPenguji,
-          nilaiAkhir,
-          nilaiHuruf,
-          komponenNilaiInstansi,
-          komponenNilaiPembimbing,
-          komponenNilaiPenguji,
+          pembimbing_instansi: pendaftaranKp?.pembimbing_instansi?.nama || undefined,
+          dosen_pembimbing: pendaftaranKp?.dosen_pembimbing?.nama || undefined,
+          dosen_penguji: pendaftaranKp?.dosen_penguji?.nama || undefined,
+          nilai_instansi: nilaiInstansi,
+          nilai_pembimbing: nilaiPembimbing,
+          nilai_penguji: nilaiPenguji,
+          nilai_akhir: nilaiAkhir,
+          nilai_huruf: nilaiHuruf,
+          komponen_nilai_instansi: komponenNilaiInstansi,
+          komponen_nilai_pembimbing: komponenNilaiPembimbing,
+          komponen_nilai_penguji: komponenNilaiPenguji,
         };
       })
       .filter((mahasiswa): mahasiswa is DetailMahasiswaNilai => mahasiswa !== null);
 
-    const jumlahNilaiBelumValid = detailMahasiswa.filter((m) => m.statusNilai === StatusNilai.NILAI_BELUM_VALID).length;
-    const jumlahNilaiValid = detailMahasiswa.filter((m) => m.statusNilai === StatusNilai.NILAI_VALID).length;
-    const jumlahNilaiApprove = detailMahasiswa.filter((m) => m.statusNilai === StatusNilai.NILAI_APPROVE).length;
+    const jumlahNilaiBelumValid = detailMahasiswa.filter((m) => m.status_nilai === StatusNilai.NILAI_BELUM_VALID).length;
+    const jumlahNilaiValid = detailMahasiswa.filter((m) => m.status_nilai === StatusNilai.NILAI_VALID).length;
+    const jumlahNilaiApprove = detailMahasiswa.filter((m) => m.status_nilai === StatusNilai.NILAI_APPROVE).length;
 
     return {
       tahunAjaran: tahunAjaran.nama || "",
