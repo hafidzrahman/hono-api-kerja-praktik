@@ -46,6 +46,8 @@ export default class MahasiswaRepository {
                 select: {
                 id: true,
                 id_instansi: true,
+                status: true,
+                tanggal_selesai: true,
                 email_pembimbing_instansi: true,
                 nip_pembimbing: true,
                 level_akses: true,
@@ -111,6 +113,33 @@ export default class MahasiswaRepository {
             include: {
                 ruangan: true,
                 pendaftaran_kp: true
+            }
+        })
+    }
+
+    public static async getDailyReportsByNIM(nim: string) {
+        return prisma.daily_report.findMany({
+            where: {
+                nim: nim
+            },
+            select: {
+                id: true,
+                tanggal_presensi: true,
+                status: true
+            }
+        })
+    }
+
+    public static async getNilaiByNIM(nim: string) {
+        return prisma.nilai.findFirst({
+            where: {
+                nim: nim
+            },
+            select: {
+                nilai_instansi: true,
+                nilai_pembimbing: true,
+                nilai_penguji: true,
+                nilai_akhir: true
             }
         })
     }
