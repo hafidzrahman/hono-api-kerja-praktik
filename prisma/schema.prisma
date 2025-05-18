@@ -124,9 +124,11 @@ model nilai {
   nip                           String?                         @db.VarChar(20)
   email_pembimbing_instansi     String?                         @db.VarChar(255)
   id_jadwal_seminar             String?                         @unique @db.Uuid
+  id_validasi_nilai             String?                         @unique @db.Uuid
   komponen_penilaian_instansi   komponen_penilaian_instansi?
   komponen_penilaian_pembimbing komponen_penilaian_pembimbing?
   komponen_penilaian_penguji    komponen_penilaian_penguji?
+  validasi_nilai                validasi_nilai?
 
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
@@ -239,6 +241,15 @@ model tahun_ajaran {
   nama           String?          @db.VarChar(255)
   created_at     String?          @db.VarChar(255)
   pendaftaran_kp pendaftaran_kp[]
+}
+
+model validasi_nilai {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  is_approve     Boolean?         @default(false)
+  created_at     DateTime?        @default(dbgenerated("CURRENT_DATE")) @db.Date
+  id_nilai       String?          @unique @db.Uuid
+
+  nilai          nilai?           @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum jenis_dokumen {
