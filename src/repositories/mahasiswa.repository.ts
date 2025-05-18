@@ -60,7 +60,7 @@ export default class MahasiswaRepository {
         return result;
     }
 
-    public static async countBimbinganByNIM(nim: string): Promise<number> {
+    public static async countBimbinganByNIM(nim: string) {
         return await prisma.bimbingan.count({
             where: {
                 nim: nim
