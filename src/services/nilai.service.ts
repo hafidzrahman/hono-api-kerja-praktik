@@ -42,8 +42,8 @@ export default class NilaiService {
         throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
       }
 
-      if (pendaftaranKp.nip_penguji !== input.nip) {
-        throw new APIError(`Waduh, Dosen dengan NIP ${input.nip} bukan penguji untuk mahasiswa ini`, 403);
+      if (!pendaftaranKp.nip_penguji) {
+        throw new APIError(`Waduh, Dosen tersebut bukan penguji untuk mahasiswa ini`, 403);
       }
 
       nipPenguji = pendaftaranKp.nip_penguji
@@ -103,8 +103,8 @@ export default class NilaiService {
         throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
       }
 
-      if (pendaftaranKp.nip_pembimbing !== input.nip) {
-        throw new APIError(`Waduh, Dosen dengan NIP ${input.nip} bukan pembimbing untuk mahasiswa ini`, 403);
+      if (!pendaftaranKp.nip_pembimbing) {
+        throw new APIError(`Waduh, Dosen bukan pembimbing untuk mahasiswa ini`, 403);
       }
 
       nipPembimbing = pendaftaranKp.nip_pembimbing;
