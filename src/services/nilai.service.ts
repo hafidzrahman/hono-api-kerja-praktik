@@ -1,8 +1,7 @@
-import { unknown } from "zod";
 import { status_dokumen } from "../generated/prisma";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import NilaiRepository from "../repositories/nilai.repository";
-import { NilaiPengujiInput, NilaiPembimbingInput, AllNilaiResponse, DetailMahasiswaNilai, StatusNilai } from "../types/seminar-kp/nilai.type";
+import { NilaiPengujiInput, NilaiPembimbingInput, AllNilaiResponse, DetailMahasiswaNilai, StatusNilai, KomponenNilaiInstansi, KomponenNilaiPembimbing, KomponenNilaiPenguji } from "../types/seminar-kp/nilai.type";
 import { APIError } from "../utils/api-error.util";
 import NilaiHelper from "../helpers/nilai.helper";
 
@@ -76,7 +75,7 @@ export default class NilaiService {
       }
 
       if (!NilaiHelper.canInputNilai(jadwal.waktu_mulai)) {
-        throw new APIError(`Waduh, Nilai pembimbing tidak bisa diinput setelah seminar dimulai! 😭`, 400);
+        throw new APIError(`Waduh, Nilai pembimbing tidak bisa diinput sebelum seminar dimulai! 😭`, 400);
       }
     }
 
@@ -135,7 +134,6 @@ export default class NilaiService {
 
     if (nilai.nilai_penguji && nilai.nilai_pembimbing && nilai.nilai_instansi) {
       const nilaiAkhir = nilai.nilai_penguji * 0.2 + nilai.nilai_pembimbing * 0.4 + nilai.nilai_instansi * 0.4;
-
       await NilaiRepository.updateNilaiAkhir(id, nilaiAkhir);
     }
 
@@ -154,17 +152,17 @@ export default class NilaiService {
         const pendaftaranKp = mahasiswa.pendaftaran_kp[0];
 
         if (!pendaftaranKp) {
-          return null;
+          return null
         }
 
-        let nilaiInstansi = undefined;
-        let nilaiPembimbing = undefined;
-        let nilaiPenguji = undefined;
-        let nilaiAkhir = undefined;
-        let nilaiHuruf = undefined;
-        let komponenNilaiInstansi = undefined;
-        let komponenNilaiPembimbing = undefined;
-        let komponenNilaiPenguji = undefined;
+        let nilaiInstansi: number | undefined = undefined;
+        let nilaiPembimbing: number | undefined = undefined;
+        let nilaiPenguji: number | undefined = undefined;
+        let nilaiAkhir: number | undefined = undefined;
+        let nilaiHuruf: string | undefined = undefined;
+        let komponenNilaiInstansi: KomponenNilaiInstansi | undefined = undefined;
+        let komponenNilaiPembimbing: KomponenNilaiPembimbing | undefined = undefined;
+        let komponenNilaiPenguji: KomponenNilaiPenguji | undefined = undefined;
 
         const nilaiData = mahasiswa.nilai[0];
 
@@ -176,8 +174,8 @@ export default class NilaiService {
 
           nilaiHuruf = NilaiHelper.getNilaiHuruf(nilaiAkhir);
 
-          if (nilaiData.komponen_penilaian_instansi.length > 0) {
-            const komponen = nilaiData.komponen_penilaian_instansi[0];
+          if (nilaiData.komponen_penilaian_instansi !== null) {
+            const komponen = nilaiData.komponen_penilaian_instansi;
             komponenNilaiInstansi = {
               deliverables: komponen.deliverables ? Number(komponen.deliverables) : undefined,
               ketepatan_waktu: komponen.ketepatan_waktu ? Number(komponen.ketepatan_waktu) : undefined,
@@ -189,8 +187,8 @@ export default class NilaiService {
             };
           }
 
-          if (nilaiData.komponen_penilaian_pembimbing.length > 0) {
-            const komponen = nilaiData.komponen_penilaian_pembimbing[0];
+          if (nilaiData.komponen_penilaian_pembimbing !== null) {
+            const komponen = nilaiData.komponen_penilaian_pembimbing;
             komponenNilaiPembimbing = {
               penyelesaian_masalah: komponen.penyelesaian_masalah ? Number(komponen.penyelesaian_masalah) : undefined,
               bimbingan_sikap: komponen.bimbingan_sikap ? Number(komponen.bimbingan_sikap) : undefined,
@@ -199,8 +197,8 @@ export default class NilaiService {
             };
           }
 
-          if (nilaiData.komponen_penilaian_penguji.length > 0) {
-            const komponen = nilaiData.komponen_penilaian_penguji[0];
+          if (nilaiData.komponen_penilaian_penguji !== null) {
+            const komponen = nilaiData.komponen_penilaian_penguji;
             komponenNilaiPenguji = {
               penguasaan_keilmuan: komponen.penguasaan_keilmuan ? Number(komponen.penguasaan_keilmuan) : undefined,
               kemampuan_presentasi: komponen.kemampuan_presentasi ? Number(komponen.kemampuan_presentasi) : undefined,
@@ -215,7 +213,8 @@ export default class NilaiService {
         const hasAllNilai = nilaiInstansi !== undefined && nilaiPembimbing !== undefined && nilaiPenguji !== undefined;
 
         if (hasAllNilai) {
-          const allDocumentsValidated = pendaftaranKp?.dokumen_seminar_kp.every((doc) => doc.status === status_dokumen.Divalidasi);
+          const dokumenSeminarKp = pendaftaranKp?.dokumen_seminar_kp || [];
+          const allDocumentsValidated = dokumenSeminarKp.length > 0 && dokumenSeminarKp.every((doc) => doc.status === status_dokumen.Divalidasi);
 
           if (allDocumentsValidated) {
             statusNilai = StatusNilai.NILAI_APPROVE;
@@ -252,11 +251,11 @@ export default class NilaiService {
     const jumlahNilaiApprove = detailMahasiswa.filter((m) => m.statusNilai === StatusNilai.NILAI_APPROVE).length;
 
     return {
-      tahun_ajaran: { ...tahunAjaran },
-      jumlah_nilai_belum_valid: jumlahNilaiBelumValid,
-      jumlah_nilai_valid: jumlahNilaiValid,
-      jumlah_nilai_approve: jumlahNilaiApprove,
-      detail_mahasiswa: detailMahasiswa,
+      tahunAjaran: tahunAjaran.nama || "",
+      jumlahNilaiBelumValid,
+      jumlahNilaiValid,
+      jumlahNilaiApprove,
+      detailMahasiswa,
     };
   }
 }
