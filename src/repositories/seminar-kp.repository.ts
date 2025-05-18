@@ -192,6 +192,7 @@ export default class SeminarKpRepository {
         },
         nilai: {
           select: {
+            id: true,
             komponen_penilaian_pembimbing: {
               select: {
                 id: true,
