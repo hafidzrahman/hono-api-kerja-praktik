@@ -65,7 +65,6 @@ export interface NilaiPengujiInput {
   kesesuaianUrgensi: number;
   catatan?: string;
   nim: string;
-  nip: string;
   idJadwalSeminar?: string;
 }
 
@@ -75,6 +74,5 @@ export interface NilaiPembimbingInput {
   kualitasLaporan: number;
   catatan?: string;
   nim: string;
-  nip: string;
   idJadwalSeminar?: string;
 }
