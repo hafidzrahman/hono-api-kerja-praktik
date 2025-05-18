@@ -4,6 +4,7 @@ import StepHelper from "./dokumen-step.helper";
 import { fromZonedTime } from "date-fns-tz";
 import DateHelper from "./date.helper";
 import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
+import MahasiswaHelper from "./mahasiswa.helper";
 
 export default class JadwalHelper {
   public static hitungMundur(targetDate: Date | null): string | null {
@@ -70,15 +71,7 @@ export default class JadwalHelper {
     const nim = jadwal.pendaftaran_kp?.mahasiswa?.nim;
     const isPenilaianCompleted = nim ? !!mahasiswaDinilaiMap[nim] : false;
 
-    let semester = "";
-    if (jadwal.pendaftaran_kp?.tahun_ajaran?.nama) {
-      const tahunAjaranName = jadwal.pendaftaran_kp.tahun_ajaran.nama;
-      if (tahunAjaranName.includes("Ganjil")) {
-        semester = "Ganjil";
-      } else if (tahunAjaranName.includes("Genap")) {
-        semester = "Genap";
-      }
-    }
+    const semester = MahasiswaHelper.getSemesterByNIM(nim)
 
     const tanggalJkt = jadwal.tanggal ? DateHelper.toJakartaTime(new Date(jadwal.tanggal)) : null
     const waktuMulaiJkt = jadwal.waktu_mulai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_mulai)) : null
