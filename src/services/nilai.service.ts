@@ -18,6 +18,8 @@ export default class NilaiService {
       }
     }
 
+    let nipPenguji: string;
+
     if (email) {
       const dosen = await NilaiRepository.getDosenByEmail(email);
       if (!dosen) {
@@ -32,8 +34,8 @@ export default class NilaiService {
       if (pendaftaranKp.nip_penguji !== dosen.nip) {
         throw new APIError(`Waduh, Anda bukan penguji untuk mahasiswa ini`, 403);
       }
-      
-      dosen.nip;
+
+      nipPenguji = dosen.nip;
     } else {
       const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
       if (!pendaftaranKp) {
@@ -43,6 +45,8 @@ export default class NilaiService {
       if (pendaftaranKp.nip_penguji !== input.nip) {
         throw new APIError(`Waduh, Dosen dengan NIP ${input.nip} bukan penguji untuk mahasiswa ini`, 403);
       }
+
+      nipPenguji = pendaftaranKp.nip_penguji
     }
 
     const nilaiPenguji = await NilaiHelper.calculateNilaiPenguji(input.penguasaanKeilmuan, input.kemampuanPresentasi, input.kesesuaianUrgensi);
@@ -55,7 +59,7 @@ export default class NilaiService {
       input.catatan || null,
       nilaiPenguji,
       input.nim,
-      input.nip,
+      nipPenguji,
       input.idJadwalSeminar
     );
 
@@ -75,6 +79,8 @@ export default class NilaiService {
       }
     }
 
+    let nipPembimbing: string
+
     if (email) {
       const dosen = await NilaiRepository.getDosenByEmail(email);
       if (!dosen) {
@@ -90,7 +96,7 @@ export default class NilaiService {
         throw new APIError(`Waduh, Anda bukan pembimbing untuk mahasiswa ini`, 403);
       }
 
-      input.nip = dosen.nip;
+      nipPembimbing = dosen.nip;
     } else {
       const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
       if (!pendaftaranKp) {
@@ -100,6 +106,8 @@ export default class NilaiService {
       if (pendaftaranKp.nip_pembimbing !== input.nip) {
         throw new APIError(`Waduh, Dosen dengan NIP ${input.nip} bukan pembimbing untuk mahasiswa ini`, 403);
       }
+
+      nipPembimbing = pendaftaranKp.nip_pembimbing;
     }
 
     const nilaiPembimbing = await NilaiHelper.calculateNilaiPembimbing(input.penyelesaianMasalah, input.bimbinganSikap, input.kualitasLaporan);
@@ -112,7 +120,7 @@ export default class NilaiService {
       input.catatan || null,
       nilaiPembimbing,
       input.nim,
-      input.nip,
+      nipPembimbing,
       input.idJadwalSeminar
     );
 
