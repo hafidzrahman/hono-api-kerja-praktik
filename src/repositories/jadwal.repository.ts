@@ -237,6 +237,12 @@ export default class JadwalRepository {
           },
         },
         ruangan: true,
+        nilai: {
+          select: {
+            id: true,
+            nilai_penguji: true,
+          },
+        }
       },
     };
 
@@ -260,6 +266,7 @@ export default class JadwalRepository {
         nip,
       },
       select: {
+        id: true,
         nim: true,
         nilai_penguji: true,
       },
