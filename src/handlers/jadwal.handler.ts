@@ -19,16 +19,7 @@ export default class JadwalHandler {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const id = c.req.param("id");
-    if (!id) {
-      throw new APIError("Waduh, ID jadwal diperlukan! 😭", 400);
-    }
-
-    const body = await c.req.json();
-    const data = updateJadwalSchema.parse({
-      body,
-      id,
-    });
+    const data = await c.req.json();
 
     const jadwal = await JadwalService.putJadwal(data);
 
