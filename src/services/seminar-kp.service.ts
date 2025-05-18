@@ -131,10 +131,12 @@ export default class SeminarKpService {
     const currentStepDocs = mahasiswa.dokumen_seminar_kp.filter(
       (doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === currentStep
     );
+
+    const hasDocsInCurrentStep = currentStepDocs.length > 0;
     
     const hasSubmittedDocs = currentStepDocs.some(doc => doc.status === "Terkirim");
     
-    if (hasSubmittedDocs) {
+    if (hasDocsInCurrentStep) {
       stats.step[`step${currentStep}` as keyof typeof stats.step]++;
     } else {
       const previousStep = currentStep > 1 ? currentStep - 1 : 1;
@@ -183,7 +185,7 @@ export default class SeminarKpService {
       nim: mahasiswa.nim,
       nama: mahasiswa.nama,
       email: mahasiswa.email,
-      step_sekarang: hasSubmittedDocs ? currentStep : (currentStep > 1 ? currentStep - 1 : 1),
+      step_sekarang: hasDocsInCurrentStep ? currentStep : (currentStep > 1 ? currentStep - 1 : 1),
       last_status: latestStatus,
       last_submission: lastSubmissionTime,
     };
