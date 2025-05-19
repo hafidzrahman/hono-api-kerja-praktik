@@ -65,4 +65,37 @@ export default class DosenRepository {
       },
     });
   }
+
+  
+  public static async getDosenByEmail(email: string) {
+    return prisma.dosen.findFirst({
+      where: { email },
+      select: {
+        nip: true,
+        nama: true,
+        email: true,
+      },
+    });
+  }
+  
+  public static async getPendaftaranKpDosen(nim: string, email?: string) {
+    const dosen = email ? await this.getDosenByEmail(email) : null;
+    const nip = dosen?.nip;
+
+    return prisma.pendaftaran_kp.findFirst({
+      where: {
+        nim,
+      },
+      select: {
+        nip_pembimbing: true,
+        nip_penguji: true,
+        pembimbing_instansi: true,
+        instansi: true,
+        dokumen_seminar_kp: true
+      },
+      orderBy: {
+        tanggal_pengajuan: 'desc'
+      }
+    });
+  }
 }
