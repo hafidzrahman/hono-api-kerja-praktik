@@ -117,6 +117,8 @@ export default class NilaiRepository {
     return prisma.nilai.findUnique({
       where: { id },
       include: {
+        dosen: true,
+        pembimbing_instansi: true,
         komponen_penilaian_penguji: true,
         komponen_penilaian_pembimbing: true,
         komponen_penilaian_instansi: true,
@@ -127,6 +129,8 @@ export default class NilaiRepository {
             email: true,
           },
         },
+        validasi_nilai: true,
+        jadwal_seminar: true
       },
     });
   }
@@ -286,7 +290,43 @@ export default class NilaiRepository {
       select: {
         nip_pembimbing: true,
         nip_penguji: true,
+        dokumen_seminar_kp: {
+          select: {
+            status: true,
+          },
+        },
       }
     });
+  }
+
+  public static async createValidasiNilai(id: string, idNilai: string, isApprove: boolean) {
+    return await prisma.validasi_nilai.create({
+      data: {
+        id,
+        id_nilai: idNilai,
+        is_approve: isApprove,
+        created_at: new Date()
+      }
+    })
+  }
+
+  public static async updateValidasiNilai(id: string, isApprove: boolean) {
+    return await prisma.validasi_nilai.update({
+      where: {
+        id,
+      },
+      data: {
+        is_approve: isApprove,
+        created_at: new Date()
+      },
+    })
+  }
+
+  public static async getValidasiNilaiById(idNilai: string) {
+    return await prisma.validasi_nilai.findUnique({
+      where: {
+        id_nilai: idNilai
+      }
+    })
   }
 }
