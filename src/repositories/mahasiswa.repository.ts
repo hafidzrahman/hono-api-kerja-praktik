@@ -5,10 +5,10 @@ import { APIError } from "../utils/api-error.util";
 
 export default class MahasiswaRepository {
 
-    public static async getNamaByEmail(email: string) {
+    public static async getNamaByNIM(nim: string) {
         return await prisma.mahasiswa.findUnique({
             where: {
-                email: email
+                nim: nim
             },
             select: {
                 nama: true
