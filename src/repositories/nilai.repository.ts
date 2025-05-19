@@ -164,17 +164,6 @@ export default class NilaiRepository {
     });
   }
 
-  public static async getDosenByEmail(email: string) {
-    return prisma.dosen.findFirst({
-      where: { email },
-      select: {
-        nip: true,
-        nama: true,
-        email: true,
-      },
-    });
-  }
-
   public static async getAllMahasiswaNilai(tahunAjaranId: number = 1) {
     let tahunAjaranSekarang;
 
@@ -277,26 +266,6 @@ export default class NilaiRepository {
       mahasiswaData,
       tahunAjaran: tahunAjaranSekarang,
     };
-  }
-
-  public static async getPendaftaranKpDosen(nim: string, email?: string) {
-    const dosen = email ? await this.getDosenByEmail(email) : null;
-    const nip = dosen?.nip;
-
-    return prisma.pendaftaran_kp.findFirst({
-      where: {
-        nim,
-      },
-      select: {
-        nip_pembimbing: true,
-        nip_penguji: true,
-        dokumen_seminar_kp: {
-          select: {
-            status: true,
-          },
-        },
-      }
-    });
   }
 
   public static async createValidasiNilai(id: string, idNilai: string, isApprove: boolean) {
