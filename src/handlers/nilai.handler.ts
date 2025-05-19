@@ -77,4 +77,13 @@ export default class NilaiHandler {
     const allNilai = await NilaiService.getAllNilai(tahunAjaranId);
     return c.json(allNilai);
   }
+
+  public static async createValidasiNilai(c: Context) {
+    const { email } = c.get("user");
+    if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
+
+    const body = await c.req.json();
+    const result = await NilaiService.createValidasiNilai(body.idNilai, email);
+    return c.json(result);
+  }
 }
