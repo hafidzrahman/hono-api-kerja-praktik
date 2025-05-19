@@ -4,6 +4,17 @@ import { FindByEmailParamsInterface, FindByEmailReturnInterface, FindByNIMParams
 import { APIError } from "../utils/api-error.util";
 
 export default class MahasiswaRepository {
+
+    public static async getNamaByEmail(email: string) {
+        return await prisma.mahasiswa.findUnique({
+            where: {
+                email: email
+            },
+            select: {
+                nama: true
+            }
+        })
+    }
     
     public static async findByEmail({email}: FindByEmailParamsInterface): Promise<FindByEmailReturnInterface | null> {
         return await prisma.mahasiswa.findUnique({
