@@ -83,7 +83,7 @@ export default class NilaiHandler {
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     const body = await c.req.json();
-    const result = await NilaiService.createValidasiNilai(body.idNilai, email);
+    const result = await NilaiService.createValidasiNilai(body.idNilai);
     return c.json(result);
   }
 }
