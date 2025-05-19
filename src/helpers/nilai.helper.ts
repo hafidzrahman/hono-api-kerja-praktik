@@ -1,3 +1,4 @@
+import { status_dokumen } from "../generated/prisma";
 import { StatusNilai } from "../types/seminar-kp/nilai.type";
 import { APIError } from "../utils/api-error.util";
 
@@ -30,40 +31,76 @@ export default class NilaiHelper {
       return null;
     }
 
-    return nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4;  
+    return nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4;
   }
 
   public static formatStatusNilai(status: StatusNilai): string {
     switch (status) {
       case StatusNilai.NILAI_BELUM_VALID:
-        return 'Nilai Belum Valid';
+        return "Nilai Belum Valid";
       case StatusNilai.NILAI_VALID:
-        return 'Nilai Valid';
+        return "Nilai Valid";
       case StatusNilai.NILAI_APPROVE:
-        return 'Nilai Approve';
+        return "Nilai Approve";
       default:
-        return 'Unknown';
+        return "Unknown";
     }
   }
 
   public static getNilaiHuruf(nilai: number | null | undefined): string {
     if (nilai === null || nilai === undefined) return "-";
 
-    if (nilai >= 85) return 'A';
-    if (nilai >= 80) return 'A-';
-    if (nilai >= 75) return 'B+';
-    if (nilai >= 70) return 'B';
-    if (nilai >= 65) return 'B-';
-    if (nilai >= 60) return 'C+';
-    if (nilai >= 55) return 'C';
-    if (nilai >= 50) return 'D';
-    return 'E';
+    if (nilai >= 85) return "A";
+    if (nilai >= 80) return "A-";
+    if (nilai >= 75) return "B+";
+    if (nilai >= 70) return "B";
+    if (nilai >= 65) return "B-";
+    if (nilai >= 60) return "C+";
+    if (nilai >= 55) return "C";
+    if (nilai >= 50) return "D";
+    return "E";
   }
 
   public static canInputNilai(waktuMulai: Date | null): boolean {
     if (!waktuMulai) return false;
-    
+
     const now = new Date();
     return now > waktuMulai;
+  }
+
+  public static canValidateNilai(nilaiPenguji: number | null, nilaiPembimbing: number | null, nilaiInstansi: number | null, dokumenSeminarKp: { status: status_dokumen }[]) {
+    if (nilaiPenguji === null) {
+      return {
+        valid: false,
+        message: "Nilai dari penguji belum diinput",
+      };
+    }
+
+    if (nilaiPembimbing === null) {
+      return {
+        valid: false,
+        message: "Nilai dari pembimbing belum diinput",
+      };
+    }
+
+    if (nilaiInstansi === null) {
+      return {
+        valid: false,
+        message: "Nilai dari instansi belum diinput",
+      };
+    }
+
+    const unvalidatedDocuments = dokumenSeminarKp.filter((doc) => doc.status !== status_dokumen.Divalidasi);
+    if (unvalidatedDocuments.length > 0) {
+      return {
+        valid: false,
+        message: `${unvalidatedDocuments.length} dokumen seminar belum divalidasi`,
+      };
+    }
+
+    return {
+      valid: true,
+      message: "Semua persyaratan validasi terpenuhi",
+    };
   }
 }
