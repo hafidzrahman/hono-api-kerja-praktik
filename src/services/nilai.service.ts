@@ -4,6 +4,7 @@ import NilaiRepository from "../repositories/nilai.repository";
 import { NilaiPengujiInput, NilaiPembimbingInput, AllNilaiResponse, DetailMahasiswaNilai, StatusNilai, KomponenNilaiInstansi, KomponenNilaiPembimbing, KomponenNilaiPenguji } from "../types/seminar-kp/nilai.type";
 import { APIError } from "../utils/api-error.util";
 import NilaiHelper from "../helpers/nilai.helper";
+import MahasiswaRepository from "../repositories/mahasiswa.repository";
 
 export default class NilaiService {
   public static async createNilaiPenguji(input: NilaiPengujiInput, id?: string, email?: string) {
@@ -272,5 +273,58 @@ export default class NilaiService {
       jumlahNilaiApprove,
       detailMahasiswa,
     };
+  }
+
+  public static async createValidasiNilai(idNilai: string, email: string) {
+    const mahasiswa = await MahasiswaRepository.getNamaByEmail(email)
+    if (!mahasiswa) {
+      throw new APIError(`Waduh, Mahasiswa tidak ditemukan ni! 😭`, 404);
+    }
+
+    const nilai = await NilaiRepository.getNilaiById(idNilai);
+    if (!nilai) {
+      throw new APIError(`Waduh, Nilai tidak ditemukan ni! 😭`, 404);
+    }
+
+    const validasi = await NilaiRepository.getValidasiNilaiById(idNilai);
+    if (validasi && validasi.is_approve) {
+      throw new APIError(`Waduh, Nilai ini sudah divalidasi sebelumnya! 😭`, 400);
+    }
+
+    let pendaftaran_kp
+    if (nilai.nim) {
+      pendaftaran_kp = await NilaiRepository.getPendaftaranKpDosen(nilai.nim);
+      if (!pendaftaran_kp) {
+        throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${nilai.nim} tidak ditemukan`, 404);
+      }
+    } else {
+      throw new APIError(`Waduh, Nilai tidak ditemukan ni! 😭`, 404);
+    }
+
+    const validasiStatus = NilaiHelper.canValidateNilai(
+      nilai.nilai_penguji,
+      nilai.nilai_pembimbing,
+      nilai.nilai_instansi,
+      pendaftaran_kp.dokumen_seminar_kp
+        .filter((doc) => doc.status !== null) as { status: status_dokumen }[]
+    )
+
+    if (!validasiStatus.valid) {
+      throw new APIError(`Waduh, ${validasiStatus.message}! 😭`, 400);
+    }
+
+    let validasiNilai
+    if (validasi) {
+      validasiNilai = await NilaiRepository.updateValidasiNilai(validasi.id, true)
+    } else {
+      const validasiId = crypto.randomUUID();
+      validasiNilai = await NilaiRepository.createValidasiNilai(validasiId, idNilai, true);
+    }
+
+    return {
+      validasiNilai,
+      nilai,
+      status: `Nilai ${mahasiswa.nama} berhasil divalidasi}`
+    }
   }
 }
