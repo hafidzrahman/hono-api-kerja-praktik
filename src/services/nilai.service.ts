@@ -65,8 +65,13 @@ export default class NilaiService {
       input.idJadwalSeminar
     );
 
+    const mahasiswa = await MahasiswaRepository.getNamaByNIM(input.nim)
+
     await this.updateNilaiAkhir(nilai.id);
-    return nilai;
+    return {
+      nilai,
+      message: `Nilai ${mahasiswa?.nama} berhasil disimpan dengan nilai ${nilaiPenguji}`
+    };
   }
 
   public static async createNilaiPembimbing(input: NilaiPembimbingInput, id?: string, email?: string) {
@@ -126,8 +131,13 @@ export default class NilaiService {
       input.idJadwalSeminar
     );
 
+    const mahasiswa = await MahasiswaRepository.getNamaByNIM(input.nim);
+
     await this.updateNilaiAkhir(nilai.id);
-    return nilai;
+    return {
+      nilai,
+      message: `Nilai ${mahasiswa?.nama} berhasil disimpan dengan nilai ${nilaiPembimbing}`
+    };
   }
 
   public static async updateNilaiAkhir(id: string) {
@@ -276,11 +286,7 @@ export default class NilaiService {
     };
   }
 
-  public static async createValidasiNilai(idNilai: string, email: string) {
-    const mahasiswa = await MahasiswaRepository.getNamaByEmail(email)
-    if (!mahasiswa) {
-      throw new APIError(`Waduh, Mahasiswa tidak ditemukan ni! 😭`, 404);
-    }
+  public static async createValidasiNilai(idNilai: string) {
 
     const nilai = await NilaiRepository.getNilaiById(idNilai);
     if (!nilai) {
@@ -325,7 +331,7 @@ export default class NilaiService {
     return {
       validasiNilai,
       nilai,
-      status: `Nilai ${mahasiswa.nama} berhasil divalidasi}`
+      status: `Nilai mahasiswa dengan nim ${nilai.nim} berhasil divalidasi`
     }
   }
 }
