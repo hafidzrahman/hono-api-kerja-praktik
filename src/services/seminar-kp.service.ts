@@ -15,7 +15,7 @@ export default class SeminarKpService {
       throw new APIError(`Waduh, mahasiswa tidak ditemukan! 😭`, 404);
     }
 
-    const validasiPersyaratan = await MahasiswaService.validasiPersyaratanSeminarKp(nim)
+    const validasiPersyaratan = await MahasiswaService.validasiPersyaratanSeminarKp(nim);
     if (!validasiPersyaratan.semua_syarat_terpenuhi) {
       throw new APIError(`Waduh, anda belum memenuhi persyaratan untuk mengupload dokumen seminar KP! 😭`, 403);
     }
@@ -36,7 +36,12 @@ export default class SeminarKpService {
       });
     }
 
-    return await SeminarKpRepository.createDokumen(jenis_dokumen, input);
+    const dokumen = await SeminarKpRepository.createDokumen(jenis_dokumen, input);
+
+    return {
+      dokumen,
+      message: `Dokumen anda berhasil terkirim! Silahkan menunggu validasi dari koordinator KP.`,
+    };
   }
 
   public static async getDataSeminarKpSaya(email: string) {
@@ -51,7 +56,7 @@ export default class SeminarKpService {
       throw new APIError(`Waduh, Dokumen tidak ditemukan! 😭`, 404);
     }
 
-    const validasiPersyaratan = await MahasiswaService.validasiPersyaratanSeminarKp(nim)
+    const validasiPersyaratan = await MahasiswaService.validasiPersyaratanSeminarKp(nim);
 
     let id_pendaftaran_kp = "";
     if (dokumen.pendaftaran_kp && dokumen.pendaftaran_kp.length > 0) {
@@ -94,115 +99,113 @@ export default class SeminarKpService {
   }
 
   public static async getAllDokumenSeminarKP() {
-  const allDokumen = await SeminarKpRepository.getAllDokumenSeminarKP();
+    const allDokumen = await SeminarKpRepository.getAllDokumenSeminarKP();
 
-  if (!allDokumen) {
-    throw new APIError(`Waduh, Dokumen tidak ditemukan! 😭`, 404);
-  }
-
-  const stats = {
-    total_mahasiswa: allDokumen.length,
-    status: {
-      terkirim: 0,
-      divalidasi: 0,
-      ditolak: 0,
-    },
-    step: {
-      step1: 0,
-      step2: 0,
-      step3: 0,
-      step4: 0,
-      step5: 0,
-    },
-  };
-
-  const processedData = allDokumen.map((mahasiswa) => {
-    let id_pendaftaran_kp = "";
-    if (mahasiswa.dokumen_seminar_kp.length > 0) {
-      id_pendaftaran_kp = mahasiswa.dokumen_seminar_kp[0].id_pendaftaran_kp ?? "";
+    if (!allDokumen) {
+      throw new APIError(`Waduh, Dokumen tidak ditemukan! 😭`, 404);
     }
 
-    const dokumensByStep = {
-      step1: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
-      step2: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
-      step3: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
-      step5: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
+    const stats = {
+      total_mahasiswa: allDokumen.length,
+      status: {
+        terkirim: 0,
+        divalidasi: 0,
+        ditolak: 0,
+      },
+      step: {
+        step1: 0,
+        step2: 0,
+        step3: 0,
+        step4: 0,
+        step5: 0,
+      },
     };
 
-    const currentStep = StepHelper.getCurrentStep(mahasiswa.dokumen_seminar_kp);
-    
-    const currentStepDocs = mahasiswa.dokumen_seminar_kp.filter(
-      (doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === currentStep
-    );
+    const processedData = allDokumen.map((mahasiswa) => {
+      let id_pendaftaran_kp = "";
+      if (mahasiswa.dokumen_seminar_kp.length > 0) {
+        id_pendaftaran_kp = mahasiswa.dokumen_seminar_kp[0].id_pendaftaran_kp ?? "";
+      }
 
-    const hasDocsInCurrentStep = currentStepDocs.length > 0;
-    
-    const hasSubmittedDocs = currentStepDocs.some(doc => doc.status === "Terkirim");
-    
-    if (hasDocsInCurrentStep) {
-      stats.step[`step${currentStep}` as keyof typeof stats.step]++;
-    } else {
-      const previousStep = currentStep > 1 ? currentStep - 1 : 1;
-      stats.step[`step${previousStep}` as keyof typeof stats.step]++;
-    }
+      const dokumensByStep = {
+        step1: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
+        step2: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
+        step3: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
+        step5: mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
+      };
 
-    let latestStatus = "Divalidasi";
-    let latestDate = new Date(0);
+      const currentStep = StepHelper.getCurrentStep(mahasiswa.dokumen_seminar_kp);
 
-    const rejectedDocs = currentStepDocs.filter(doc => doc.status === "Ditolak");
-    if (rejectedDocs.length > 0) {
-      latestStatus = "Ditolak";
-      rejectedDocs.forEach(doc => {
-        if (doc.tanggal_upload && new Date(doc.tanggal_upload) > latestDate) {
-          latestDate = new Date(doc.tanggal_upload);
-        }
-      });
-    } else {
-      currentStepDocs.forEach(doc => {
-        if (doc.tanggal_upload && new Date(doc.tanggal_upload) > latestDate) {
-          latestDate = new Date(doc.tanggal_upload);
-          latestStatus = doc.status as string;
-        }
-      });
-    }
+      const currentStepDocs = mahasiswa.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === currentStep);
 
-    if (latestStatus === "Terkirim") stats.status.terkirim++;
-    else if (latestStatus === "Divalidasi") stats.status.divalidasi++;
-    else if (latestStatus === "Ditolak") stats.status.ditolak++;
+      const hasDocsInCurrentStep = currentStepDocs.length > 0;
 
-    const lastSubmissionTime =
-      mahasiswa.dokumen_seminar_kp.length > 0
-        ? JadwalHelper.formatWaktu(
-            new Date(
-              Math.max(
-                ...mahasiswa.dokumen_seminar_kp
-                  .filter((doc) => doc.tanggal_upload)
-                  .filter((doc) => doc.tanggal_upload !== null)
-                  .map((doc) => new Date(doc.tanggal_upload!).getTime())
+      const hasSubmittedDocs = currentStepDocs.some((doc) => doc.status === "Terkirim");
+
+      if (hasDocsInCurrentStep) {
+        stats.step[`step${currentStep}` as keyof typeof stats.step]++;
+      } else {
+        const previousStep = currentStep > 1 ? currentStep - 1 : 1;
+        stats.step[`step${previousStep}` as keyof typeof stats.step]++;
+      }
+
+      let latestStatus = "Divalidasi";
+      let latestDate = new Date(0);
+
+      const rejectedDocs = currentStepDocs.filter((doc) => doc.status === "Ditolak");
+      if (rejectedDocs.length > 0) {
+        latestStatus = "Ditolak";
+        rejectedDocs.forEach((doc) => {
+          if (doc.tanggal_upload && new Date(doc.tanggal_upload) > latestDate) {
+            latestDate = new Date(doc.tanggal_upload);
+          }
+        });
+      } else {
+        currentStepDocs.forEach((doc) => {
+          if (doc.tanggal_upload && new Date(doc.tanggal_upload) > latestDate) {
+            latestDate = new Date(doc.tanggal_upload);
+            latestStatus = doc.status as string;
+          }
+        });
+      }
+
+      if (latestStatus === "Terkirim") stats.status.terkirim++;
+      else if (latestStatus === "Divalidasi") stats.status.divalidasi++;
+      else if (latestStatus === "Ditolak") stats.status.ditolak++;
+
+      const lastSubmissionTime =
+        mahasiswa.dokumen_seminar_kp.length > 0
+          ? JadwalHelper.formatWaktu(
+              new Date(
+                Math.max(
+                  ...mahasiswa.dokumen_seminar_kp
+                    .filter((doc) => doc.tanggal_upload)
+                    .filter((doc) => doc.tanggal_upload !== null)
+                    .map((doc) => new Date(doc.tanggal_upload!).getTime())
+                )
               )
             )
-          )
-        : "Belum ada dokumen";
+          : "Belum ada dokumen";
+
+      return {
+        nim: mahasiswa.nim,
+        nama: mahasiswa.nama,
+        email: mahasiswa.email,
+        step_sekarang: hasDocsInCurrentStep ? currentStep : currentStep > 1 ? currentStep - 1 : 1,
+        last_status: latestStatus,
+        last_submission: lastSubmissionTime,
+      };
+    });
 
     return {
-      nim: mahasiswa.nim,
-      nama: mahasiswa.nama,
-      email: mahasiswa.email,
-      step_sekarang: hasDocsInCurrentStep ? currentStep : (currentStep > 1 ? currentStep - 1 : 1),
-      last_status: latestStatus,
-      last_submission: lastSubmissionTime,
+      response: true,
+      message: "Berhasil mendapatkan seluruh dokumen mahasiswa! 😁",
+      data: {
+        statistics: stats,
+        mahasiswa: processedData,
+      },
     };
-  });
-
-  return {
-    response: true,
-    message: "Berhasil mendapatkan seluruh dokumen mahasiswa! 😁",
-    data: {
-      statistics: stats,
-      mahasiswa: processedData,
-    },
-  };
-}
+  }
 
   public static async getDokumenSeminarKPByNIM(nim: string) {
     const mahasiswa = await SeminarKpRepository.getMahasiswaSeminarKPByNIM(nim);
@@ -247,10 +250,15 @@ export default class SeminarKpService {
     if (!dokumen) {
       throw new APIError("Waduh, Dokumen tidak ditemukan! 😭", 404);
     }
-    return await SeminarKpRepository.updateDokumenSeminarKP(id, {
+
+    const validasi = await SeminarKpRepository.updateDokumenSeminarKP(id, {
       status: "Divalidasi",
       komentar,
     });
+    return {
+      validasi,
+      message: `Dokumen berhasil divalidasi!`,
+    }
   }
 
   public static async postTolakDokumenSeminarKP(id: string, komentar: string) {
@@ -258,9 +266,15 @@ export default class SeminarKpService {
     if (!dokumen) {
       throw new APIError("Waduh, Dokumen tidak ditemukan! 😭", 404);
     }
-    return await SeminarKpRepository.updateDokumenSeminarKP(id, {
+
+    const tolak = await SeminarKpRepository.updateDokumenSeminarKP(id, {
       status: "Ditolak",
       komentar,
     });
+
+    return {
+      tolak,
+      message: `Dokumen berhasil ditolak!`,
+    }
   }
 }
