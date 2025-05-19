@@ -5,6 +5,7 @@ import { NilaiPengujiInput, NilaiPembimbingInput, AllNilaiResponse, DetailMahasi
 import { APIError } from "../utils/api-error.util";
 import NilaiHelper from "../helpers/nilai.helper";
 import MahasiswaRepository from "../repositories/mahasiswa.repository";
+import DosenRepository from "../repositories/dosen.repository";
 
 export default class NilaiService {
   public static async createNilaiPenguji(input: NilaiPengujiInput, id?: string, email?: string) {
@@ -22,12 +23,12 @@ export default class NilaiService {
     let nipPenguji: string;
 
     if (email) {
-      const dosen = await NilaiRepository.getDosenByEmail(email);
+      const dosen = await DosenRepository.getDosenByEmail(email);
       if (!dosen) {
         throw new APIError(`Waduh, Email Dosen tidak ditemukan ni! 😭`, 404);
       }
 
-      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      const pendaftaranKp = await DosenRepository.getPendaftaranKpDosen(input.nim);
       if (!pendaftaranKp) {
         throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
       }
@@ -38,7 +39,7 @@ export default class NilaiService {
 
       nipPenguji = dosen.nip;
     } else {
-      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      const pendaftaranKp = await DosenRepository.getPendaftaranKpDosen(input.nim);
       if (!pendaftaranKp) {
         throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
       }
@@ -83,12 +84,12 @@ export default class NilaiService {
     let nipPembimbing: string;
 
     if (email) {
-      const dosen = await NilaiRepository.getDosenByEmail(email);
+      const dosen = await DosenRepository.getDosenByEmail(email);
       if (!dosen) {
         throw new APIError(`Waduh, Email Dosen tidak ditemukan ni! 😭`, 404);
       }
 
-      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      const pendaftaranKp = await DosenRepository.getPendaftaranKpDosen(input.nim);
       if (!pendaftaranKp) {
         throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
       }
@@ -99,7 +100,7 @@ export default class NilaiService {
 
       nipPembimbing = dosen.nip;
     } else {
-      const pendaftaranKp = await NilaiRepository.getPendaftaranKpDosen(input.nim);
+      const pendaftaranKp = await DosenRepository.getPendaftaranKpDosen(input.nim);
       if (!pendaftaranKp) {
         throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${input.nim} tidak ditemukan`, 404);
       }
@@ -293,7 +294,7 @@ export default class NilaiService {
 
     let pendaftaran_kp
     if (nilai.nim) {
-      pendaftaran_kp = await NilaiRepository.getPendaftaranKpDosen(nilai.nim);
+      pendaftaran_kp = await DosenRepository.getPendaftaranKpDosen(nilai.nim);
       if (!pendaftaran_kp) {
         throw new APIError(`Waduh, Pendaftaran KP untuk mahasiswa dengan NIM ${nilai.nim} tidak ditemukan`, 404);
       }
