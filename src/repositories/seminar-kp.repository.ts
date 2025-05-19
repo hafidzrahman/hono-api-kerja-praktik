@@ -209,6 +209,7 @@ export default class SeminarKpRepository {
             nilai_instansi: true,
             nilai_pembimbing: true,
             nilai_akhir: true,
+            validasi_nilai: true,
           },
         },
       },
