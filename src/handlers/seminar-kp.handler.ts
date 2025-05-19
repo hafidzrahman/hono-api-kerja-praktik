@@ -33,7 +33,6 @@ export default class SeminarKPHandler {
 
   public static async getDokumenSeminarKPSaya(c: Context) {
     const { email } = c.get("user");
-
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     return c.json(await SeminarKpService.getDataSeminarKpSaya(email));
@@ -41,7 +40,6 @@ export default class SeminarKPHandler {
 
   public static async getAllDokumenSeminarKP(c: Context) {
     const { email } = c.get("user");
-
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
     return c.json(await SeminarKpService.getAllDokumenSeminarKP());
@@ -49,7 +47,6 @@ export default class SeminarKPHandler {
 
   public static async getDokumenSeminarKPByNIM(c: Context) {
     const nim = c.req.param("nim");
-
     if (!nim) {
       throw new APIError("Waduh, NIM tidak ditemukan! 😭", 400);
     }
@@ -66,7 +63,7 @@ export default class SeminarKPHandler {
     const parsed = dokumenIdSchema.parse({ id });
 
     const dokumen = await SeminarKpService.postTerimaDokumenSeminarKP(parsed.id, komentar);
-    const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
+    const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.validasi.jenis_dokumen);
 
     return successResponse(c, dokumen, `Dokumen ${jenisDokumenName} berhasil divalidasi`, 201);
   }
@@ -82,7 +79,7 @@ export default class SeminarKPHandler {
     const parsed = dokumenIdSchema.parse({ id });
 
     const dokumen = await SeminarKpService.postTolakDokumenSeminarKP(parsed.id, komentar);
-    const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.jenis_dokumen);
+    const jenisDokumenName = await StepHelper.getNamaDokumen(dokumen.tolak.jenis_dokumen);
 
     return successResponse(c, dokumen, `Dokumen ${jenisDokumenName} ditolak`, 201);
   }
