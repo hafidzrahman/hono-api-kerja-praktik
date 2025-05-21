@@ -86,7 +86,7 @@ export default class NilaiService {
     await this.updateNilaiAkhir(nilai.id);
     return {
       nilai,
-      message: `Nilai ${mahasiswa?.nama} berhasil disimpan dengan nilai ${nilaiPenguji}`,
+      message: `Nilai ${mahasiswa?.nama} berhasil ${isUpdate ? 'diperbarui' : 'disimpan'} dengan nilai ${nilaiPenguji}`
     };
   }
 
