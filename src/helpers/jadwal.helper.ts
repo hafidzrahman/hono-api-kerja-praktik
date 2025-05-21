@@ -93,6 +93,12 @@ export default class JadwalHelper {
       lokasi_kp: jadwal.pendaftaran_kp?.instansi?.nama ? `${jadwal.pendaftaran_kp.instansi.nama}, ${jadwal.pendaftaran_kp.instansi.alamat}` : "-",
       status_jadwal: jadwal.status || "-",
       id_nilai: jadwal.nilai?.id || null,
+      nilai_penguji: jadwal.nilai?.nilai_penguji || null,
+      id_komponen_penilaian_penguji: jadwal.nilai?.komponen_penilaian_penguji?.id || null,
+      penguasaan_keilmuan: jadwal.nilai?.komponen_penilaian_penguji?.penguasaan_keilmuan || null,
+      kemampuan_presentasi: jadwal.nilai?.komponen_penilaian_penguji?.kemampuan_presentasi || null,
+      kesesuaian_urgensi: jadwal.nilai?.komponen_penilaian_penguji?.kesesuaian_urgensi || null,
+      catatan_penguji: jadwal.nilai?.komponen_penilaian_penguji?.catatan || null,
       id_pendaftaran_kp: jadwal.pendaftaran_kp?.id || null,
     };
   }
