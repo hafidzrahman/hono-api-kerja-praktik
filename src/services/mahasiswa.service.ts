@@ -101,6 +101,10 @@ export default class MahasiswaService {
     };
   }
 
+  public static async validasiMurojaah(email: string) {
+    
+  }
+
   public static async validasiPersyaratanSeminarKp(nim: string) {
     const pendaftaranKp = await MahasiswaRepository.getPendaftaranKP(nim);
 
