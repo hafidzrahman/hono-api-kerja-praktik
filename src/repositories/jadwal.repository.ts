@@ -135,7 +135,7 @@ export default class JadwalRepository {
     });
   }
 
-  public static getAllRuangan() {
+  public static async getAllRuangan() {
     const ruangan = prisma.ruangan.findMany({
       select: {
         nama: true,
@@ -144,7 +144,7 @@ export default class JadwalRepository {
     return ruangan;
   }
 
-  public static getAllDosen() {
+  public static async getAllDosen() {
     const dosen = prisma.dosen.findMany({
       select: {
         nip: true,
@@ -241,6 +241,16 @@ export default class JadwalRepository {
           select: {
             id: true,
             nilai_penguji: true,
+            komponen_penilaian_penguji: {
+              select: {
+                id: true,
+                penguasaan_keilmuan: true,
+                kemampuan_presentasi: true,
+                kesesuaian_urgensi: true,
+                catatan: true,
+                created_at: true,
+              },
+            },
           },
         }
       },
