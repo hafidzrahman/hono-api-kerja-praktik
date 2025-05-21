@@ -42,7 +42,12 @@ export default class SeminarKPHandler {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    return c.json(await SeminarKpService.getAllDokumenSeminarKP());
+    const tahunAjaranIdParam = c.req.query("tahun_ajaran_id");
+    const tahunAjaranId = tahunAjaranIdParam ? parseInt(tahunAjaranIdParam) : 0;
+
+    const allDokumen = await SeminarKpService.getAllDokumenSeminarKP(tahunAjaranId);
+
+    return c.json(allDokumen);
   }
 
   public static async getDokumenSeminarKPByNIM(c: Context) {
