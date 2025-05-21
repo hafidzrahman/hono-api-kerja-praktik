@@ -1,6 +1,3 @@
--- AlterTable
-ALTER TABLE "pendaftaran_kp" ALTER COLUMN "level_akses" SET DEFAULT 1;
-
 -- CreateTable
 CREATE TABLE "option" (
     "id" SERIAL NOT NULL,
