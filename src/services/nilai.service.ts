@@ -86,7 +86,7 @@ export default class NilaiService {
     await this.updateNilaiAkhir(nilai.id);
     return {
       nilai,
-      message: `Nilai ${mahasiswa?.nama} berhasil ${isUpdate ? 'diperbarui' : 'disimpan'} dengan nilai ${nilaiPenguji}`
+      message: `Nilai ${mahasiswa?.nama} berhasil ${isUpdate ? "diperbarui" : "disimpan"} dengan nilai ${nilaiPenguji}`,
     };
   }
 
@@ -136,40 +136,30 @@ export default class NilaiService {
     const nilaiPembimbing = await NilaiHelper.calculateNilaiPembimbing(input.penyelesaianMasalah, input.bimbinganSikap, input.kualitasLaporan);
 
     let nilaiId: string;
-  let isUpdate = false;
-  
-  if (id) {
-    const existingNilai = await NilaiRepository.getNilaiById(id);
-    if (existingNilai) {
-      nilaiId = id;
-      isUpdate = true;
-    } else {
-      nilaiId = id;
-    }
-  } else {
-    const existingNilai = await prisma.nilai.findFirst({
-      where: { nim: input.nim }
-    });
-    
-    if (existingNilai) {
-      nilaiId = existingNilai.id;
-      isUpdate = true;
-    } else {
-      nilaiId = crypto.randomUUID();
-    }
-  }
+    let isUpdate = false;
 
-    const nilai = await NilaiRepository.createNilaiPembimbing(
-      nilaiId,
-      input.penyelesaianMasalah,
-      input.bimbinganSikap,
-      input.kualitasLaporan,
-      input.catatan || null,
-      nilaiPembimbing,
-      input.nim,
-      nipPembimbing,
-      input.idJadwalSeminar
-    );
+    if (id) {
+      const existingNilai = await NilaiRepository.getNilaiById(id);
+      if (existingNilai) {
+        nilaiId = id;
+        isUpdate = true;
+      } else {
+        nilaiId = id;
+      }
+    } else {
+      const existingNilai = await prisma.nilai.findFirst({
+        where: { nim: input.nim },
+      });
+
+      if (existingNilai) {
+        nilaiId = existingNilai.id;
+        isUpdate = true;
+      } else {
+        nilaiId = crypto.randomUUID();
+      }
+    }
+
+    const nilai = await NilaiRepository.createNilaiPembimbing(nilaiId, input.penyelesaianMasalah, input.bimbinganSikap, input.kualitasLaporan, input.catatan || null, nilaiPembimbing, input.nim, nipPembimbing, input.idJadwalSeminar);
 
     const mahasiswa = await MahasiswaRepository.getNamaByNIM(input.nim);
 
