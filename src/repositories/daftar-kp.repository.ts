@@ -82,7 +82,7 @@ export default class DaftarKPRepository {
         })
     }
 
-    public static async createPermomohonanInstansi({nim, namaInstansi, alamatInstansi, namaPenanggungJawabInstansi, telpPenanggungJawabInstansi, jenisInstansi, longitude, latitude, profilSingkat} : RepositoryPendaftaranInstansiInterface ) : Promise<void> {
+    public static async createPermomohonanInstansi({namaInstansi, alamatInstansi, namaPenanggungJawabInstansi, telpPenanggungJawabInstansi, jenisInstansi, longitude, latitude, profilSingkat} : RepositoryPendaftaranInstansiInterface ) : Promise<void> {
         await prisma.instansi.create({
             data : {
                 nama : namaInstansi,

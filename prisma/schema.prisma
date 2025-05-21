@@ -58,7 +58,6 @@ model dosen {
   no_hp          String?          @unique @db.VarChar(14)
   email          String           @unique @db.VarChar(255)
   id_telegram    String?          @unique @db.VarChar(10)
-
   bimbingan      bimbingan[]
   nilai          nilai[]
   pembimbing     pendaftaran_kp[] @relation("pembimbing")

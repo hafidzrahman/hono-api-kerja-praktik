@@ -15,8 +15,8 @@ export interface CreatePermohonanPendaftaranInstansiInterface {
     alamatInstansi : string,
     jenisInstansi : jenis_instansi,
     profilSingkat? : string
-    longitude? : number,
-    latitude? : number,
+    longitude : number,
+    latitude : number,
     namaPenanggungJawabInstansi : string,
     telpPenanggungJawabInstansi : string
 }
