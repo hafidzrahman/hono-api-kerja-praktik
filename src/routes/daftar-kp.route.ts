@@ -11,29 +11,37 @@ const daftarKPRoute = new Hono({router : new RegExpRouter()});
 // mahasiswa route
 
 daftarKPRoute.get("/show", async function (c : Context) {
-    const mahasiswa = await prisma.mahasiswa.findMany({})
-    const instansi = await prisma.instansi.findMany({})
-    const pendaftaranKP = await prisma.pendaftaran_kp.findMany({})
+    const mahasiswa = await prisma.mahasiswa.findMany({});
+    const instansi = await prisma.instansi.findMany({});
+    const pendaftaranKP = await prisma.pendaftaran_kp.findMany({});
     
     return c.json({mahasiswa, instansi, pendaftaranKP})
 })
 
 daftarKPRoute.get("/test", async function (c : Context) {
-
+    await prisma.option.deleteMany({})
     await prisma.pendaftaran_kp.deleteMany({})
     await prisma.instansi.deleteMany({})
     await prisma.mahasiswa.deleteMany({})
+    await prisma.ruangan.deleteMany({})
     await prisma.dosen.deleteMany({})
     await prisma.pembimbing_instansi.deleteMany({})
     await prisma.tahun_ajaran.deleteMany({})
-    await prisma.ruangan.deleteMany({})
 
+    await prisma.dosen.create({
+        data : {
+            nip : "123321",
+            nama : "Olav",
+            email : "a@gmail.com",
+        }
+    })
 
     await prisma.mahasiswa.create({
         data : {
             nim : "123",
             nama : "Olav",
             email : "a@gmail.com",
+            nip: "123321"
         }
     })
 
@@ -51,7 +59,17 @@ daftarKPRoute.get("/test", async function (c : Context) {
 
     await prisma.tahun_ajaran.create({
         data : {
-            id : 20260251
+            id : 202420251
+        }
+    })
+
+    await prisma.option.create({
+        data : {
+            id : 999,
+            tanggal_mulai_pendaftaran_kp : "2025-05-02T08:18:36.528Z",
+            tanggal_akhir_pendaftaran_kp : "2025-05-30T08:18:36.528Z",
+            tanggal_mulai_pendaftaran_kp_lanjut : "2025-05-02T08:18:36.528Z",
+            tanggal_akhir_pendaftaran_kp_lanjut : "2025-05-30T08:18:36.528Z"
         }
     })
 
@@ -89,10 +107,22 @@ daftarKPRoute.post("/berkas-mahasiswa", DaftarKPHandler.postBerkasMahasiswa);
 
 daftarKPRoute.post("/tolak-berkas-mahasiswa", DaftarKPHandler.postTolakBerkasMahasiswa)
 
-daftarKPRoute.get("/pending-data-instansi", DaftarKPHandler.getPendingDataInstansi)
+daftarKPRoute.get("/get-all-data-instansi", DaftarKPHandler.getAllDataInstansi)
 
-daftarKPRoute.post("/pending-data-instansi", DaftarKPHandler.postPendingDataInstansi)
+daftarKPRoute.get("/get-data-instansi/:id", DaftarKPHandler.getDataDetailInstansi)
+
+daftarKPRoute.post("/edit-data-instansi", DaftarKPHandler.postEditDataInstansi)
 
 daftarKPRoute.post("/delete-data-instansi", DaftarKPHandler.deleteDataInstansi)
+
+daftarKPRoute.get("/get-data-kp", DaftarKPHandler.getDataKPMahasiswa)
+
+daftarKPRoute.get("/get-data-kp/:id", DaftarKPHandler.getDataKPDetailMahasiswa)
+
+daftarKPRoute.get("/get-tanggal-daftar-kp", DaftarKPHandler.getTanggalDaftarKP)
+
+daftarKPRoute.post("/post-tanggal-daftar-kp", DaftarKPHandler.postTanggalDaftarKP)
+
+daftarKPRoute.post("/post-tanggal-daftar-kp-lanjut", DaftarKPHandler.postTanggalDaftarKPLanjut)
 
 export default daftarKPRoute;

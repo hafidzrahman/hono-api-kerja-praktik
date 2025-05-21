@@ -1,12 +1,101 @@
 import prisma from "../infrastructures/db.infrastructure";
-import { RepositoryPendaftaranInstansiInterface, RepositoryPendaftaranKPInterface, RepositoryRiwayatPendaftaranKPInterface } from "../types/daftar-kp/repository.type";
+import { RepositoryPendaftaranInstansiInterface, RepositoryPendaftaranKPMahasiswaInterface, RepositoryPendaftaranKPInterface, RepositoryRiwayatPendaftaranKPInterface, RepositoryDetailPendaftaranKPMahasiswa, GetAllDataInstansiRepository } from "../types/daftar-kp/repository.type";
 import MahasiswaHelper from "../helpers/mahasiswa.helper"
 import { APIError } from "../utils/api-error.util";
-import { instansi, pendaftaran_kp } from "../generated/prisma";
+import { instansi, option, pendaftaran_kp, status_instansi } from "../generated/prisma";
 
 export default class DaftarKPRepository {
 
-    public static async postTolakBerkasMahasiswa(id : string, message : string = "") : Promise<void> {
+    public static async postTanggalDaftarKP(tanggalMulaiDaftarKP : string, tanggalTerakhirDaftarKP : string) {
+        await prisma.option.update({
+            where : {
+                id : 999
+            }, 
+            data : {
+                tanggal_mulai_pendaftaran_kp : tanggalMulaiDaftarKP, 
+                tanggal_akhir_pendaftaran_kp : tanggalTerakhirDaftarKP
+            }
+        })
+
+        const time = new Date(tanggalTerakhirDaftarKP).getTime() - new Date().getTime()
+
+        setTimeout(async function() {
+            await prisma.pendaftaran_kp.updateMany({
+                where : {
+                    level_akses : {
+                        gte : 1,
+                        lte : 9
+                    }
+                }, data : {
+                    status : "Gagal"
+                }
+            })
+        }, time)
+    }
+
+    public static async postTanggalDaftarKPLanjut(tanggalMulaiDaftarKP : string, tanggalTerakhirDaftarKP : string) {
+        await prisma.option.update({
+            where : {
+                id : 999
+            }, 
+            data : {
+                tanggal_mulai_pendaftaran_kp_lanjut : tanggalMulaiDaftarKP, 
+                tanggal_akhir_pendaftaran_kp_lanjut : tanggalTerakhirDaftarKP
+            }
+        })
+    }
+
+    public static async getTanggalDaftarKP() : Promise<option | null> {
+        return await prisma.option.findUnique({
+            where : {
+                id : 999
+            }
+        })
+    }
+
+    public static async getDataDetailInstansi(idInstansi : string) : Promise<instansi | null> {
+        return await prisma.instansi.findUnique({
+            where : {
+                id : idInstansi
+            }
+        })
+    }
+
+    public static async getDataKPDetailMahasiswa(idKP : string) : Promise<RepositoryDetailPendaftaranKPMahasiswa | null> {
+        return await prisma.pendaftaran_kp.findUnique({
+            where : {
+                id : idKP
+            },
+            include : {
+                mahasiswa : true,
+                dosen_pembimbing : true,
+                instansi : {
+                    include : {
+                        pembimbing_instansi : true
+                    }
+                }
+            }
+        })
+    }
+
+    public static async getDataKPMahasiswa() : Promise<RepositoryPendaftaranKPMahasiswaInterface[]> {
+        return await prisma.pendaftaran_kp.findMany({
+        select : {
+            id : true,
+            tanggal_mulai : true,
+            status : true,
+            id_tahun_ajaran : true,
+            mahasiswa : {
+                select : {
+                    nama : true,
+                    nim : true,
+                }
+            },
+        },    
+    });
+    }
+
+    public static async postTolakBerkasMahasiswa(id : string, message : string) : Promise<void> {
         await prisma.pendaftaran_kp.update({
             where : {
                 id
@@ -28,13 +117,13 @@ export default class DaftarKPRepository {
         })
     }
 
-    public static async postPendingDataInstansi(id : string) : Promise<void> {
+    public static async postEditDataInstansi(id : string, status : string) : Promise<void> {
         await prisma.instansi.update({
             where : {
                 id
             },
             data : {
-                status : "Aktif"
+                status : status as "Aktif" | "Pending" | "Tidak_Aktif"
             }
         })
     }
@@ -47,10 +136,13 @@ export default class DaftarKPRepository {
         });
     }
 
-    public static async getPendingDataInstansi() : Promise<instansi[]> {
+    public static async getAllDataInstansi() : Promise<GetAllDataInstansiRepository[]> {
         const data = await prisma.instansi.findMany({
-            where : {
-                status : "Pending"
+            select : {
+                id : true,
+                nama : true,
+                jenis : true,
+                status : true,
             }
         })
 
@@ -77,7 +169,7 @@ export default class DaftarKPRepository {
                 id_instansi : idInstansi,
                 tujuan_surat_instansi : tujuanSuratInstansi,
                 id_tahun_ajaran : MahasiswaHelper.getTahunAjaran(),
-                level_akses : 1
+                level_akses : 1,
             }
         })
     }
@@ -267,6 +359,9 @@ export default class DaftarKPRepository {
         const data = await prisma.pendaftaran_kp.findMany({
             where : {
                 level_akses : 2
+            },
+            include : {
+                mahasiswa : true
             }
         })
 
@@ -277,6 +372,9 @@ export default class DaftarKPRepository {
         const data = await prisma.pendaftaran_kp.findMany({
             where : {
                 level_akses : 4
+            },
+            include : {
+                mahasiswa : true
             }
         })
 
@@ -287,6 +385,9 @@ export default class DaftarKPRepository {
         const data = await prisma.pendaftaran_kp.findMany({
             where : {
                 level_akses : 6
+            },
+            include : {
+                mahasiswa : true
             }
         })
 
@@ -297,6 +398,9 @@ export default class DaftarKPRepository {
         const data = await prisma.pendaftaran_kp.findMany({
             where : {
                 level_akses : 8
+            },
+            include : {
+                mahasiswa : true
             }
         })
 
@@ -307,6 +411,9 @@ export default class DaftarKPRepository {
         const data = await prisma.pendaftaran_kp.findMany({
             where : {
                 level_akses : 10
+            },
+            include : {
+                mahasiswa : true
             }
         })
 

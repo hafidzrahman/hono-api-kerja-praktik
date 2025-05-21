@@ -279,6 +279,14 @@ model validasi_nilai {
   nilai          nilai?           @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model option {
+  id                                  Int      @id @default(autoincrement())
+  tanggal_mulai_pendaftaran_kp        DateTime
+  tanggal_akhir_pendaftaran_kp        DateTime
+  tanggal_mulai_pendaftaran_kp_lanjut DateTime
+  tanggal_akhir_pendaftaran_kp_lanjut DateTime
+}
+
 enum jenis_dokumen {
   SURAT_KETERANGAN_SELESAI_KP
   LAPORAN_TAMBAHAN_KP
