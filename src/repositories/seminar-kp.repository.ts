@@ -16,12 +16,17 @@ export default class SeminarKpRepository {
     });
   }
 
-  public static async getAllDokumenSeminarKP(): Promise<MahasiswaWithDokumen[]> {
+  public static async getAllDokumenSeminarKP(tahunAjaranId: number = 0): Promise<MahasiswaWithDokumen[]> {
     return await prisma.mahasiswa.findMany({
       where: {
         dokumen_seminar_kp: {
           some: {},
         },
+        pendaftaran_kp: {
+          some: {
+            id_tahun_ajaran: tahunAjaranId > 0 ? tahunAjaranId : undefined,
+          },
+        }
       },
       select: {
         nim: true,
