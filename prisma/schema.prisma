@@ -51,10 +51,7 @@ model dosen {
   bimbingan      bimbingan[]
   nilai          nilai[]
   pendaftaran_kp pendaftaran_kp[]
-<<<<<<< HEAD
-=======
   mahasiswa      mahasiswa[]
->>>>>>> 358f9639ef01b9bb8e359660963bfcdfd2cbac7e
 }
 
 model instansi {
@@ -236,6 +233,14 @@ model tahun_ajaran {
   nama           String?          @db.VarChar(255)
   created_at     String?          @db.VarChar(255)
   pendaftaran_kp pendaftaran_kp[]
+}
+
+model option {
+  id                                  Int      @id @default(autoincrement())
+  tanggal_mulai_pendaftaran_kp        DateTime
+  tanggal_akhir_pendaftaran_kp        DateTime
+  tanggal_mulai_pendaftaran_kp_lanjut DateTime
+  tanggal_akhir_pendaftaran_kp_lanjut DateTime
 }
 
 enum jenis_dokumen {

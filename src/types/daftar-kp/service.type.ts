@@ -1,6 +1,6 @@
 import { CommonResponse } from "../global.type";
-import { instansi, jenis_instansi, pendaftaran_kp } from "../../generated/prisma";
-import { RepositoryRiwayatPendaftaranKPInterface } from "./repository.type";
+import { $Enums, instansi, jenis_instansi, option, pendaftaran_kp } from "../../generated/prisma";
+import { GetAllDataInstansiRepository, RepositoryDetailPendaftaranKPMahasiswa, RepositoryPendaftaranKPMahasiswaInterface, RepositoryRiwayatPendaftaranKPInterface } from "./repository.type";
 
 export interface CreatePermohonanPendaftaranKPInterface {
     email : string,
@@ -39,6 +39,22 @@ export interface GetPendaftaranKPTerbaru extends CommonResponse {
     data : pendaftaran_kp | null
 }
 
-export interface GetPendingDataInstansi extends CommonResponse {
-    data : instansi[]
+export interface GetAllDataInstansi extends CommonResponse {
+    data : GetAllDataInstansiRepository[]
+}
+
+export interface ServicePendaftaranKPMahasiswa extends CommonResponse {
+    data : RepositoryPendaftaranKPMahasiswaInterface[]
+}
+
+export interface ServiceDetailPendaftaranKPMahasiswa extends CommonResponse {
+    data : RepositoryDetailPendaftaranKPMahasiswa | null
+}
+
+export interface ServiceDetailInstansi extends CommonResponse {
+    data : instansi | null
+}
+
+export interface ServiceTanggalDaftarKP extends CommonResponse {
+    data : option | null
 }
