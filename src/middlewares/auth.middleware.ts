@@ -17,7 +17,7 @@ export default class AuthMiddleware {
 			c.set("user", payload);
 			await next();
 		} catch (error) {
-			throw new APIError("Waduh, token-nya salah mas, kagak valid, lu heker! 😡", 401);
+			throw new APIError("Waduh, token-nya salah mas, kagak valid, heker kamu yah! 😡", 401);
 		}
 	}
 }
