@@ -3,7 +3,6 @@ import { APIError } from "../utils/api-error.util";
 
 export default class NilaiRepository {
   public static async createNilaiPenguji(id: string, penguasaanKeilmuan: number, kemampuanPresentasi: number, kesesuaianUrgensi: number, catatan: string | null, nilaiPenguji: number, nim: string, nip: string, idJadwalSeminar?: string) {
-
     const dosen = await prisma.dosen.findUnique({
       where: { nip },
     });
@@ -18,7 +17,7 @@ export default class NilaiRepository {
       },
       select: {
         nip_penguji: true,
-      }
+      },
     });
 
     if (!pendaftaranKp) {
@@ -29,31 +28,67 @@ export default class NilaiRepository {
       throw new APIError(`Waduh, Dosen dengan NIP ${nip} bukan penguji untuk mahasiswa ini! 😭`, 403);
     }
 
-    const nilai = await prisma.nilai.upsert({
-      where: { id },
-      update: {
-        nilai_penguji: nilaiPenguji,
-        nim,
-        nip,
-        id_jadwal_seminar: idJadwalSeminar,
-      },
-      create: {
-        nilai_penguji: nilaiPenguji,
-        nim,
-        nip,
-        id_jadwal_seminar: idJadwalSeminar,
+    const existingNilai = await prisma.nilai.findFirst({
+      where: { nim },
+      include: {
+        komponen_penilaian_penguji: true,
       },
     });
 
-    await prisma.komponen_penilaian_penguji.create({
-      data: {
-        penguasaan_keilmuan: penguasaanKeilmuan,
-        kemampuan_presentasi: kemampuanPresentasi,
-        kesesuaian_urgensi: kesesuaianUrgensi,
-        catatan,
-        id_nilai: nilai.id,
-      },
-    });
+    let nilai;
+
+    if (existingNilai) {
+      nilai = await prisma.nilai.update({
+        where: { id: existingNilai.id },
+        data: {
+          nilai_penguji: nilaiPenguji,
+          nip,
+          id_jadwal_seminar: idJadwalSeminar,
+        },
+      });
+
+      if (existingNilai.komponen_penilaian_penguji) {
+        await prisma.komponen_penilaian_penguji.update({
+          where: { id_nilai: existingNilai.id },
+          data: {
+            penguasaan_keilmuan: penguasaanKeilmuan,
+            kemampuan_presentasi: kemampuanPresentasi,
+            kesesuaian_urgensi: kesesuaianUrgensi,
+            catatan,
+          },
+        });
+      } else {
+        await prisma.komponen_penilaian_penguji.create({
+          data: {
+            penguasaan_keilmuan: penguasaanKeilmuan,
+            kemampuan_presentasi: kemampuanPresentasi,
+            kesesuaian_urgensi: kesesuaianUrgensi,
+            catatan,
+            id_nilai: nilai.id,
+          },
+        });
+      }
+    } else {
+      nilai = await prisma.nilai.create({
+        data: {
+          id,
+          nilai_penguji: nilaiPenguji,
+          nim,
+          nip,
+          id_jadwal_seminar: idJadwalSeminar,
+        },
+      });
+
+      await prisma.komponen_penilaian_penguji.create({
+        data: {
+          penguasaan_keilmuan: penguasaanKeilmuan,
+          kemampuan_presentasi: kemampuanPresentasi,
+          kesesuaian_urgensi: kesesuaianUrgensi,
+          catatan,
+          id_nilai: nilai.id,
+        },
+      });
+    }
 
     return nilai;
   }
@@ -73,7 +108,7 @@ export default class NilaiRepository {
       },
       select: {
         nip_pembimbing: true,
-      }
+      },
     });
 
     if (!pendaftaranKp) {
@@ -84,31 +119,67 @@ export default class NilaiRepository {
       throw new APIError(`Waduh, Dosen dengan NIP ${nip} bukan pembimbing untuk mahasiswa ini! 😭`, 403);
     }
 
-    const nilai = await prisma.nilai.upsert({
-      where: { id },
-      update: {
-        nilai_pembimbing: nilaiPembimbing,
-        nim,
-        nip,
-        id_jadwal_seminar: idJadwalSeminar,
-      },
-      create: {
-        nilai_pembimbing: nilaiPembimbing,
-        nim,
-        nip,
-        id_jadwal_seminar: idJadwalSeminar,
+    const existingNilai = await prisma.nilai.findFirst({
+      where: { nim },
+      include: {
+        komponen_penilaian_pembimbing: true,
       },
     });
 
-    await prisma.komponen_penilaian_pembimbing.create({
-      data: {
-        penyelesaian_masalah: penyelesaianMasalah,
-        bimbingan_sikap: bimbinganSikap,
-        kualitas_laporan: kualitasLaporan,
-        catatan,
-        id_nilai: nilai.id,
-      },
-    });
+    let nilai;
+
+    if (existingNilai) {
+      nilai = await prisma.nilai.update({
+        where: { id: existingNilai.id },
+        data: {
+          nilai_pembimbing: nilaiPembimbing,
+          nip,
+          id_jadwal_seminar: idJadwalSeminar,
+        },
+      });
+
+      if (existingNilai.komponen_penilaian_pembimbing) {
+        await prisma.komponen_penilaian_pembimbing.update({
+          where: { id_nilai: existingNilai.id },
+          data: {
+            penyelesaian_masalah: penyelesaianMasalah,
+            bimbingan_sikap: bimbinganSikap,
+            kualitas_laporan: kualitasLaporan,
+            catatan,
+          },
+        });
+      } else {
+        await prisma.komponen_penilaian_pembimbing.create({
+          data: {
+            penyelesaian_masalah: penyelesaianMasalah,
+            bimbingan_sikap: bimbinganSikap,
+            kualitas_laporan: kualitasLaporan,
+            catatan,
+            id_nilai: nilai.id,
+          },
+        });
+      }
+    } else {
+      nilai = await prisma.nilai.create({
+        data: {
+          id,
+          nilai_pembimbing: nilaiPembimbing,
+          nim,
+          nip,
+          id_jadwal_seminar: idJadwalSeminar,
+        },
+      });
+
+      await prisma.komponen_penilaian_pembimbing.create({
+        data: {
+          penyelesaian_masalah: penyelesaianMasalah,
+          bimbingan_sikap: bimbinganSikap,
+          kualitas_laporan: kualitasLaporan,
+          catatan,
+          id_nilai: nilai.id,
+        },
+      });
+    }
 
     return nilai;
   }
@@ -130,7 +201,7 @@ export default class NilaiRepository {
           },
         },
         validasi_nilai: true,
-        jadwal_seminar: true
+        jadwal_seminar: true,
       },
     });
   }
@@ -274,9 +345,9 @@ export default class NilaiRepository {
         id,
         id_nilai: idNilai,
         is_approve: isApprove,
-        created_at: new Date()
-      }
-    })
+        created_at: new Date(),
+      },
+    });
   }
 
   public static async updateValidasiNilai(id: string, isApprove: boolean) {
@@ -286,16 +357,16 @@ export default class NilaiRepository {
       },
       data: {
         is_approve: isApprove,
-        created_at: new Date()
+        created_at: new Date(),
       },
-    })
+    });
   }
 
   public static async getValidasiNilaiById(idNilai: string) {
     return await prisma.validasi_nilai.findUnique({
       where: {
-        id_nilai: idNilai
-      }
-    })
+        id_nilai: idNilai,
+      },
+    });
   }
 }
