@@ -6,6 +6,8 @@ import { APIError } from "../utils/api-error.util";
 import NilaiHelper from "../helpers/nilai.helper";
 import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import DosenRepository from "../repositories/dosen.repository";
+import { string } from "zod";
+import prisma from "../infrastructures/db.infrastructure";
 
 export default class NilaiService {
   public static async createNilaiPenguji(input: NilaiPengujiInput, id?: string, email?: string) {
@@ -53,24 +55,38 @@ export default class NilaiService {
 
     const nilaiPenguji = await NilaiHelper.calculateNilaiPenguji(input.penguasaanKeilmuan, input.kemampuanPresentasi, input.kesesuaianUrgensi);
 
-    const nilai = await NilaiRepository.createNilaiPenguji(
-      id || crypto.randomUUID(),
-      input.penguasaanKeilmuan,
-      input.kemampuanPresentasi,
-      input.kesesuaianUrgensi,
-      input.catatan || null,
-      nilaiPenguji,
-      input.nim,
-      nipPenguji,
-      input.idJadwalSeminar
-    );
+    let nilaiId: string;
+    let isUpdate = false;
 
-    const mahasiswa = await MahasiswaRepository.getNamaByNIM(input.nim)
+    if (id) {
+      const existingNilai = await NilaiRepository.getNilaiById(id);
+      if (existingNilai) {
+        nilaiId = id;
+        isUpdate = true;
+      } else {
+        nilaiId = id;
+      }
+    } else {
+      const existingNilai = await prisma.nilai.findFirst({
+        where: { nim: input.nim },
+      });
+
+      if (existingNilai) {
+        nilaiId = existingNilai.id;
+        isUpdate = true;
+      } else {
+        nilaiId = crypto.randomUUID();
+      }
+    }
+
+    const nilai = await NilaiRepository.createNilaiPenguji(nilaiId, input.penguasaanKeilmuan, input.kemampuanPresentasi, input.kesesuaianUrgensi, input.catatan || null, nilaiPenguji, input.nim, nipPenguji, input.idJadwalSeminar);
+
+    const mahasiswa = await MahasiswaRepository.getNamaByNIM(input.nim);
 
     await this.updateNilaiAkhir(nilai.id);
     return {
       nilai,
-      message: `Nilai ${mahasiswa?.nama} berhasil disimpan dengan nilai ${nilaiPenguji}`
+      message: `Nilai ${mahasiswa?.nama} berhasil disimpan dengan nilai ${nilaiPenguji}`,
     };
   }
 
@@ -119,8 +135,32 @@ export default class NilaiService {
 
     const nilaiPembimbing = await NilaiHelper.calculateNilaiPembimbing(input.penyelesaianMasalah, input.bimbinganSikap, input.kualitasLaporan);
 
+    let nilaiId: string;
+  let isUpdate = false;
+  
+  if (id) {
+    const existingNilai = await NilaiRepository.getNilaiById(id);
+    if (existingNilai) {
+      nilaiId = id;
+      isUpdate = true;
+    } else {
+      nilaiId = id;
+    }
+  } else {
+    const existingNilai = await prisma.nilai.findFirst({
+      where: { nim: input.nim }
+    });
+    
+    if (existingNilai) {
+      nilaiId = existingNilai.id;
+      isUpdate = true;
+    } else {
+      nilaiId = crypto.randomUUID();
+    }
+  }
+
     const nilai = await NilaiRepository.createNilaiPembimbing(
-      id || crypto.randomUUID(),
+      nilaiId,
       input.penyelesaianMasalah,
       input.bimbinganSikap,
       input.kualitasLaporan,
@@ -136,7 +176,7 @@ export default class NilaiService {
     await this.updateNilaiAkhir(nilai.id);
     return {
       nilai,
-      message: `Nilai ${mahasiswa?.nama} berhasil disimpan dengan nilai ${nilaiPembimbing}`
+      message: `Nilai ${mahasiswa?.nama} berhasil ${isUpdate ? "diperbarui" : "disimpan"} dengan nilai ${nilaiPembimbing}`,
     };
   }
 
@@ -150,19 +190,15 @@ export default class NilaiService {
     const nilaiPembimbing = nilai.nilai_pembimbing ?? 0;
     const nilaiInstansi = nilai.nilai_instansi ?? 0;
 
-    const nilaiAkhir = await NilaiHelper.calculateNilaiAkhir(
-      nilaiPenguji, 
-      nilaiPembimbing, 
-      nilaiInstansi
-    );
+    const nilaiAkhir = await NilaiHelper.calculateNilaiAkhir(nilaiPenguji, nilaiPembimbing, nilaiInstansi);
 
     if (nilaiAkhir != null) {
-      await NilaiRepository.updateNilaiAkhir(id, nilaiAkhir)
+      await NilaiRepository.updateNilaiAkhir(id, nilaiAkhir);
     }
 
     return {
       nilai,
-      nilaiAkhir
+      nilaiAkhir,
     };
   }
 
@@ -287,7 +323,6 @@ export default class NilaiService {
   }
 
   public static async createValidasiNilai(idNilai: string) {
-
     const nilai = await NilaiRepository.getNilaiById(idNilai);
     if (!nilai) {
       throw new APIError(`Waduh, Nilai tidak ditemukan ni! 😭`, 404);
@@ -298,7 +333,7 @@ export default class NilaiService {
       throw new APIError(`Waduh, Nilai ini sudah divalidasi sebelumnya! 😭`, 400);
     }
 
-    let pendaftaran_kp
+    let pendaftaran_kp;
     if (nilai.nim) {
       pendaftaran_kp = await DosenRepository.getPendaftaranKpDosen(nilai.nim);
       if (!pendaftaran_kp) {
@@ -308,21 +343,15 @@ export default class NilaiService {
       throw new APIError(`Waduh, Nilai tidak ditemukan ni! 😭`, 404);
     }
 
-    const validasiStatus = NilaiHelper.canValidateNilai(
-      nilai.nilai_penguji,
-      nilai.nilai_pembimbing,
-      nilai.nilai_instansi,
-      pendaftaran_kp.dokumen_seminar_kp
-        .filter((doc) => doc.status !== null) as { status: status_dokumen }[]
-    )
+    const validasiStatus = NilaiHelper.canValidateNilai(nilai.nilai_penguji, nilai.nilai_pembimbing, nilai.nilai_instansi, pendaftaran_kp.dokumen_seminar_kp.filter((doc) => doc.status !== null) as { status: status_dokumen }[]);
 
     if (!validasiStatus.valid) {
       throw new APIError(`Waduh, ${validasiStatus.message}! 😭`, 400);
     }
 
-    let validasiNilai
+    let validasiNilai;
     if (validasi) {
-      validasiNilai = await NilaiRepository.updateValidasiNilai(validasi.id, true)
+      validasiNilai = await NilaiRepository.updateValidasiNilai(validasi.id, true);
     } else {
       const validasiId = crypto.randomUUID();
       validasiNilai = await NilaiRepository.createValidasiNilai(validasiId, idNilai, true);
@@ -331,7 +360,7 @@ export default class NilaiService {
     return {
       validasiNilai,
       nilai,
-      status: `Nilai mahasiswa dengan nim ${nilai.nim} berhasil divalidasi`
-    }
+      status: `Nilai mahasiswa dengan nim ${nilai.nim} berhasil divalidasi`,
+    };
   }
 }
