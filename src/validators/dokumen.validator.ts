@@ -2,7 +2,6 @@ import { z } from "zod";
 import { jenis_dokumen, status_dokumen } from "../generated/prisma";
 
 const validateLinkPath = (value: string, ctx: z.RefinementCtx, jenisDokumen: jenis_dokumen) => {
-  // Pengecekan khusus untuk ID Surat Undangan
   if (jenisDokumen === jenis_dokumen.ID_SURAT_UNDANGAN) {
     if (value.length > 10) {
       ctx.addIssue({
@@ -11,13 +10,11 @@ const validateLinkPath = (value: string, ctx: z.RefinementCtx, jenisDokumen: jen
       });
       return false;
     }
-    return true; // Untuk ID_SURAT_UNDANGAN, kita hanya validasi panjang dan tidak perlu validasi Google Drive link
+    return true;
   }
 
-  // Untuk jenis dokumen lainnya, kita validasi link Google Drive
   const gdriveLinkRegex = /^https:\/\/drive\.google\.com\/(file\/d\/|drive\/folders\/|open\?id=)([a-zA-Z0-9_-]+)(\/?|\?usp=sharing|\&authuser=0)/;
 
-  // Check if it's a Google Drive link
   if (!gdriveLinkRegex.test(value)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -41,15 +38,11 @@ const validateLinkPath = (value: string, ctx: z.RefinementCtx, jenisDokumen: jen
   return true;
 };
 
-// Buat schema khusus per jenis dokumen
 export const createDokumenSeminarKpSchema = z.object({
   link_path: z
     .string()
     .superRefine((val, ctx) => {
-      // Kita akan mendapatkan jenis dokumen dari handler
-      // Tetapi karena handler mengirimkan jenis dokumen secara terpisah,
-      // kita perlu menyesuaikan validator ini nanti
-      return true; // Sementara kita izinkan, validasi sebenarnya akan dilakukan di handler
+      return true;
     }),
   nim: z.string().min(1, "NIM tidak boleh kosong"),
   id_pendaftaran_kp: z.string().uuid("ID pendaftaran KP harus berupa UUID")

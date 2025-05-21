@@ -61,11 +61,9 @@ model dosen {
 
   bimbingan      bimbingan[]
   nilai          nilai[]
-  pendaftaran_kp pendaftaran_kp[]
-<<<<<<< HEAD
-=======
+  pembimbing     pendaftaran_kp[] @relation("pembimbing")
+  penguji        pendaftaran_kp[] @relation("penguji")
   mahasiswa      mahasiswa[]
->>>>>>> 358f9639ef01b9bb8e359660963bfcdfd2cbac7e
 }
 
 model instansi {
@@ -93,11 +91,11 @@ model jadwal {
 
   nim               String?         @db.VarChar(11)
   nama_ruangan      String?         @db.VarChar(10)
-  id_pendaftaran_kp String?         @db.Uuid
-
+  id_pendaftaran_kp String?         @unique @db.Uuid
   pendaftaran_kp    pendaftaran_kp? @relation(fields: [id_pendaftaran_kp], references: [id], onDelete: NoAction, onUpdate: NoAction)
   ruangan           ruangan?        @relation(fields: [nama_ruangan], references: [nama], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa         mahasiswa?      @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
+  nilai             nilai?     
 }
 
 model log_jadwal {
@@ -105,11 +103,11 @@ model log_jadwal {
   log_type          String?
   tanggal_lama      DateTime? @db.Date
   tanggal_baru      DateTime  @db.Date
-  ruangan_lama      DateTime? @db.Date
-  ruangan_baru      DateTime  @db.Date
+  ruangan_lama      String?   
+  ruangan_baru      String  
   keterangan        String?   @db.VarChar(255)
   created_at        DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
-  id_jadwal_seminar Int?
+  id_jadwal         String?   @db.Uuid
   nip               String?   @db.VarChar(20)
 }
 
@@ -142,16 +140,19 @@ model nilai {
   nim                           String?                         @db.VarChar(11)
   nip                           String?                         @db.VarChar(20)
   email_pembimbing_instansi     String?                         @db.VarChar(255) 
-  id_jadwal_seminar             String?                         @db.Uuid
+  id_jadwal_seminar             String?                         @unique @db.Uuid
+  id_validasi_nilai             String?                         @unique @db.Uuid
   id_pendaftaran_kp             String?                         @db.Uuid
 
-  komponen_penilaian_instansi   komponen_penilaian_instansi[]
-  komponen_penilaian_pembimbing komponen_penilaian_pembimbing[]
-  komponen_penilaian_penguji    komponen_penilaian_penguji[]
+  komponen_penilaian_instansi   komponen_penilaian_instansi?
+  komponen_penilaian_pembimbing komponen_penilaian_pembimbing?
+  komponen_penilaian_penguji    komponen_penilaian_penguji?
+  validasi_nilai                validasi_nilai?
 
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
   dosen               dosen?               @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  jadwal_seminar      jadwal?              @relation(fields: [id_jadwal_seminar], references: [id], onDelete: NoAction, onUpdate: NoAction)
   pendaftaran_kp      pendaftaran_kp? @relation(fields: [id_pendaftaran_kp], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -204,7 +205,8 @@ model pendaftaran_kp {
   instansi            instansi?            @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tahun_ajaran        tahun_ajaran?        @relation(fields: [id_tahun_ajaran], references: [id], onDelete: NoAction, onUpdate: NoAction)
   mahasiswa           mahasiswa?           @relation(fields: [nim], references: [nim], onDelete: NoAction, onUpdate: NoAction)
-  dosen_pembimbing    dosen?               @relation(fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  dosen_pembimbing    dosen?               @relation("pembimbing", fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
+  dosen_penguji       dosen?               @relation("penguji", fields: [nip_penguji], references: [nip], onDelete: NoAction, onUpdate: NoAction)
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -235,7 +237,7 @@ model komponen_penilaian_instansi {
   kerjasama_tim   Float?
   inisiatif       Float?
   masukan         String?
-  id_nilai        String? @db.Uuid
+  id_nilai        String? @unique @db.Uuid
   nilai           nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -245,7 +247,8 @@ model komponen_penilaian_pembimbing {
   bimbingan_sikap      Float?
   kualitas_laporan     Float?
   catatan              String?
-  id_nilai             String? @db.Uuid
+  created_at           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
+  id_nilai             String? @unique @db.Uuid
   nilai                nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -255,7 +258,8 @@ model komponen_penilaian_penguji {
   kemampuan_presentasi Float?
   kesesuaian_urgensi   Float?
   catatan              String?
-  id_nilai             String? @db.Uuid
+  created_at           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
+  id_nilai             String? @unique @db.Uuid
   nilai                nilai?  @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -267,6 +271,15 @@ model tahun_ajaran {
   pendaftaran_kp pendaftaran_kp[]
 }
 
+model validasi_nilai {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  is_approve     Boolean?         @default(false)
+  created_at     DateTime?        @default(dbgenerated("CURRENT_DATE")) @db.Date
+  id_nilai       String?          @unique @db.Uuid
+
+  nilai          nilai?           @relation(fields: [id_nilai], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
 enum jenis_dokumen {
   SURAT_KETERANGAN_SELESAI_KP
   LAPORAN_TAMBAHAN_KP
@@ -276,7 +289,6 @@ enum jenis_dokumen {
   BERITA_ACARA_SEMINAR
   DAFTAR_HADIR_SEMINAR
   LEMBAR_PENGESAHAN_KP
-  REVISI_DAILY_REPORT
   REVISI_LAPORAN_TAMBAHAN
   SISTEM_KP_FINAL
 }
