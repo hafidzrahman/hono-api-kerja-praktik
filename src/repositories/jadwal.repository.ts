@@ -129,7 +129,8 @@ export default class JadwalRepository {
         ruangan_baru: data.ruangan_baru,
         keterangan: data.keterangan,
         id_jadwal: data.id_jadwal,
-        nip: data.nip || null,
+        nip_penguji_baru: data.nip_penguji_baru,
+        nip_penguji_lama: data.nip_penguji_lama,
         created_at: new Date(),
       },
     });
@@ -381,5 +382,84 @@ export default class JadwalRepository {
         nama: tahunAjaran.nama,
       },
     };
+  }
+
+  public static async getLogJadwal(tahunAjaranId: number = 1) {
+    const tahunAjaran = await prisma.tahun_ajaran.findUnique({
+      where: {
+        id: tahunAjaranId,
+      },
+      select: {
+        id: true,
+        nama: true,
+      },
+    });
+
+    const logJadwal = await prisma.log_jadwal.findMany({
+      select: {
+        id: true,
+        log_type: true,
+        tanggal_lama: true,
+        tanggal_baru: true,
+        ruangan_lama: true,
+        ruangan_baru: true,
+        keterangan: true,
+        created_at: true,
+        nip_penguji_lama: true,
+        nip_penguji_baru: true,
+        id_jadwal: true,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    const logJadwalWithJadwal = await Promise.all(
+    logJadwal.map(async (log) => {
+      const jadwal = log.id_jadwal ? await this.findJadwalById(log.id_jadwal) : null;
+      return {
+        ...log,
+        jadwal: jadwal
+      };
+    })
+  );
+
+    return {
+      logJadwal,
+      logJadwalWithJadwal,
+      tahunAjaran
+    }
+  }
+
+  public static async findJadwalById(id: string) {
+    return await prisma.jadwal.findUnique({
+      where: {
+        id: id
+      },
+      select: {
+        id: true,
+        tanggal: true,
+        waktu_mulai: true,
+        waktu_selesai: true,
+        status: true,
+        nama_ruangan: true,
+        pendaftaran_kp: {
+          select: {
+            dosen_pembimbing: {
+              select: {
+                nip: true,
+                nama: true
+              }
+            },
+            dosen_penguji: {
+              select: {
+                nip: true,
+                nama: true
+              }
+            }
+          }
+        }
+      }
+    })
   }
 }
