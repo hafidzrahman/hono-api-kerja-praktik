@@ -2,7 +2,17 @@ import prisma from "../infrastructures/db.infrastructure";
 import { APIError } from "../utils/api-error.util";
 
 export default class NilaiRepository {
-  public static async createNilaiPenguji(id: string, penguasaanKeilmuan: number, kemampuanPresentasi: number, kesesuaianUrgensi: number, catatan: string | null, nilaiPenguji: number, nim: string, nip: string, idJadwalSeminar?: string) {
+  public static async createNilaiPenguji(
+    id: string, 
+    penguasaanKeilmuan: number, 
+    kemampuanPresentasi: number, 
+    kesesuaianUrgensi: number, 
+    catatan: string | null, 
+    nilaiPenguji: number, 
+    nim: string, 
+    nip: string, 
+    idJadwalSeminar?: string
+  ) {
     const dosen = await prisma.dosen.findUnique({
       where: { nip },
     });
@@ -93,7 +103,16 @@ export default class NilaiRepository {
     return nilai;
   }
 
-  public static async createNilaiPembimbing(id: string, penyelesaianMasalah: number, bimbinganSikap: number, kualitasLaporan: number, catatan: string | null, nilaiPembimbing: number, nim: string, nip: string, idJadwalSeminar?: string) {
+  public static async createNilaiPembimbing(
+    id: string, 
+    penyelesaianMasalah: number, 
+    bimbinganSikap: number, 
+    kualitasLaporan: number, 
+    catatan: string | null, 
+    nilaiPembimbing: number, 
+    nim: string, 
+    nip: string, 
+    idJadwalSeminar?: string) {
     const dosen = await prisma.dosen.findUnique({
       where: { nip },
     });
@@ -217,6 +236,10 @@ export default class NilaiRepository {
 
   public static async getTahunAjaranSekarang() {
     return prisma.tahun_ajaran.findFirst({
+      select: {
+        id: true,
+        nama: true,
+      },
       orderBy: {
         id: "desc",
       },
@@ -368,5 +391,25 @@ export default class NilaiRepository {
         id_nilai: idNilai,
       },
     });
+  }
+
+  public static async findNilaiByJadwalId(jadwal_id: string) {
+    const nilai = await prisma.nilai.findFirst({
+      where: {
+        id_jadwal_seminar: jadwal_id,
+      },
+      select: {
+        nilai_pembimbing: true,
+        nilai_penguji: true,
+        nilai_instansi: true,
+        nilai_akhir: true,
+        komponen_penilaian_pembimbing: true,
+        komponen_penilaian_penguji: true,
+        komponen_penilaian_instansi: true,
+        validasi_nilai: true,
+      }
+    })
+
+    return nilai
   }
 }
