@@ -28,11 +28,12 @@ seminarKpRoute.get("/jadwal-saya", AuthMiddleware.JWTBearerTokenExtraction, Jadw
 seminarKpRoute.get("/jadwal-saya/tahun-ajaran", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getTahunAjaran)
 seminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.postJadwal);
 seminarKpRoute.put("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.putJadwal);
+seminarKpRoute.get("/jadwal/log-jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getLogJadwal);
 seminarKpRoute.get("/dosen", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllDosen);
 seminarKpRoute.get("/ruangan", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllRuangan)
 
-seminarKpRoute.post("/nilai/penguji", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createNilaiPenguji)
-seminarKpRoute.post("/nilai/pembimbing", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createNilaiPembimbing)
+seminarKpRoute.post("/nilai/penguji", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createUpdateNilaiPenguji)
+seminarKpRoute.post("/nilai/pembimbing", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createUpdateNilaiPembimbing)
 seminarKpRoute.get("/nilai", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.getAllNilai)
 seminarKpRoute.post("/nilai/validasi", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createValidasiNilai)
 
