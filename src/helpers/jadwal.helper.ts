@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import StepHelper from "./dokumen-step.helper";
-import { fromZonedTime } from "date-fns-tz";
 import DateHelper from "./date.helper";
 import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
 import MahasiswaHelper from "./mahasiswa.helper";
@@ -38,8 +37,10 @@ export default class JadwalHelper {
   }
 
   public static formatWaktu(date: Date): string {
-    const now = new Date();
-    const diffInMilliseconds = now.getTime() - date.getTime();
+    const now = DateHelper.toJakartaTime(new Date())
+    const uploadWaktuJakarta = DateHelper.toJakartaTime(date)
+
+    const diffInMilliseconds = now.getTime() - uploadWaktuJakarta.getTime();
 
     const seconds = Math.floor(diffInMilliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
