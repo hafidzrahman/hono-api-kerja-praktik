@@ -98,4 +98,16 @@ export default class DosenRepository {
       }
     });
   }
+
+  public static async findNamaDosenByNip(nip: string) {
+    return await prisma.dosen.findUnique({
+      where: {
+        nip
+      },
+      select: {
+        nama: true,
+        email: true
+      }
+    })
+  }
 }
