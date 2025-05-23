@@ -101,19 +101,4 @@ export default class BimbinganKPHandler {
       201
     );
   }
-
-  // public static async putBimbingan(c: Context) {
-  //   const { email } = c.get("user");
-  //   const { id_bimbingan, catatan_bimbingan } = await c.req.json();
-
-  //   if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
-  //   if (!id_bimbingan || !catatan_bimbingan) {
-  //     throw new APIError("Data bimbingan tidak lengkap! 😭", 400);
-  //   }
-
-  //   return c.json(
-  //     await BimbinganKPService.putBimbingan(id_bimbingan, catatan_bimbingan),
-  //     200
-  //   );
-  // }
 }

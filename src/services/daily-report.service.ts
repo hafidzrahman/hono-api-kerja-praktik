@@ -8,7 +8,9 @@ export default class DailyReportService {
       throw new APIError(`Waduh, kamu siapa sih? 😭`, 404);
     }
 
-    const data = await DailyReportRepository.findPendaftaranKP(mahasiswa.nim);
+    const data = await DailyReportRepository.findPendaftaranKPByNIM(
+      mahasiswa.nim
+    );
     if (!data) {
       throw new APIError(
         `Waduh, kamu belum mendaftar KP nih, wajib daftar dulu yak! 😉`,
@@ -35,24 +37,22 @@ export default class DailyReportService {
       throw new APIError(`Waduh, kamu siapa sih? 😭`, 404);
     }
 
-    const data = await DailyReportRepository.findPendaftaranKP(mahasiswa.nim);
-    if (!data) {
+    const daily_report = await DailyReportRepository.findIdDailyReport(id);
+    if (!daily_report) {
       throw new APIError(
-        `Waduh, kamu belum melakukan pendaftaran KP nih! 😭`,
+        `Waduh, daily report kamu tidak ditemukan nih! 😭`,
         404
       );
     }
-    if (data.level_akses < 5) {
-      throw new APIError(
-        `Waduh, kamu belum bisa membuat daily report nih, pastikan setiap tahapan pendaftaran KP kamu sudah divalidasi! 😉`,
-        403
-      );
-    }
+
+    const pendaftaran = await DailyReportRepository.findIdPendaftaranKP(
+      mahasiswa.nim
+    );
 
     const detail = await DailyReportRepository.findDailyReportById(
-      id,
+      daily_report.id,
       mahasiswa.nim,
-      data.id
+      pendaftaran!.id
     );
 
     return {
@@ -68,14 +68,16 @@ export default class DailyReportService {
       throw new APIError(`Waduh, kamu siapa sih? 😭`, 404);
     }
 
-    const data = await DailyReportRepository.findPendaftaranKP(mahasiswa.nim);
-    if (!data) {
+    const pendaftaran = await DailyReportRepository.findIdPendaftaranKP(
+      mahasiswa.nim
+    );
+    if (!pendaftaran) {
       throw new APIError(
         `Waduh, kamu belum melakukan pendaftaran KP nih! 😭`,
         404
       );
     }
-    if (data.level_akses < 5) {
+    if (pendaftaran.level_akses < 5) {
       throw new APIError(
         `Waduh, kamu belum bisa membuat daily report nih, pastikan setiap tahapan pendaftaran KP kamu sudah divalidasi! 😉`,
         403
@@ -88,7 +90,7 @@ export default class DailyReportService {
     const checkPresensi = await DailyReportRepository.findDailyReportByDate(
       today,
       mahasiswa.nim,
-      data.id
+      pendaftaran.id
     );
 
     return !!checkPresensi;
@@ -100,18 +102,20 @@ export default class DailyReportService {
       throw new APIError(`Waduh, kamu siapa sih?`, 404);
     }
 
-    const data = await DailyReportRepository.findPendaftaranKP(mahasiswa.nim);
-    if (!data) {
+    const pendaftaran = await DailyReportRepository.findIdPendaftaranKP(
+      mahasiswa.nim
+    );
+    if (!pendaftaran) {
       throw new APIError(
         `Waduh, kamu belum melakukan pendaftaran KP nih 😭`,
         404
       );
     }
-    if (!data.instansi) {
+    if (!pendaftaran.instansi) {
       throw new APIError(`Waduh, instansi tidak ditenukan nih! 😭`, 404);
     }
 
-    return data.instansi;
+    return pendaftaran.instansi;
   }
 
   public static async postDailyReport(
@@ -124,14 +128,16 @@ export default class DailyReportService {
       throw new APIError(`Waduh, kamu siapa sih? 😭`, 404);
     }
 
-    const data = await DailyReportRepository.findPendaftaranKP(mahasiswa.nim);
-    if (!data) {
+    const pendaftaran = await DailyReportRepository.findIdPendaftaranKP(
+      mahasiswa.nim
+    );
+    if (!pendaftaran) {
       throw new APIError(
         `Waduh, kamu belum melakukan pendaftaran KP nih 😭`,
         404
       );
     }
-    if (data.level_akses < 5) {
+    if (pendaftaran.level_akses < 5) {
       throw new APIError(
         `Waduh, kamu belum bisa membuat daily report nih, pastikan setiap tahapan pendaftaran KP kamu sudah divalidasi! 😉`,
         403
@@ -140,7 +146,7 @@ export default class DailyReportService {
 
     const daily_report = await DailyReportRepository.createDailyReport(
       mahasiswa.nim,
-      data.id,
+      pendaftaran.id,
       latitude,
       longitude
     );
@@ -182,18 +188,19 @@ export default class DailyReportService {
     deskripsi_agenda: string,
     id_detail_daily_report: number
   ) {
-    const updated = await DailyReportRepository.updateDetailDailyReport(
-      waktu_mulai,
-      waktu_selesai,
-      judul_agenda,
-      deskripsi_agenda,
-      id_detail_daily_report
-    );
+    const updated_detail_daily_report =
+      await DailyReportRepository.updateDetailDailyReport(
+        waktu_mulai,
+        waktu_selesai,
+        judul_agenda,
+        deskripsi_agenda,
+        id_detail_daily_report
+      );
 
     return {
       response: true,
       message: "Detail daily report kamu berhasil diperbarui! 😁",
-      data: updated,
+      data: updated_detail_daily_report,
     };
   }
 
@@ -202,16 +209,17 @@ export default class DailyReportService {
     catatan_evaluasi: string,
     status: string
   ) {
-    const daily_report = await DailyReportRepository.updateDailyReport(
-      id_daily_report,
-      catatan_evaluasi,
-      status
-    );
+    const evaluated_daily_report =
+      await DailyReportRepository.updateDailyReport(
+        id_daily_report,
+        catatan_evaluasi,
+        status
+      );
 
     return {
       response: true,
       message: "Evaluasi daily report berhasil disimpan! 😁",
-      data: daily_report,
+      data: evaluated_daily_report,
     };
   }
 

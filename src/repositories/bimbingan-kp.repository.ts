@@ -271,18 +271,4 @@ export default class BimbinganKPRepository {
       },
     });
   }
-
-  // public static async updateBimbingan(
-  //   id_bimbingan: string,
-  //   catatan_bimbingan: string
-  // ) {
-  //   return prisma.bimbingan.update({
-  //     where: {
-  //       id: id_bimbingan,
-  //     },
-  //     data: {
-  //       catatan_bimbingan: catatan_bimbingan,
-  //     },
-  //   });
-  // }
 }

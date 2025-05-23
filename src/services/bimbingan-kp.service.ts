@@ -175,20 +175,4 @@ export default class BimbinganKPService {
       data: result,
     };
   }
-
-  // public static async putBimbingan(
-  //   id_bimbingan: string,
-  //   catatan_bimbingan: string
-  // ) {
-  //   const updateBimbingan = await BimbinganKPRepository.updateBimbingan(
-  //     id_bimbingan,
-  //     catatan_bimbingan
-  //   );
-
-  //   return {
-  //     response: true,
-  //     message: "Catatan bimbingan berhasil diperbarui! 😁",
-  //     data: updateBimbingan,
-  //   };
-  // }
 }
