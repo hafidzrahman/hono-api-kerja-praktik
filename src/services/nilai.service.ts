@@ -18,7 +18,7 @@ export default class NilaiService {
       }
 
       if (!NilaiHelper.canInputNilai(jadwal.waktu_mulai)) {
-        throw new APIError(`Waduh, Nilai penguji tidak bisa diinput setelah seminar dimulai! 😭`, 400);
+        throw new APIError(`Waduh, Nilai penguji tidak bisa diinput sebelum seminar dimulai! 😭`, 400);
       }
     }
 
