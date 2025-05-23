@@ -5,7 +5,7 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import DateHelper from "../helpers/date.helper";
-import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput, DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
 import NilaiRepository from "../repositories/nilai.repository";
 import DosenRepository from "../repositories/dosen.repository";
@@ -275,19 +275,29 @@ export default class JadwalService {
     return JadwalRepository.getTahunAjaran();
   }
 
-  public static async getAllJadwalSeminar(tahunAjaranId: number): Promise<JadwalSeminarResponse> {
+  public static async getAllJadwalSeminar(tahunAjaranId: number = 1): Promise<JadwalSeminarResponse> {
     if (!tahunAjaranId) {
       const tahunAjaranSekarang = await JadwalRepository.getTahunAjaran();
       if (!tahunAjaranSekarang) {
-        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan`);
+        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
       }
       tahunAjaranId = tahunAjaranSekarang.id;
     }
 
-    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
+    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran, jadwalByRuangan } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
 
     const hariIni = JadwalHelper.filterJadwalHariIni(jadwalList);
     const mingguIni = JadwalHelper.filterJadwalMingguIni(jadwalList);
+
+    const hariIniByRuangan = Object.keys(jadwalByRuangan).reduce((acc, ruangan) => {
+      acc[ruangan] = JadwalHelper.filterJadwalHariIni(jadwalByRuangan[ruangan]);
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
+
+    const mingguIniByRuangan = Object.keys(jadwalByRuangan).reduce((acc, ruangan) => {
+      acc[ruangan] = JadwalHelper.filterJadwalMingguIni(jadwalByRuangan[ruangan]);
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
 
     return {
       total_seminar: totalSeminar,
@@ -297,6 +307,11 @@ export default class JadwalService {
         semua: jadwalList,
         hari_ini: hariIni,
         minggu_ini: mingguIni,
+        by_ruangan: {
+          semua: jadwalByRuangan,
+          hari_ini: hariIniByRuangan,
+          minggu_ini: mingguIniByRuangan,
+        },
       },
       tahun_ajaran: { ...tahunAjaran, nama: tahunAjaran.nama ?? "Unknown" },
     };
