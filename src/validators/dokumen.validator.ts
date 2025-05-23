@@ -25,7 +25,7 @@ export const validateLinkPath = (value: string, jenisDokumen: jenis_dokumen) => 
 export const createDokumenSeminarKpSchema = z.object({
   link_path: z
     .string()
-    .min(1, "Link/Path tidak boleh kosong")
+    .min(1, "Link tidak boleh kosong")
     .refine((val) => {
       return true;
     }),
