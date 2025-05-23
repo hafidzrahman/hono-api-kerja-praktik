@@ -8,6 +8,7 @@ import DateHelper from "../helpers/date.helper";
 import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
 import NilaiRepository from "../repositories/nilai.repository";
+import DosenRepository from "../repositories/dosen.repository";
 
 export default class JadwalService {
   public static async postJadwal(data: CreateJadwalDto): Promise<jadwal> {
@@ -232,7 +233,7 @@ export default class JadwalService {
       keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}${data.nip_penguji ? ` dengan pembaruan dosen penguji ${data.nip_penguji}` : ""}`,
       id_jadwal: existingJadwal.id,
       nip_penguji_lama: existingJadwal.pendaftaran_kp?.nip_penguji,
-      nip_penguji_baru: data.nip_penguji
+      nip_penguji_baru: data.nip_penguji,
     });
 
     return updatedJadwal;
@@ -315,8 +316,21 @@ export default class JadwalService {
       throw new APIError(`Waduh, Log jadwal tidak ditemukan, 😭`, 404);
     }
 
+    const logJadwalWithNames = await Promise.all(
+      result.logJadwalWithJadwal.map(async (log) => {
+        const pengujiLama = log.nip_penguji_lama ? await DosenRepository.findNamaDosenByNip(log.nip_penguji_lama) : null;
+        const pengujiBaru = log.nip_penguji_baru ? await DosenRepository.findNamaDosenByNip(log.nip_penguji_baru) : null;
+
+        return {
+          ...log,
+          nama_penguji_lama: pengujiLama?.nama || null,
+          nama_penguji_baru: pengujiBaru?.nama || null,
+        };
+      })
+    );
+
     return {
-      logJadwal: result.logJadwalWithJadwal,
+      logJadwal: logJadwalWithNames,
       tahunAjaran: result.tahunAjaran,
     };
   }
