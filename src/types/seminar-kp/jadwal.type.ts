@@ -92,12 +92,17 @@ export interface JadwalSeminarResponse {
   total_seminar_minggu_ini: number;
   total_jadwal_ulang: number;
   jadwal: {
-    semua: DataJadwalSeminar[],
-    minggu_ini: DataJadwalSeminar[],
-    hari_ini: DataJadwalSeminar[]
-  }
-  tahun_ajaran?: {
+    semua: DataJadwalSeminar[];
+    hari_ini: DataJadwalSeminar[];
+    minggu_ini: DataJadwalSeminar[];
+    by_ruangan: {
+      semua: Record<string, DataJadwalSeminar[]>;
+      hari_ini: Record<string, DataJadwalSeminar[]>;
+      minggu_ini: Record<string, DataJadwalSeminar[]>;
+    };
+  };
+  tahun_ajaran: {
     id: number;
-    nama: string
-  }
+    nama: string;
+  };
 }
