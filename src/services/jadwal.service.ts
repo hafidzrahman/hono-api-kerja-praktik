@@ -284,7 +284,14 @@ export default class JadwalService {
       tahunAjaranId = tahunAjaranSekarang.id;
     }
 
-    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran, jadwalByRuangan } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
+    const { 
+      totalSeminar, 
+      totalSeminarMingguIni, 
+      totalJadwalUlang, 
+      jadwalList, 
+      tahunAjaran, 
+      jadwalByRuangan 
+    } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
 
     const hariIni = JadwalHelper.filterJadwalHariIni(jadwalList);
     const mingguIni = JadwalHelper.filterJadwalMingguIni(jadwalList);
