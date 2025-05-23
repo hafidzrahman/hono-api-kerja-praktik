@@ -320,6 +320,8 @@ export default class JadwalRepository {
   }
 
   public static async getAllJadwalSeminar(tahunAjaranId: number = 1) {
+    await this.updateJadwalStatus();
+
     const tahunAjaran = await prisma.tahun_ajaran.findUnique({
       where: {
         id: tahunAjaranId,
@@ -481,5 +483,23 @@ export default class JadwalRepository {
         },
       },
     });
+  }
+
+  public static async updateJadwalStatus() {
+    const now = new Date()
+
+    const result = await prisma.jadwal.updateMany({
+      where: {
+        status: "Menunggu",
+        waktu_selesai: {
+          lte: now,
+        },
+      },
+      data: {
+        status: "Selesai",
+      },
+    })
+
+    return result.count
   }
 }
