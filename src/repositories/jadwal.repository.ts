@@ -141,6 +141,9 @@ export default class JadwalRepository {
       select: {
         nama: true,
       },
+      orderBy: {
+        nama: "asc",
+      },
     });
     return ruangan;
   }
@@ -253,7 +256,7 @@ export default class JadwalRepository {
               },
             },
           },
-        }
+        },
       },
     };
 
@@ -372,11 +375,28 @@ export default class JadwalRepository {
       };
     });
 
+    const jadwalByRuangan = formattedJadwalList.reduce((acc, jadwal) => {
+      const ruangan = jadwal.ruangan;
+      if (!acc[ruangan]) {
+        acc[ruangan] = [];
+      }
+      acc[ruangan].push(jadwal);
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
+
+    const allRuangan = await this.getAllRuangan();
+
+    const jadwalByRuanganComplete = allRuangan.reduce((acc, ruangan) => {
+      acc[ruangan.nama] = jadwalByRuangan[ruangan.nama] || [];
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
+
     return {
       totalSeminar: dataJadwal.length,
       totalSeminarMingguIni: JadwalHelper.jumlahJadwalMingguIni(dataJadwal),
       totalJadwalUlang,
       jadwalList: formattedJadwalList,
+      jadwalByRuangan: jadwalByRuanganComplete,
       tahunAjaran: {
         id: tahunAjaran.id,
         nama: tahunAjaran.nama,
@@ -415,26 +435,26 @@ export default class JadwalRepository {
     });
 
     const logJadwalWithJadwal = await Promise.all(
-    logJadwal.map(async (log) => {
-      const jadwal = log.id_jadwal ? await this.findJadwalById(log.id_jadwal) : null;
-      return {
-        ...log,
-        jadwal: jadwal
-      };
-    })
-  );
+      logJadwal.map(async (log) => {
+        const jadwal = log.id_jadwal ? await this.findJadwalById(log.id_jadwal) : null;
+        return {
+          ...log,
+          jadwal: jadwal,
+        };
+      })
+    );
 
     return {
       logJadwal,
       logJadwalWithJadwal,
-      tahunAjaran
-    }
+      tahunAjaran,
+    };
   }
 
   public static async findJadwalById(id: string) {
     return await prisma.jadwal.findUnique({
       where: {
-        id: id
+        id: id,
       },
       select: {
         id: true,
@@ -448,18 +468,18 @@ export default class JadwalRepository {
             dosen_pembimbing: {
               select: {
                 nip: true,
-                nama: true
-              }
+                nama: true,
+              },
             },
             dosen_penguji: {
               select: {
                 nip: true,
-                nama: true
-              }
-            }
-          }
-        }
-      }
-    })
+                nama: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 }
