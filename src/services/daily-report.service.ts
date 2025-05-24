@@ -292,6 +292,11 @@ export default class DailyReportService {
       masukan: string;
     }
   ) {
+    const mahasiswa = await DailyReportRepository.findNIMById(id);
+    if (!mahasiswa || !mahasiswa.nim) {
+      throw new APIError("Mahasiswa tidak ditemukan nih! 😭", 404);
+    }
+
     const nilai_akhir =
       komponen_penilaian.deliverables * 0.15 +
       komponen_penilaian.ketepatan_waktu * 0.1 +
@@ -303,7 +308,8 @@ export default class DailyReportService {
     const result = await DailyReportRepository.createNilai(
       id,
       nilai_akhir,
-      komponen_penilaian
+      komponen_penilaian,
+      mahasiswa.nim
     );
 
     return {
@@ -312,8 +318,9 @@ export default class DailyReportService {
       data: result,
     };
   }
+
   public static async putNilai(
-    nim: string,
+    id: string,
     komponen_penilaian: {
       deliverables: number;
       ketepatan_waktu: number;
@@ -324,6 +331,15 @@ export default class DailyReportService {
       masukan: string;
     }
   ) {
+    const komponen =
+      await DailyReportRepository.findIdKomponenPenilaianInstansi(id);
+
+    if (!komponen) {
+      throw new APIError(
+        "Komponen penilaian instansi tidak ditemukan! 😭",
+        404
+      );
+    }
     const nilai_akhir =
       komponen_penilaian.deliverables * 0.15 +
       komponen_penilaian.ketepatan_waktu * 0.1 +
@@ -333,9 +349,10 @@ export default class DailyReportService {
       komponen_penilaian.inisiatif * 0.2;
 
     const result = await DailyReportRepository.updateNilai(
-      nim,
+      id,
       nilai_akhir,
-      komponen_penilaian
+      komponen_penilaian,
+      komponen.id
     );
 
     return {

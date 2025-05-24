@@ -210,9 +210,11 @@ export default class BimbinganKPRepository {
       catatan: string;
     }
   ) {
-    return prisma.nilai.create({
+    return prisma.nilai.update({
+      where: {
+        id: id,
+      },
       data: {
-        id_pendaftaran_kp: id,
         nip: nip,
         nilai_pembimbing: nilai_pembimbing,
         komponen_penilaian_pembimbing: {
