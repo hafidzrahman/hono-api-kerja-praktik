@@ -71,6 +71,7 @@ model instansi {
   alamat              String                @db.VarChar(255)
   longitude           Float
   latitude            Float
+  radius Float?
   jenis               jenis_instansi
   profil_singkat      String?               @db.VarChar(255)
   status              status_instansi?      @default(Pending)
@@ -109,6 +110,14 @@ model log_jadwal {
   id_jadwal         String?   @db.Uuid
   nip_penguji_lama  String?   @db.VarChar(20)
   nip_penguji_baru  String?   @db.VarChar(20)
+}
+model LOG {
+  id Int @id @default(autoincrement())
+  message String
+  tanggal DateTime
+  status Int @default(0)
+  pendaftaran_kp_id String @db.Uuid
+  pendaftaran_kp pendaftaran_kp @relation(references: [id], fields: [pendaftaran_kp_id])
 }
 
 model mahasiswa {
@@ -208,6 +217,7 @@ model pendaftaran_kp {
   dosen_pembimbing    dosen?               @relation("pembimbing", fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
   dosen_penguji       dosen?               @relation("penguji", fields: [nip_penguji], references: [nip], onDelete: NoAction, onUpdate: NoAction)
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
+  log LOG[]
 }
 
 model ruangan {
@@ -282,10 +292,11 @@ model validasi_nilai {
 
 model option {
   id                                  Int      @id @default(autoincrement())
-  tanggal_mulai_pendaftaran_kp        DateTime
-  tanggal_akhir_pendaftaran_kp        DateTime
-  tanggal_mulai_pendaftaran_kp_lanjut DateTime
-  tanggal_akhir_pendaftaran_kp_lanjut DateTime
+  tanggal_mulai_pendaftaran_kp        DateTime?
+  tanggal_akhir_pendaftaran_kp        DateTime?
+  tanggal_mulai_pendaftaran_kp_lanjut DateTime?
+  tanggal_akhir_pendaftaran_kp_lanjut DateTime?
+
 }
 
 enum jenis_dokumen {
