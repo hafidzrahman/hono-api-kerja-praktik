@@ -2,16 +2,11 @@ import { Hono } from "hono";
 import { RegExpRouter } from "hono/router/reg-exp-router";
 import { jenis_dokumen } from "../generated/prisma";
 import AuthMiddleware from "../middlewares/auth.middleware";
-import DokumenSeminarKpHandler from "../handlers/dokumen-seminar-kp.handler";
-import JadwalSeminarKpHandler from "../handlers/jadwal-seminar-kp.handler";
-import * as nilaiSeminarKpHandler from "../handlers/nilai-seminar-kp.handler";
+import SeminarKpHandler from "../handlers/seminar-kp.handler";
+import JadwalSeminarKpHandler from "../handlers/jadwal.handler";
+import NilaiHandler from "../handlers/nilai.handler";
 
-const dokumenSeminarKpRoute = new Hono({ router: new RegExpRouter() });
-const jadwalSeminarKpRoute = new Hono({ router: new RegExpRouter() });
-const nilaiSeminarKpRoute = new Hono({ router: new RegExpRouter() });
-const jadwalSeminarKpHandler = new JadwalSeminarKpHandler();
-
-dokumenSeminarKpRoute.use(AuthMiddleware.JWTBearerTokenExtraction);
+const seminarKpRoute = new Hono({ router: new RegExpRouter() });
 
 const dokumenTypes = Object.keys(jenis_dokumen).map((key) => ({
   route: key.toLowerCase().replace(/_/g, "-"),
@@ -19,27 +14,26 @@ const dokumenTypes = Object.keys(jenis_dokumen).map((key) => ({
 }));
 
 dokumenTypes.forEach(({ route, type }) => {
-  dokumenSeminarKpRoute.post(`/dokumen/${route}`, (c) => DokumenSeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen[type]));
+  seminarKpRoute.post(`/dokumen/${route}`, (c) => SeminarKpHandler.postDokumenSeminarKP(c, jenis_dokumen[type]));
 });
 
-dokumenSeminarKpRoute.get("/dokumen", DokumenSeminarKpHandler.getAllDokumenSeminarKP);
-dokumenSeminarKpRoute.get("/dokumen/:nim", DokumenSeminarKpHandler.getDokumenSeminarKPByNIM);
-dokumenSeminarKpRoute.post("/dokumen/diterima/:id", DokumenSeminarKpHandler.postTerimaDokumenSeminarKP);
-dokumenSeminarKpRoute.post("/dokumen/ditolak/:id", DokumenSeminarKpHandler.postTolakDokumenSeminarKP);
+seminarKpRoute.get("/dokumen", AuthMiddleware.JWTBearerTokenExtraction, SeminarKpHandler.getAllDokumenSeminarKP);
+seminarKpRoute.get("/dokumen/:nim", AuthMiddleware.JWTBearerTokenExtraction, SeminarKpHandler.getDokumenSeminarKPByNIM);
+seminarKpRoute.get("/dokumen-saya", AuthMiddleware.JWTBearerTokenExtraction, SeminarKpHandler.getDokumenSeminarKPSaya);
+seminarKpRoute.post("/dokumen/validasi", AuthMiddleware.JWTBearerTokenExtraction, SeminarKpHandler.postTerimaDokumenSeminarKP);
+seminarKpRoute.post("/dokumen/ditolak", AuthMiddleware.JWTBearerTokenExtraction, SeminarKpHandler.postTolakDokumenSeminarKP);
 
-// endpoint jadwal seminar kp
-jadwalSeminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.createJadwal);
-jadwalSeminarKpRoute.get("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.getAllJadwal);
-jadwalSeminarKpRoute.get("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.getJadwalById);
-jadwalSeminarKpRoute.put("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.updateJadwal);
-jadwalSeminarKpRoute.delete("/jadwal/:id", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.deleteJadwal);
-jadwalSeminarKpRoute.post("/jadwal/:id/selesai", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.completeJadwal);
-jadwalSeminarKpRoute.post("/jadwal/:id/jadwal-ulang", AuthMiddleware.JWTBearerTokenExtraction, jadwalSeminarKpHandler.rescheduleJadwal);
+seminarKpRoute.get("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllJadwalSeminar)
+seminarKpRoute.get("/jadwal-saya", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getJadwalMahasiswaSaya)
+seminarKpRoute.get("/jadwal-saya/tahun-ajaran", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getTahunAjaran)
+seminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.postJadwal);
+seminarKpRoute.put("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.putJadwal);
+seminarKpRoute.get("/dosen", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllDosen);
+seminarKpRoute.get("/ruangan", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllRuangan)
 
-// endpoint nilai seminar kp
-nilaiSeminarKpRoute.post("/nilai/dosen-pembimbing", AuthMiddleware.JWTBearerTokenExtraction, nilaiSeminarKpHandler.createNilaiPembimbing);
-nilaiSeminarKpRoute.post("/nilai/dosen-penguji", AuthMiddleware.JWTBearerTokenExtraction, nilaiSeminarKpHandler.createNilaiPenguji);
-nilaiSeminarKpRoute.get("/nilai/mahasiswa/:nim", AuthMiddleware.JWTBearerTokenExtraction, nilaiSeminarKpHandler.getNilaiMahasiswa);
-nilaiSeminarKpRoute.get("/nilai", AuthMiddleware.JWTBearerTokenExtraction, nilaiSeminarKpHandler.getAllNilai);
+seminarKpRoute.post("/nilai/penguji", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createNilaiPenguji)
+seminarKpRoute.post("/nilai/pembimbing", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createNilaiPembimbing)
+seminarKpRoute.get("/nilai", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.getAllNilai)
+seminarKpRoute.post("/nilai/validasi", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createValidasiNilai)
 
-export default dokumenSeminarKpRoute;
+export default seminarKpRoute;
