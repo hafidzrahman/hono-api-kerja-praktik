@@ -78,7 +78,8 @@ export interface DataJadwalSeminar {
   }
   status_kp: string;
   ruangan: string;
-  jam: string;
+  waktu_mulai: string;
+  waktu_selesai: string;
   tanggal: string;
   dosen_penguji: string;
   dosen_pembimbing: string;
