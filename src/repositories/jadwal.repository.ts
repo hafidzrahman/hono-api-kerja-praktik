@@ -373,9 +373,8 @@ export default class JadwalRepository {
         },
         status_kp: jadwal.pendaftaran_kp?.status || "N/A",
         ruangan: jadwal.ruangan?.nama || "N/A",
-        waktu_mulai: waktuMulai? format(waktuMulai, "HH:mm") : "-",
-        waktu_selesai: waktuSelesai? format(waktuSelesai, "HH:mm") : "-",
-        jam: waktuMulai ? `${waktuMulai.getHours().toString().padStart(2, "0")}:${waktuMulai.getMinutes().toString().padStart(2, "0")}` : "N/A",
+        waktu_mulai: waktuMulai ? format(waktuMulai, "HH:mm") : "-",
+        waktu_selesai: waktuSelesai ? format(waktuSelesai, "HH:mm") : "-",
         tanggal: tanggal ? JadwalHelper.formatTanggal(tanggal) : "N/A",
         dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || "N/A",
         dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || "N/A",
@@ -494,7 +493,7 @@ export default class JadwalRepository {
   }
 
   public static async updateJadwalStatus() {
-    const now = new Date()
+    const now = new Date();
 
     const result = await prisma.jadwal.updateMany({
       where: {
@@ -506,8 +505,8 @@ export default class JadwalRepository {
       data: {
         status: "Selesai",
       },
-    })
+    });
 
-    return result.count
+    return result.count;
   }
 }
