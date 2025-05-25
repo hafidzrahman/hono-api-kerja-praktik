@@ -77,6 +77,7 @@ export default class JadwalHelper {
     const tanggalJkt = jadwal.tanggal ? DateHelper.toJakartaTime(new Date(jadwal.tanggal)) : null
     const waktuMulaiJkt = jadwal.waktu_mulai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_mulai)) : null
     const waktuSelesaiJkt = jadwal.waktu_selesai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_selesai)) : null
+    const waktuDinilai = jadwal.nilai?.komponen_penilaian_penguji?.created_at ? DateHelper.toJakartaTime(new Date(jadwal.nilai.komponen_penilaian_penguji.created_at)) : null
 
     return {
       id: jadwal.id,
@@ -100,7 +101,7 @@ export default class JadwalHelper {
       kemampuan_presentasi: jadwal.nilai?.komponen_penilaian_penguji?.kemampuan_presentasi || null,
       kesesuaian_urgensi: jadwal.nilai?.komponen_penilaian_penguji?.kesesuaian_urgensi || null,
       catatan_penguji: jadwal.nilai?.komponen_penilaian_penguji?.catatan || null,
-      waktu_dinilai: jadwal.nilai?.komponen_penilaian_penguji?.created_at || null,
+      waktu_dinilai: waktuDinilai? format(waktuDinilai, "HH:mm") : "-",
       id_pendaftaran_kp: jadwal.pendaftaran_kp?.id || null,
     };
   }
