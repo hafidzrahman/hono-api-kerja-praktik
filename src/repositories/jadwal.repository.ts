@@ -367,6 +367,8 @@ export default class JadwalRepository {
         },
         status_kp: jadwal.pendaftaran_kp?.status || "N/A",
         ruangan: jadwal.ruangan?.nama || "N/A",
+        waktu_mulai: jadwal.waktu_mulai,
+        waktu_selesai: jadwal.waktu_selesai,
         jam: jadwal.waktu_mulai ? `${jadwal.waktu_mulai.getHours().toString().padStart(2, "0")}:${jadwal.waktu_mulai.getMinutes().toString().padStart(2, "0")}` : "N/A",
         tanggal: jadwal.tanggal ? JadwalHelper.formatTanggal(jadwal.tanggal) : "N/A",
         dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || "N/A",
