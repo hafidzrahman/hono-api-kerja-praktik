@@ -100,7 +100,7 @@ export default class JadwalHelper {
       kemampuan_presentasi: jadwal.nilai?.komponen_penilaian_penguji?.kemampuan_presentasi || null,
       kesesuaian_urgensi: jadwal.nilai?.komponen_penilaian_penguji?.kesesuaian_urgensi || null,
       catatan_penguji: jadwal.nilai?.komponen_penilaian_penguji?.catatan || null,
-      waktu_dinilai: jadwal.created_at,
+      waktu_dinilai: jadwal.nilai?.komponen_penilaian_penguji?.created_at || null,
       id_pendaftaran_kp: jadwal.pendaftaran_kp?.id || null,
     };
   }
