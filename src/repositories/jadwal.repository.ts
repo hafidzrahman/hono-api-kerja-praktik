@@ -4,6 +4,8 @@ import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelatio
 import { APIError } from "../utils/api-error.util";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import JadwalHelper from "../helpers/jadwal.helper";
+import { format } from "date-fns";
+import DateHelper from "../helpers/date.helper";
 
 export default class JadwalRepository {
   public static async postJadwal(data: CreateJadwalInput): Promise<jadwal> {
@@ -358,6 +360,10 @@ export default class JadwalRepository {
     const totalJadwalUlang = dataJadwal.filter((jadwal) => jadwal.status === "Jadwal_Ulang").length;
 
     const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map((jadwal) => {
+      const waktuMulai = jadwal.waktu_mulai ? DateHelper.toJakartaTime(jadwal.waktu_mulai) : null;
+      const waktuSelesai = jadwal.waktu_selesai ? DateHelper.toJakartaTime(jadwal.waktu_selesai) : null;
+      const tanggal = jadwal.tanggal ? DateHelper.toJakartaTime(jadwal.tanggal) : null;
+
       return {
         id: jadwal.id,
         mahasiswa: {
@@ -367,10 +373,10 @@ export default class JadwalRepository {
         },
         status_kp: jadwal.pendaftaran_kp?.status || "N/A",
         ruangan: jadwal.ruangan?.nama || "N/A",
-        waktu_mulai: jadwal.waktu_mulai,
-        waktu_selesai: jadwal.waktu_selesai,
-        jam: jadwal.waktu_mulai ? `${jadwal.waktu_mulai.getHours().toString().padStart(2, "0")}:${jadwal.waktu_mulai.getMinutes().toString().padStart(2, "0")}` : "N/A",
-        tanggal: jadwal.tanggal ? JadwalHelper.formatTanggal(jadwal.tanggal) : "N/A",
+        waktu_mulai: waktuMulai? format(waktuMulai, "HH:mm") : "-",
+        waktu_selesai: waktuSelesai? format(waktuSelesai, "HH:mm") : "-",
+        jam: waktuMulai ? `${waktuMulai.getHours().toString().padStart(2, "0")}:${waktuMulai.getMinutes().toString().padStart(2, "0")}` : "N/A",
+        tanggal: tanggal ? JadwalHelper.formatTanggal(tanggal) : "N/A",
         dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || "N/A",
         dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || "N/A",
         instansi: jadwal.pendaftaran_kp?.instansi?.nama || "N/A",
