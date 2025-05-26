@@ -203,15 +203,23 @@ export default class JadwalRepository {
     });
   }
 
-  public static async getJadwalMahasiswaSaya(nip: string) {
+  public static async getJadwalMahasiswaSaya(nip: string, tahunAjaranId: number) {
     const jakartaDate = DateHelper.toJakartaTime(new Date());
     const currentDate = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 0, 0, 0, 0);
 
     const endOfDay = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 23, 59, 59, 999);
 
+    if (tahunAjaranId === 0) {
+      const latestTahunAjaran = await this.getTahunAjaran();
+      if (latestTahunAjaran) {
+        tahunAjaranId = latestTahunAjaran.id;
+      }
+    }
+
     const jadwal = {
       where: {
         pendaftaran_kp: {
+          id_tahun_ajaran: tahunAjaranId,
           nip_penguji: nip,
         },
       },
@@ -334,6 +342,10 @@ export default class JadwalRepository {
 
   public static async getTahunAjaran() {
     return prisma.tahun_ajaran.findFirst({
+      select: {
+        id: true,
+        nama: true,
+      },
       orderBy: {
         id: "desc",
       },
@@ -539,5 +551,17 @@ export default class JadwalRepository {
     });
 
     return result.count;
+  }
+
+  public static async getTahunAjaranById(tahunAjaranId: number = 1) {
+    return await prisma.tahun_ajaran.findUnique({
+      where: {
+        id: tahunAjaranId,
+      },
+      select: {
+        id: true,
+        nama: true,
+      },
+    });
   }
 }
