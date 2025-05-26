@@ -52,7 +52,10 @@ export interface DetailMahasiswaNilai {
 }
 
 export interface AllNilaiResponse {
-  tahunAjaran: string;
+  tahunAjaran: {
+    id: number;
+    nama: string;
+  };
   jumlahNilaiBelumValid: number;
   jumlahNilaiValid: number;
   jumlahNilaiApprove: number;
