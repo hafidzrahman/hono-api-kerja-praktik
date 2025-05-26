@@ -103,6 +103,8 @@ export default class JadwalHelper {
       catatan_penguji: jadwal.nilai?.komponen_penilaian_penguji?.catatan || null,
       waktu_dinilai: waktuDinilai,
       id_pendaftaran_kp: jadwal.pendaftaran_kp?.id || null,
+      tahun_ajaran_id: jadwal.pendaftaran_kp?.tahun_ajaran?.id || null,
+      tahun_ajaran_nama: jadwal.pendaftaran_kp?.tahun_ajaran?.nama || null,
     };
   }
 
