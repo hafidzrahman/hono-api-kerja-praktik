@@ -266,6 +266,10 @@ export default class NilaiRepository {
         where: {
           id: tahunAjaranId,
         },
+        select: {
+          id: true,
+          nama: true,
+        },
       });
 
       if (!tahunAjaranSekarang) {
