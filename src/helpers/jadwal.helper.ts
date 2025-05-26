@@ -84,7 +84,7 @@ export default class JadwalHelper {
       nim: nim || "-",
       nama: jadwal.pendaftaran_kp?.mahasiswa?.nama || "-",
       ruangan: jadwal.ruangan?.nama || "-",
-      tanggal: tanggalJkt ? format(tanggalJkt, "EEEE, MMMM dd yyyy") : "-",
+      tanggal: tanggalJkt ? this.formatTanggal(tanggalJkt) : "-",
       waktu_mulai: waktuMulaiJkt ? format(waktuMulaiJkt, "HH:mm") : "-",
       waktu_selesai: waktuSelesaiJkt? format(waktuSelesaiJkt, "HH:mm") : "-",
       status: isPenilaianCompleted ? "Dinilai" : "Belum Dinilai",
