@@ -1,91 +1,106 @@
-import { KomponenPenilaianInstansi, KomponenPenilaianPembimbing, KomponenPenilaianPenguji } from "../types/seminar-kp/nilai-seminar-kp.type";
+import { status_dokumen } from "../generated/prisma";
+import { StatusNilai } from "../types/seminar-kp/nilai.type";
+import { APIError } from "../utils/api-error.util";
 
-export const hitungNilaiInstansi = (komponenPenilaian: KomponenPenilaianInstansi): number => {
-  const { deliverables, ketepatan_waktu, kedisiplinan, attitude, kerjasama_tim, inisiatif } = komponenPenilaian;
-
-  // Bobot komponen penilaian instansi
-  const nilai = deliverables * 0.15 + ketepatan_waktu * 0.1 + kedisiplinan * 0.15 + attitude * 0.15 + kerjasama_tim * 0.25 + inisiatif * 0.2;
-
-  return Number(nilai.toFixed(2));
-};
-
-export const hitungNilaiPembimbing = (komponenPenilaian: KomponenPenilaianPembimbing): number => {
-  const { penyelesaian_masalah, bimbingan_sikap, kualitas_laporan } = komponenPenilaian;
-
-  // Bobot komponen penilaian pembimbing
-  const nilai = penyelesaian_masalah * 0.4 + bimbingan_sikap * 0.35 + kualitas_laporan * 0.25;
-
-  return Number(nilai.toFixed(2));
-};
-
-export const hitungNilaiPenguji = (komponenPenilaian: KomponenPenilaianPenguji): number => {
-  const { penguasaan_keilmuan, kemampuan_presentasi, kesesuaian_urgensi } = komponenPenilaian;
-
-  // Bobot komponen penilaian penguji
-  const nilai = penguasaan_keilmuan * 0.4 + kemampuan_presentasi * 0.2 + kesesuaian_urgensi * 0.4;
-
-  return Number(nilai.toFixed(2));
-};
-
-export const hitungNilaiAkhir = (nilaiPembimbing?: number, nilaiPenguji?: number, nilaiInstansi?: number): number | null => {
-  // Pastikan semua nilai tersedia untuk menghitung nilai akhir
-  if (!nilaiPembimbing && !nilaiPenguji && !nilaiInstansi) {
-    return null;
+export default class NilaiHelper {
+  public static async validateNilaiInput(nilai: number, fieldName: string) {
+    if (nilai < 0 || nilai > 100) {
+      throw new APIError(`Waduh, ${fieldName} harus bernilai antara 0 dan 100! 😭`, 400);
+    }
+    return true;
   }
 
-  // Nilai awal
-  let nilaiAkhir = 0;
-  let pembagi = 0;
+  public static async calculateNilaiPenguji(penguasaanKeilmuan: number, kemampuanPresentasi: number, kesesuaianUrgensi: number) {
+    this.validateNilaiInput(penguasaanKeilmuan, "Penguasaan Keilmuan");
+    this.validateNilaiInput(kemampuanPresentasi, "Kemampuan Presentasi");
+    this.validateNilaiInput(kesesuaianUrgensi, "Kesesuaian Urgensi");
 
-  // Menambahkan komponen nilai yang tersedia dengan bobotnya
-  if (nilaiPembimbing !== undefined && nilaiPembimbing !== null) {
-    nilaiAkhir += nilaiPembimbing * 0.4;
-    pembagi += 0.4;
+    return penguasaanKeilmuan * 0.4 + kemampuanPresentasi * 0.2 + kesesuaianUrgensi * 0.4;
   }
 
-  if (nilaiPenguji !== undefined && nilaiPenguji !== null) {
-    nilaiAkhir += nilaiPenguji * 0.2;
-    pembagi += 0.2;
+  public static async calculateNilaiPembimbing(penyelesaianMasalah: number, bimbinganSikap: number, kualitasLaporan: number) {
+    this.validateNilaiInput(penyelesaianMasalah, "Penyelesaian Masalah");
+    this.validateNilaiInput(bimbinganSikap, "Bimbingan Sikap");
+    this.validateNilaiInput(kualitasLaporan, "Kualitas Laporan");
+
+    return penyelesaianMasalah * 0.4 + bimbinganSikap * 0.35 + kualitasLaporan * 0.25;
   }
 
-  if (nilaiInstansi !== undefined && nilaiInstansi !== null) {
-    nilaiAkhir += nilaiInstansi * 0.4;
-    pembagi += 0.4;
+  public static async calculateNilaiAkhir(nilaiPenguji: number | null = 0, nilaiPembimbing: number | null = 0, nilaiInstansi: number | null = 0) {
+    if (nilaiPenguji === null || nilaiPembimbing === null || nilaiInstansi === null) {
+      return null;
+    }
+
+    return nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4;
   }
 
-  // Jika tidak ada nilai yang tersedia, kembalikan null
-  if (pembagi === 0) {
-    return null;
+  public static formatStatusNilai(status: StatusNilai): string {
+    switch (status) {
+      case StatusNilai.NILAI_BELUM_VALID:
+        return "Nilai Belum Valid";
+      case StatusNilai.NILAI_VALID:
+        return "Nilai Valid";
+      case StatusNilai.NILAI_APPROVE:
+        return "Nilai Approve";
+      default:
+        return "Unknown";
+    }
   }
 
-  // Menyesuaikan nilai berdasarkan komponen yang tersedia
-  nilaiAkhir = nilaiAkhir / pembagi;
+  public static getNilaiHuruf(nilai: number | null | undefined): string {
+    if (nilai === null || nilai === undefined) return "-";
 
-  return Number(nilaiAkhir.toFixed(2));
-};
+    if (nilai >= 85) return "A";
+    if (nilai >= 80) return "A-";
+    if (nilai >= 75) return "B+";
+    if (nilai >= 70) return "B";
+    if (nilai >= 65) return "B-";
+    if (nilai >= 60) return "C+";
+    if (nilai >= 55) return "C";
+    if (nilai >= 50) return "D";
+    return "E";
+  }
 
-export const validateKomponenPenilaianInstansi = (komponenPenilaian: KomponenPenilaianInstansi): boolean => {
-  const { deliverables, ketepatan_waktu, kedisiplinan, attitude, kerjasama_tim, inisiatif } = komponenPenilaian;
+  public static canInputNilai(waktuMulai: Date | null): boolean {
+    if (!waktuMulai) return false;
 
-  // Validasi rentang nilai (0-100)
-  return isValidNilai(deliverables) && isValidNilai(ketepatan_waktu) && isValidNilai(kedisiplinan) && isValidNilai(attitude) && isValidNilai(kerjasama_tim) && isValidNilai(inisiatif);
-};
+    const now = new Date();
+    return now > waktuMulai;
+  }
 
-export const validateKomponenPenilaianPembimbing = (komponenPenilaian: KomponenPenilaianPembimbing): boolean => {
-  const { penyelesaian_masalah, bimbingan_sikap, kualitas_laporan } = komponenPenilaian;
+  public static canValidateNilai(nilaiPenguji: number | null, nilaiPembimbing: number | null, nilaiInstansi: number | null, dokumenSeminarKp: { status: status_dokumen }[]) {
+    if (nilaiPenguji === null) {
+      return {
+        valid: false,
+        message: "Nilai dari penguji belum diinput",
+      };
+    }
 
-  // Validasi rentang nilai (0-100)
-  return isValidNilai(penyelesaian_masalah) && isValidNilai(bimbingan_sikap) && isValidNilai(kualitas_laporan);
-};
+    if (nilaiPembimbing === null) {
+      return {
+        valid: false,
+        message: "Nilai dari pembimbing belum diinput",
+      };
+    }
 
-export const validateKomponenPenilaianPenguji = (komponenPenilaian: KomponenPenilaianPenguji): boolean => {
-  const { penguasaan_keilmuan, kemampuan_presentasi, kesesuaian_urgensi } = komponenPenilaian;
+    if (nilaiInstansi === null) {
+      return {
+        valid: false,
+        message: "Nilai dari instansi belum diinput",
+      };
+    }
 
-  // Validasi rentang nilai (0-100)
-  return isValidNilai(penguasaan_keilmuan) && isValidNilai(kemampuan_presentasi) && isValidNilai(kesesuaian_urgensi);
-};
+    const unvalidatedDocuments = dokumenSeminarKp.filter((doc) => doc.status !== status_dokumen.Divalidasi);
+    if (unvalidatedDocuments.length > 0) {
+      return {
+        valid: false,
+        message: `${unvalidatedDocuments.length} dokumen seminar belum divalidasi`,
+      };
+    }
 
-// Helper untuk validasi nilai (0-100)
-const isValidNilai = (nilai: number): boolean => {
-  return nilai >= 0 && nilai <= 100;
-};
+    return {
+      valid: true,
+      message: "Semua persyaratan validasi terpenuhi",
+    };
+  }
+}

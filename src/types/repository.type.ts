@@ -12,6 +12,7 @@ export interface RepositoryPendaftaranInstansiInterface extends Omit<CreatePermo
 
 // utk return
 export interface RepositoryRiwayatPendaftaranKPInterface {
+        id : string,
         status : status_pendaftaran | null | undefined,
         tanggal_mulai : Date,
         level_akses : number,

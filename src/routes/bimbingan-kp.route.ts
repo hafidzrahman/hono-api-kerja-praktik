@@ -11,8 +11,10 @@ bimbinganKPRoute.use(AuthMiddleware.JWTBearerTokenExtraction);
 bimbinganKPRoute.get("/mahasiswa/bimbingan-saya", BimbinganKPHandler.getBimbinganSaya);
 
 // for Dosen Pembimbing
-bimbinganKPRoute.post("/dosen-pembimbing/bimbingan-mahasiswa", BimbinganKPHandler.postBimbingan);
-bimbinganKPRoute.put("/dosen-pembimbing/bimbingan-mahasiswa", BimbinganKPHandler.putBimbingan);
-bimbinganKPRoute.get("/dosen-pembimbing/bimbingan/mahasiswa/:nim", BimbinganKPHandler.getDetailMahasiswaBimbinganSaya);
+bimbinganKPRoute.get("/dosen-pembimbing/mahasiswa-saya", BimbinganKPHandler.getMahasiswaBimbinganSaya);
+bimbinganKPRoute.get("/dosen-pembimbing/mahasiswa/:id", BimbinganKPHandler.getDetailMahasiswaBimbinganSaya);
+bimbinganKPRoute.post("/dosen-pembimbing/bimbingan-mahasiswa/:id", BimbinganKPHandler.postBimbingan);
+bimbinganKPRoute.post("/dosen-pembimbing/nilai-mahasiswa/:id", BimbinganKPHandler.postNilai);
+bimbinganKPRoute.put("/dosen-pembimbing/nilai-mahasiswa/:id", BimbinganKPHandler.putNilai);
 
 export default bimbinganKPRoute;

@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "jenis_dokumen" AS ENUM ('SURAT_KETERANGAN_SELESAI_KP', 'LAPORAN_TAMBAHAN_KP', 'FORM_KEHADIRAN_SEMINAR', 'ID_SURAT_UNDANGAN', 'SURAT_UNDANGAN_SEMINAR_KP', 'BERITA_ACARA_SEMINAR', 'DAFTAR_HADIR_SEMINAR', 'LEMBAR_PENGESAHAN_KP', 'REVISI_DAILY_REPORT', 'REVISI_LAPORAN_TAMBAHAN', 'SISTEM_KP_FINAL');
+CREATE TYPE "jenis_dokumen" AS ENUM ('SURAT_KETERANGAN_SELESAI_KP', 'LAPORAN_TAMBAHAN_KP', 'FORM_KEHADIRAN_SEMINAR', 'ID_SURAT_UNDANGAN', 'SURAT_UNDANGAN_SEMINAR_KP', 'BERITA_ACARA_SEMINAR', 'DAFTAR_HADIR_SEMINAR', 'LEMBAR_PENGESAHAN_KP', 'REVISI_LAPORAN_TAMBAHAN', 'SISTEM_KP_FINAL');
 
 -- CreateEnum
 CREATE TYPE "jenis_instansi" AS ENUM ('Swasta', 'Pemerintahan', 'Pendidikan', 'UMKM');
@@ -17,15 +17,17 @@ CREATE TYPE "status_jadwal" AS ENUM ('Menunggu', 'Selesai', 'Jadwal_Ulang');
 CREATE TYPE "status_pendaftaran" AS ENUM ('Baru', 'Lanjut', 'Gagal', 'Ditolak');
 
 -- CreateEnum
-CREATE TYPE "status_presensi" AS ENUM ('Menunggu', 'Disetujui', 'Revisi');
+CREATE TYPE "status_presensi" AS ENUM ('Menunggu', 'Disetujui', 'Revisi', 'Ditolak');
 
 -- CreateTable
 CREATE TABLE "bimbingan" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "tanggal_bimbingan" DATE DEFAULT CURRENT_DATE,
-    "catatan_bimbingan" VARCHAR(255),
+    "tanggal_bimbingan" DATE NOT NULL DEFAULT CURRENT_DATE,
+    "catatan_bimbingan" VARCHAR(255) NOT NULL,
+    "status" VARCHAR(7) NOT NULL DEFAULT 'Selesai',
     "nim" VARCHAR(11),
     "nip" VARCHAR(20),
+    "id_pendaftaran_kp" UUID,
 
     CONSTRAINT "bimbingan_pkey" PRIMARY KEY ("id")
 );
@@ -33,12 +35,13 @@ CREATE TABLE "bimbingan" (
 -- CreateTable
 CREATE TABLE "daily_report" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "tanggal_presensi" DATE DEFAULT CURRENT_DATE,
-    "status" "status_presensi" DEFAULT 'Menunggu',
+    "tanggal_presensi" DATE NOT NULL DEFAULT CURRENT_DATE,
+    "status" "status_presensi" NOT NULL DEFAULT 'Menunggu',
     "catatan_evaluasi" VARCHAR(255),
-    "latitude" DOUBLE PRECISION,
-    "longitude" DOUBLE PRECISION,
+    "latitude" DOUBLE PRECISION NOT NULL,
+    "longitude" DOUBLE PRECISION NOT NULL,
     "nim" VARCHAR(11),
+    "id_pendaftaran_kp" UUID,
 
     CONSTRAINT "daily_report_pkey" PRIMARY KEY ("id")
 );
@@ -46,7 +49,8 @@ CREATE TABLE "daily_report" (
 -- CreateTable
 CREATE TABLE "detail_daily_report" (
     "id" SERIAL NOT NULL,
-    "waktu" TIMESTAMP(6) NOT NULL,
+    "waktu_mulai" VARCHAR(5) NOT NULL,
+    "waktu_selesai" VARCHAR(5) NOT NULL,
     "judul_agenda" VARCHAR(255) NOT NULL,
     "deskripsi_agenda" VARCHAR(255) NOT NULL,
     "id_daily_report" UUID,
@@ -70,8 +74,8 @@ CREATE TABLE "instansi" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "nama" VARCHAR(255) NOT NULL,
     "alamat" VARCHAR(255) NOT NULL,
-    "longitude" DOUBLE PRECISION,
-    "latitude" DOUBLE PRECISION,
+    "longitude" DOUBLE PRECISION NOT NULL,
+    "latitude" DOUBLE PRECISION NOT NULL,
     "jenis" "jenis_instansi" NOT NULL,
     "profil_singkat" VARCHAR(255),
     "status" "status_instansi" DEFAULT 'Pending',
@@ -101,11 +105,11 @@ CREATE TABLE "log_jadwal" (
     "log_type" TEXT,
     "tanggal_lama" DATE,
     "tanggal_baru" DATE NOT NULL,
-    "ruangan_lama" DATE,
-    "ruangan_baru" DATE NOT NULL,
+    "ruangan_lama" TEXT,
+    "ruangan_baru" TEXT NOT NULL,
     "keterangan" VARCHAR(255),
     "created_at" DATE DEFAULT CURRENT_DATE,
-    "id_jadwal_seminar" INTEGER,
+    "id_jadwal" UUID,
     "nip" VARCHAR(20),
 
     CONSTRAINT "log_jadwal_pkey" PRIMARY KEY ("id")
@@ -125,7 +129,7 @@ CREATE TABLE "mahasiswa" (
 -- CreateTable
 CREATE TABLE "nilai" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "tanggal" DATE DEFAULT CURRENT_DATE,
+    "tanggal" DATE NOT NULL DEFAULT CURRENT_DATE,
     "nilai_penguji" DOUBLE PRECISION,
     "nilai_pembimbing" DOUBLE PRECISION,
     "nilai_instansi" DOUBLE PRECISION,
@@ -134,6 +138,8 @@ CREATE TABLE "nilai" (
     "nip" VARCHAR(20),
     "email_pembimbing_instansi" VARCHAR(255),
     "id_jadwal_seminar" UUID,
+    "id_validasi_nilai" UUID,
+    "id_pendaftaran_kp" UUID,
 
     CONSTRAINT "nilai_pkey" PRIMARY KEY ("id")
 );
@@ -142,7 +148,7 @@ CREATE TABLE "nilai" (
 CREATE TABLE "pembimbing_instansi" (
     "email" VARCHAR(255) NOT NULL,
     "id" VARCHAR(255) NOT NULL,
-    "nama" VARCHAR(255),
+    "nama" VARCHAR(255) NOT NULL,
     "no_hp" VARCHAR(16),
     "jabatan" VARCHAR(40),
     "id_instansi" UUID,
@@ -164,11 +170,11 @@ CREATE TABLE "pendaftaran_kp" (
     "link_surat_penunjukan_dospem" VARCHAR(255),
     "link_surat_perpanjangan_kp" VARCHAR(255),
     "id_surat_pengajuan_dospem" VARCHAR(25),
-    "email_pembimbing_instansi" VARCHAR(255),
     "catatan_penolakan" VARCHAR(255),
-    "level_akses" INTEGER NOT NULL DEFAULT 0,
+    "level_akses" INTEGER NOT NULL DEFAULT 1,
     "judul_kp" VARCHAR(255),
     "alasan_lanjut_kp" VARCHAR(255),
+    "email_pembimbing_instansi" VARCHAR(255),
     "id_tahun_ajaran" INTEGER,
     "id_instansi" UUID,
     "nim" VARCHAR(11),
@@ -221,6 +227,7 @@ CREATE TABLE "komponen_penilaian_pembimbing" (
     "bimbingan_sikap" DOUBLE PRECISION,
     "kualitas_laporan" DOUBLE PRECISION,
     "catatan" TEXT,
+    "created_at" DATE DEFAULT CURRENT_DATE,
     "id_nilai" UUID,
 
     CONSTRAINT "komponen_penilaian_pembimbing_pkey" PRIMARY KEY ("id")
@@ -233,6 +240,7 @@ CREATE TABLE "komponen_penilaian_penguji" (
     "kemampuan_presentasi" DOUBLE PRECISION,
     "kesesuaian_urgensi" DOUBLE PRECISION,
     "catatan" TEXT,
+    "created_at" DATE DEFAULT CURRENT_DATE,
     "id_nilai" UUID,
 
     CONSTRAINT "komponen_penilaian_penguji_pkey" PRIMARY KEY ("id")
@@ -247,6 +255,16 @@ CREATE TABLE "tahun_ajaran" (
     CONSTRAINT "tahun_ajaran_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "validasi_nilai" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "is_approve" BOOLEAN DEFAULT false,
+    "created_at" DATE DEFAULT CURRENT_DATE,
+    "id_nilai" UUID,
+
+    CONSTRAINT "validasi_nilai_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "dosen_no_hp_key" ON "dosen"("no_hp");
 
@@ -257,10 +275,31 @@ CREATE UNIQUE INDEX "dosen_email_key" ON "dosen"("email");
 CREATE UNIQUE INDEX "dosen_id_telegram_key" ON "dosen"("id_telegram");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "jadwal_id_pendaftaran_kp_key" ON "jadwal"("id_pendaftaran_kp");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "mahasiswa_email_key" ON "mahasiswa"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "nilai_id_jadwal_seminar_key" ON "nilai"("id_jadwal_seminar");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "nilai_id_validasi_nilai_key" ON "nilai"("id_validasi_nilai");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "pembimbing_instansi_id_key" ON "pembimbing_instansi"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "komponen_penilaian_instansi_id_nilai_key" ON "komponen_penilaian_instansi"("id_nilai");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "komponen_penilaian_pembimbing_id_nilai_key" ON "komponen_penilaian_pembimbing"("id_nilai");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "komponen_penilaian_penguji_id_nilai_key" ON "komponen_penilaian_penguji"("id_nilai");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "validasi_nilai_id_nilai_key" ON "validasi_nilai"("id_nilai");
 
 -- AddForeignKey
 ALTER TABLE "bimbingan" ADD CONSTRAINT "bimbingan_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -269,7 +308,13 @@ ALTER TABLE "bimbingan" ADD CONSTRAINT "bimbingan_nim_fkey" FOREIGN KEY ("nim") 
 ALTER TABLE "bimbingan" ADD CONSTRAINT "bimbingan_nip_fkey" FOREIGN KEY ("nip") REFERENCES "dosen"("nip") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
+ALTER TABLE "bimbingan" ADD CONSTRAINT "bimbingan_id_pendaftaran_kp_fkey" FOREIGN KEY ("id_pendaftaran_kp") REFERENCES "pendaftaran_kp"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
 ALTER TABLE "daily_report" ADD CONSTRAINT "daily_report_nim_fkey" FOREIGN KEY ("nim") REFERENCES "mahasiswa"("nim") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "daily_report" ADD CONSTRAINT "daily_report_id_pendaftaran_kp_fkey" FOREIGN KEY ("id_pendaftaran_kp") REFERENCES "pendaftaran_kp"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "detail_daily_report" ADD CONSTRAINT "detail_daily_report_id_daily_report_fkey" FOREIGN KEY ("id_daily_report") REFERENCES "daily_report"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -296,6 +341,12 @@ ALTER TABLE "nilai" ADD CONSTRAINT "nilai_nim_fkey" FOREIGN KEY ("nim") REFERENC
 ALTER TABLE "nilai" ADD CONSTRAINT "nilai_nip_fkey" FOREIGN KEY ("nip") REFERENCES "dosen"("nip") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
+ALTER TABLE "nilai" ADD CONSTRAINT "nilai_id_jadwal_seminar_fkey" FOREIGN KEY ("id_jadwal_seminar") REFERENCES "jadwal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "nilai" ADD CONSTRAINT "nilai_id_pendaftaran_kp_fkey" FOREIGN KEY ("id_pendaftaran_kp") REFERENCES "pendaftaran_kp"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
 ALTER TABLE "pembimbing_instansi" ADD CONSTRAINT "pembimbing_instansi_id_instansi_fkey" FOREIGN KEY ("id_instansi") REFERENCES "instansi"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
@@ -309,6 +360,9 @@ ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_nim_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_nip_pembimbing_fkey" FOREIGN KEY ("nip_pembimbing") REFERENCES "dosen"("nip") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_nip_penguji_fkey" FOREIGN KEY ("nip_penguji") REFERENCES "dosen"("nip") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "pendaftaran_kp" ADD CONSTRAINT "pendaftaran_kp_email_pembimbing_instansi_fkey" FOREIGN KEY ("email_pembimbing_instansi") REFERENCES "pembimbing_instansi"("email") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -327,3 +381,6 @@ ALTER TABLE "komponen_penilaian_pembimbing" ADD CONSTRAINT "komponen_penilaian_p
 
 -- AddForeignKey
 ALTER TABLE "komponen_penilaian_penguji" ADD CONSTRAINT "komponen_penilaian_penguji_id_nilai_fkey" FOREIGN KEY ("id_nilai") REFERENCES "nilai"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "validasi_nilai" ADD CONSTRAINT "validasi_nilai_id_nilai_fkey" FOREIGN KEY ("id_nilai") REFERENCES "nilai"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
