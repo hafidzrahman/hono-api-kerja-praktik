@@ -304,7 +304,10 @@ export default class NilaiService {
     const jumlahNilaiApprove = detailMahasiswa.filter((m) => m.status_nilai === StatusNilai.NILAI_APPROVE).length;
 
     return {
-      tahunAjaran: tahunAjaran.nama || "",
+      tahunAjaran: {
+        id: tahunAjaran.id || 0,
+        nama: tahunAjaran.nama || "",
+      },
       jumlahNilaiBelumValid,
       jumlahNilaiValid,
       jumlahNilaiApprove,
