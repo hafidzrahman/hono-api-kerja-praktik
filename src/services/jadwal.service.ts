@@ -271,6 +271,10 @@ export default class JadwalService {
     };
   }
 
+  public static async getAllTahunAjaran() {
+    return await JadwalRepository.getAllTahunAjaran()
+  }
+
   public static async getTahunAjaran() {
     return JadwalRepository.getTahunAjaran();
   }
