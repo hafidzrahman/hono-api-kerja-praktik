@@ -342,6 +342,13 @@ export default class JadwalRepository {
   public static async getAllJadwalSeminar(tahunAjaranId: number = 1) {
     await this.updateJadwalStatus();
 
+    if (tahunAjaranId === 0) {
+      const latestTahunAjaran = await this.getTahunAjaran();
+      if (latestTahunAjaran) {
+        tahunAjaranId = latestTahunAjaran.id;
+      }
+    }
+
     const tahunAjaran = await prisma.tahun_ajaran.findUnique({
       where: {
         id: tahunAjaranId,
@@ -352,6 +359,11 @@ export default class JadwalRepository {
     }
 
     const dataJadwal = await prisma.jadwal.findMany({
+      where: {
+        pendaftaran_kp: {
+          id_tahun_ajaran: tahunAjaranId,
+        },
+      },
       select: {
         id: true,
         mahasiswa: true,
