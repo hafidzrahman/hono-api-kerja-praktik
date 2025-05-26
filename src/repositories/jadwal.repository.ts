@@ -204,8 +204,10 @@ export default class JadwalRepository {
   }
 
   public static async getJadwalMahasiswaSaya(nip: string) {
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
+    const jakartaDate = DateHelper.toJakartaTime(new Date());
+    const currentDate = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 0, 0, 0, 0);
+
+    const endOfDay = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 23, 59, 59, 999);
 
     const jadwal = {
       where: {
@@ -267,11 +269,15 @@ export default class JadwalRepository {
     const todayJadwal = await prisma.jadwal.findMany({
       ...jadwal,
       where: {
-        ...jadwal.where,
-        tanggal: {
-          gte: currentDate,
-          lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000),
-        },
+        AND: [
+          { ...jadwal.where },
+          {
+            tanggal: {
+              gte: currentDate,
+              lte: endOfDay,
+            },
+          },
+        ],
       },
     });
 
