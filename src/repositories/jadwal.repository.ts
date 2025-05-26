@@ -313,6 +313,15 @@ export default class JadwalRepository {
     };
   }
 
+  public static async getAllTahunAjaran() {
+    return await prisma.tahun_ajaran.findMany({
+      select: {
+        id: true,
+        nama: true
+      }
+    })
+  }
+
   public static async getTahunAjaran() {
     return prisma.tahun_ajaran.findFirst({
       orderBy: {
