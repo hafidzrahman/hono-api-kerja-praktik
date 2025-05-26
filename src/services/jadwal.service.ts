@@ -249,10 +249,21 @@ export default class JadwalService {
     return dosen;
   }
 
-  public static async getJadwalMahasiswaSaya(email: string) {
+  public static async getJadwalMahasiswaSaya(email: string, tahunAjaranId: number = 1) {
     const dosen = await DosenService.getDosenByEmail(email);
 
-    const { statistics, jadwalHariIni, semuaJadwal, mahasiswaDinilaiMap } = await JadwalRepository.getJadwalMahasiswaSaya(dosen.nip);
+    let tahunAjaran;
+    if (tahunAjaranId && tahunAjaranId > 0) {
+      tahunAjaran = await JadwalRepository.getTahunAjaranById(tahunAjaranId);
+    } else {
+      tahunAjaran = await JadwalRepository.getTahunAjaran();
+    }
+
+    if (!tahunAjaran) {
+      throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
+    }
+
+    const { statistics, jadwalHariIni, semuaJadwal, mahasiswaDinilaiMap } = await JadwalRepository.getJadwalMahasiswaSaya(dosen.nip, tahunAjaranId);
 
     const formattedJadwalHariIni = jadwalHariIni.map((jadwal) => JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap));
 
@@ -265,6 +276,10 @@ export default class JadwalService {
     });
 
     return {
+      tahun_ajaran: {
+        id: tahunAjaran.id,
+        nama: tahunAjaran.nama,
+      },
       statistics,
       jadwalHariIni: formattedJadwalHariIni,
       semuaJadwal: formattedSemuaJadwal,
@@ -272,7 +287,7 @@ export default class JadwalService {
   }
 
   public static async getAllTahunAjaran() {
-    return await JadwalRepository.getAllTahunAjaran()
+    return await JadwalRepository.getAllTahunAjaran();
   }
 
   public static async getTahunAjaran() {
@@ -288,14 +303,7 @@ export default class JadwalService {
       tahunAjaranId = tahunAjaranSekarang.id;
     }
 
-    const { 
-      totalSeminar, 
-      totalSeminarMingguIni, 
-      totalJadwalUlang, 
-      jadwalList, 
-      tahunAjaran, 
-      jadwalByRuangan 
-    } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
+    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran, jadwalByRuangan } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
 
     const hariIni = JadwalHelper.filterJadwalHariIni(jadwalList);
     const mingguIni = JadwalHelper.filterJadwalMingguIni(jadwalList);
