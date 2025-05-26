@@ -24,7 +24,6 @@ import {
   IsPendaftaranKPClosed,
   IsPendaftaranKPLanjutClosed,
 } from "../validators/batas-waktu-pendaftaran..validator";
-import MahasiswaService from "./mahasiswa.service";
 
 export default class DaftarKPService {
   public static async getLOGKPendaftaranKPById(
@@ -221,12 +220,14 @@ export default class DaftarKPService {
     email: string
   ): Promise<GetPendaftaranKPTerbaru> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
-
+    console.log(dataMhs);
     if (!dataMhs || !dataMhs.nim) {
       throw new APIError("Data mahasiswa tidak ditemukan", 404);
     }
 
     const data = await DaftarKPRepository.getKPTerbaruMahasiswa(dataMhs.nim);
+
+    console.log(data);
 
     return {
       response: true,
@@ -240,6 +241,7 @@ export default class DaftarKPService {
     tanggalMulai,
     idInstansi,
     tujuanSuratInstansi,
+    judul_kp,
   }: CreatePermohonanPendaftaranKPInterface): Promise<CommonResponse> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
 
@@ -258,6 +260,16 @@ export default class DaftarKPService {
       );
     }
 
+    const dataInstansi = await DaftarKPRepository.findInstansiById(idInstansi);
+
+    if (!dataInstansi) {
+      throw new APIError("Data instansi tidak ditemukan");
+    } else if (dataInstansi.status === "Pending") {
+      throw new APIError("Instansi belum disetujui oleh koordinator KP");
+    } else if (dataInstansi.status === "Tidak_Aktif") {
+      throw new APIError("Instansi yang dipilih tidak aktif");
+    }
+
     const isPendaftaranKPClosed = await IsPendaftaranKPClosed();
 
     if (isPendaftaranKPClosed) {
@@ -269,6 +281,7 @@ export default class DaftarKPService {
       tanggalMulai,
       idInstansi,
       tujuanSuratInstansi,
+      judul_kp,
     });
 
     return {
@@ -286,6 +299,7 @@ export default class DaftarKPService {
     jenisInstansi,
     longitude,
     latitude,
+    radius,
     profilSingkat,
   }: CreatePermohonanPendaftaranInstansiInterface): Promise<CommonResponse> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
@@ -303,6 +317,7 @@ export default class DaftarKPService {
       jenisInstansi,
       longitude,
       latitude,
+      radius,
       profilSingkat,
     });
 
@@ -480,7 +495,8 @@ export default class DaftarKPService {
 
   public static async postSuratPerpanjanganKP(
     email: string,
-    linkSuratPerpanjanganKP: string
+    linkSuratPerpanjanganKP: string,
+    alasan_lanjut_kp?: string
   ): Promise<CommonResponse> {
     // [NOTE] Validasi dulu apakah fitur perpanjangan KP sudah dibuka oleh koordinator KP?
 
@@ -498,7 +514,8 @@ export default class DaftarKPService {
 
     await DaftarKPRepository.postSuratPerpanjanganKP(
       dataMhs.nim,
-      linkSuratPerpanjanganKP
+      linkSuratPerpanjanganKP,
+      alasan_lanjut_kp
     );
     return {
       response: true,

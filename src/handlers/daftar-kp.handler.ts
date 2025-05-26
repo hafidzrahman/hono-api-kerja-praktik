@@ -140,7 +140,7 @@ export default class DaftarKPHandler {
     const { email } = c.get("user");
     // const email = "a@gmail.com";
 
-    const { tanggalMulai, tujuanSuratInstansi, idInstansi } =
+    const { tanggalMulai, tujuanSuratInstansi, idInstansi, judul_kp } =
       await c.req.json();
 
     if (!email) {
@@ -160,6 +160,7 @@ export default class DaftarKPHandler {
         tanggalMulai,
         tujuanSuratInstansi,
         idInstansi,
+        judul_kp,
       })
     );
   }
@@ -180,6 +181,7 @@ export default class DaftarKPHandler {
       jenisInstansi,
       longitude,
       latitude,
+      radius,
       profilSingkat,
     } = await c.req.json();
 
@@ -190,7 +192,9 @@ export default class DaftarKPHandler {
       !alamatInstansi ||
       !namaPenanggungJawabInstansi ||
       !telpPenanggungJawabInstansi ||
-      !jenisInstansi
+      !jenisInstansi ||
+      !longitude ||
+      !latitude
     ) {
       throw new APIError("Data yang anda masukkan tidak lengkap", 405);
     }
@@ -205,6 +209,7 @@ export default class DaftarKPHandler {
         jenisInstansi,
         longitude,
         latitude,
+        radius,
         profilSingkat,
       })
     );
@@ -282,7 +287,7 @@ export default class DaftarKPHandler {
     const { email } = c.get("user");
     // const email = "a@gmail.com";
 
-    const { linkSuratPerpanjanganKP } = await c.req.json();
+    const { linkSuratPerpanjanganKP, alasan_lanjut_kp } = await c.req.json();
 
     if (!email) {
       throw new APIError("Data email tidak ditemukan", 404);
@@ -291,7 +296,8 @@ export default class DaftarKPHandler {
     return c.json(
       await DaftarKPService.postSuratPerpanjanganKP(
         email,
-        linkSuratPerpanjanganKP
+        linkSuratPerpanjanganKP,
+        alasan_lanjut_kp
       )
     );
   }
@@ -302,8 +308,6 @@ export default class DaftarKPHandler {
 
   public static async postBerkasMahasiswa(c: Context) {
     const { id } = (await c.req.json()) as any;
-
-    console.log(id);
 
     if (!id) {
       throw new APIError("ID pendaftaran KP tidak ditemukan");
@@ -324,8 +328,8 @@ export default class DaftarKPHandler {
   }
 
   //  public static async createPermohonan(c: Context) {
-  //     const { email } = c.get("user");
-  //     const { tanggalMulaiStr, idInstansiStr, tujuanSuratInstansiStr } = await c.req.json();
+  // const { email } = c.get("user");
+  // const { tanggalMulaiStr, idInstansiStr, tujuanSuratInstansiStr } = await c.req.json();
 
   //     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
   //     if (!tanggalMulaiStr || !idInstansiStr || !tujuanSuratInstansiStr) throw new APIError("Waduh, data yang kamu ajukan belum lengkap cuy! 😭", 404);

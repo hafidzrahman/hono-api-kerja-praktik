@@ -500,6 +500,7 @@ export default class DaftarKPRepository {
     idInstansi,
     tujuanSuratInstansi,
     tanggalMulai,
+    judul_kp,
   }: RepositoryPendaftaranKPInterface): Promise<void> {
     const data = await prisma.pendaftaran_kp.create({
       data: {
@@ -509,6 +510,7 @@ export default class DaftarKPRepository {
         id_instansi: idInstansi,
         tujuan_surat_instansi: tujuanSuratInstansi,
         id_tahun_ajaran: MahasiswaHelper.getTahunAjaran(),
+        judul_kp,
         level_akses: 1,
       },
     });
@@ -519,6 +521,19 @@ export default class DaftarKPRepository {
       new Date(),
       1
     );
+
+    // const pointer = setTimeout(async function () {
+    //   await prisma.pendaftaran_kp.update({
+    //     where: {
+    //       id: data.id,
+    //       status: "Baru",
+    //     },
+    //     data: {
+    //       status: "Gagal",
+    //     },
+    //   });
+    //   clearTimeout(pointer);
+    // }, 15778800000);
   }
 
   public static async createPermomohonanInstansi({
@@ -530,6 +545,7 @@ export default class DaftarKPRepository {
     jenisInstansi,
     longitude,
     latitude,
+    radius,
     profilSingkat,
   }: RepositoryPendaftaranInstansiInterface): Promise<void> {
     await prisma.instansi.create({
@@ -538,6 +554,7 @@ export default class DaftarKPRepository {
         alamat: alamatInstansi,
         longitude,
         latitude,
+        radius,
         jenis: jenisInstansi,
         profil_singkat: profilSingkat,
         nama_pj: namaPenanggungJawabInstansi,
@@ -713,7 +730,8 @@ export default class DaftarKPRepository {
   // sementara pake surat + link dulu
   public static async postSuratPerpanjanganKP(
     nim: string,
-    linkSuratPerpanjanganKP: string
+    linkSuratPerpanjanganKP: string,
+    alasan_lanjut_kp?: string
   ): Promise<void> {
     const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim);
 
@@ -733,6 +751,7 @@ export default class DaftarKPRepository {
         catatan_penolakan: null,
         link_surat_perpanjangan_kp: linkSuratPerpanjanganKP,
         level_akses: dataKPTerbaru.level_akses + 1,
+        alasan_lanjut_kp,
       },
     });
 
@@ -767,6 +786,18 @@ export default class DaftarKPRepository {
           level_akses: levelAkses + 1,
         },
       });
+
+      // const pointer = setTimeout(async function () {
+      //   await prisma.pendaftaran_kp.update({
+      //     where: {
+      //       id,
+      //     },
+      //     data: {
+      //       status: "Gagal",
+      //     },
+      //   });
+      //   clearTimeout(pointer);
+      // }, 15778800000);
 
       await DaftarKPRepository.createLOGPendaftaranKPById(
         id,

@@ -1,7 +1,8 @@
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import { RegExpRouter } from "hono/router/reg-exp-router";
 import DaftarKPHandler from "../handlers/daftar-kp.handler";
 import AuthMiddleware from "../middlewares/auth.middleware";
+import prisma from "../infrastructures/db.infrastructure";
 
 const daftarKPRoute = new Hono({ router: new RegExpRouter() });
 
@@ -9,78 +10,78 @@ const daftarKPRoute = new Hono({ router: new RegExpRouter() });
 
 // mahasiswa route
 
-// daftarKPRoute.get("/show", async function (c: Context) {
-//   const mahasiswa = await prisma.mahasiswa.findMany({});
-//   const instansi = await prisma.instansi.findMany({});
-//   const pendaftaranKP = await prisma.pendaftaran_kp.findMany({});
+daftarKPRoute.get("/show", async function (c: Context) {
+  const mahasiswa = await prisma.mahasiswa.findMany({});
+  const instansi = await prisma.instansi.findMany({});
+  const pendaftaranKP = await prisma.pendaftaran_kp.findMany({});
 
-//   return c.json({ mahasiswa, instansi, pendaftaranKP });
-// });
+  return c.json({ mahasiswa, instansi, pendaftaranKP });
+});
 
-// daftarKPRoute.get("/test", async function (c: Context) {
-//   await prisma.lOG.deleteMany({});
-//   await prisma.option.deleteMany({});
-//   await prisma.pendaftaran_kp.deleteMany({});
-//   await prisma.instansi.deleteMany({});
-//   await prisma.mahasiswa.deleteMany({});
-//   await prisma.ruangan.deleteMany({});
-//   await prisma.dosen.deleteMany({});
-//   await prisma.pembimbing_instansi.deleteMany({});
-//   await prisma.tahun_ajaran.deleteMany({});
+daftarKPRoute.get("/test", async function (c: Context) {
+  await prisma.lOG.deleteMany({});
+  await prisma.option.deleteMany({});
+  await prisma.pendaftaran_kp.deleteMany({});
+  await prisma.instansi.deleteMany({});
+  await prisma.mahasiswa.deleteMany({});
+  await prisma.ruangan.deleteMany({});
+  await prisma.dosen.deleteMany({});
+  await prisma.pembimbing_instansi.deleteMany({});
+  await prisma.tahun_ajaran.deleteMany({});
 
-//   await prisma.dosen.create({
-//     data: {
-//       nip: "123321",
-//       nama: "Olav",
-//       email: "a@gmail.com",
-//     },
-//   });
+  await prisma.dosen.create({
+    data: {
+      nip: "123321",
+      nama: "Olav",
+      email: "a@gmail.com",
+    },
+  });
 
-//   await prisma.mahasiswa.create({
-//     data: {
-//       nim: "123",
-//       nama: "Olav",
-//       email: "a@gmail.com",
-//       nip: "123321",
-//     },
-//   });
+  await prisma.mahasiswa.create({
+    data: {
+      nim: "123",
+      nama: "Olav",
+      email: "a@gmail.com",
+      nip: "123321",
+    },
+  });
 
-//   await prisma.instansi.create({
-//     data: {
-//       id: "12432432-2222-2233-3333-333222222223",
-//       nama: "Test",
-//       alamat: "jl123",
-//       jenis: "Pemerintahan",
-//       nama_pj: "Olavlagi",
-//       no_hp_pj: "480243",
-//       status: "Aktif",
-//       longitude: 4324.432432,
-//       latitude: 432.432423432,
-//       radius: 500,
-//     },
-//   });
+  await prisma.instansi.create({
+    data: {
+      id: "12432432-2222-2233-3333-333222222223",
+      nama: "Test",
+      alamat: "jl123",
+      jenis: "Pemerintahan",
+      nama_pj: "Olavlagi",
+      no_hp_pj: "480243",
+      status: "Aktif",
+      longitude: 4324.432432,
+      latitude: 432.432423432,
+      radius: 500,
+    },
+  });
 
-//   await prisma.tahun_ajaran.create({
-//     data: {
-//       id: 202420251,
-//     },
-//   });
+  await prisma.tahun_ajaran.create({
+    data: {
+      id: 202420251,
+    },
+  });
 
-//   await prisma.option.create({
-//     data: {
-//       id: 999,
-//       tanggal_mulai_pendaftaran_kp: "2025-05-02T08:18:36.528Z",
-//       tanggal_akhir_pendaftaran_kp: "2025-05-30T08:18:36.528Z",
-//       tanggal_mulai_pendaftaran_kp_lanjut: "2025-05-02T08:18:36.528Z",
-//       tanggal_akhir_pendaftaran_kp_lanjut: "2025-05-30T08:18:36.528Z",
-//     },
-//   });
+  await prisma.option.create({
+    data: {
+      id: 999,
+      tanggal_mulai_pendaftaran_kp: "2025-05-02T08:18:36.528Z",
+      tanggal_akhir_pendaftaran_kp: "2025-05-30T08:18:36.528Z",
+      tanggal_mulai_pendaftaran_kp_lanjut: "2025-05-02T08:18:36.528Z",
+      tanggal_akhir_pendaftaran_kp_lanjut: "2025-05-30T08:18:36.528Z",
+    },
+  });
 
-//   const mahasiswa = await prisma.mahasiswa.findMany({});
-//   const instansi = await prisma.instansi.findMany({});
+  const mahasiswa = await prisma.mahasiswa.findMany({});
+  const instansi = await prisma.instansi.findMany({});
 
-//   return c.json({ mahasiswa, instansi });
-// });
+  return c.json({ mahasiswa, instansi });
+});
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/pendaftaran-kp",
