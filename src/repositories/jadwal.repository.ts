@@ -268,7 +268,10 @@ export default class JadwalRepository {
       ...jadwal,
       where: {
         ...jadwal.where,
-        tanggal: currentDate,
+        tanggal: {
+          gte: currentDate,
+          lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000),
+        },
       },
     });
 
@@ -317,9 +320,9 @@ export default class JadwalRepository {
     return await prisma.tahun_ajaran.findMany({
       select: {
         id: true,
-        nama: true
-      }
-    })
+        nama: true,
+      },
+    });
   }
 
   public static async getTahunAjaran() {
