@@ -239,6 +239,7 @@ export default class JadwalRepository {
             },
             tahun_ajaran: {
               select: {
+                id: true,
                 nama: true,
               },
             },
