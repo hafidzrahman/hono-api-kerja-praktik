@@ -59,6 +59,10 @@ export default class JadwalHandler {
     return c.json(await JadwalService.getTahunAjaran);
   }
 
+  public static async getAllTahunAjaran(c: Context) {
+    return c.json(await JadwalService.getAllTahunAjaran())
+  }
+
   public static async getAllJadwalSeminar(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
