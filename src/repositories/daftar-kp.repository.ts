@@ -522,18 +522,43 @@ export default class DaftarKPRepository {
       1
     );
 
-    // const pointer = setTimeout(async function () {
-    //   await prisma.pendaftaran_kp.update({
-    //     where: {
-    //       id: data.id,
-    //       status: "Baru",
-    //     },
-    //     data: {
-    //       status: "Gagal",
-    //     },
-    //   });
-    //   clearTimeout(pointer);
-    // }, 15778800000);
+    // TIMEOUT UNTUK 6 BULAN
+
+    const pointer = setTimeout(function () {
+      const pointer1 = setTimeout(function () {
+        const pointer2 = setTimeout(function () {
+          const pointer3 = setTimeout(function () {
+            const pointer4 = setTimeout(function () {
+              const pointer5 = setTimeout(function () {
+                const pointer6 = setTimeout(function () {
+                  const pointer7 = setTimeout(async function () {
+                    {
+                      await prisma.pendaftaran_kp.update({
+                        where: {
+                          id: data.id,
+                          status: "Baru",
+                        },
+                        data: {
+                          status: "Gagal",
+                        },
+                      });
+                      clearTimeout(pointer7);
+                    }
+                  }, 518400000);
+                  clearTimeout(pointer6);
+                }, 2147483640);
+                clearTimeout(pointer5);
+              }, 2147483640);
+              clearTimeout(pointer4);
+            }, 2147483640);
+            clearTimeout(pointer3);
+          }, 2147483640);
+          clearTimeout(pointer2);
+        }, 2147483640);
+        clearTimeout(pointer1);
+      }, 2147483640);
+      clearTimeout(pointer);
+    }, 2147483640);
   }
 
   public static async createPermomohonanInstansi({
@@ -787,17 +812,43 @@ export default class DaftarKPRepository {
         },
       });
 
-      // const pointer = setTimeout(async function () {
-      //   await prisma.pendaftaran_kp.update({
-      //     where: {
-      //       id,
-      //     },
-      //     data: {
-      //       status: "Gagal",
-      //     },
-      //   });
-      //   clearTimeout(pointer);
-      // }, 15778800000);
+      // TIMEOUT UNTUK 6 BULAN
+
+      const pointer = setTimeout(function () {
+        const pointer1 = setTimeout(function () {
+          const pointer2 = setTimeout(function () {
+            const pointer3 = setTimeout(function () {
+              const pointer4 = setTimeout(function () {
+                const pointer5 = setTimeout(function () {
+                  const pointer6 = setTimeout(function () {
+                    const pointer7 = setTimeout(async function () {
+                      {
+                        await prisma.pendaftaran_kp.update({
+                          where: {
+                            id: id,
+                            status: "Baru",
+                          },
+                          data: {
+                            status: "Gagal",
+                          },
+                        });
+                        clearTimeout(pointer7);
+                      }
+                    }, 518400000);
+                    clearTimeout(pointer6);
+                  }, 2147483640);
+                  clearTimeout(pointer5);
+                }, 2147483640);
+                clearTimeout(pointer4);
+              }, 2147483640);
+              clearTimeout(pointer3);
+            }, 2147483640);
+            clearTimeout(pointer2);
+          }, 2147483640);
+          clearTimeout(pointer1);
+        }, 2147483640);
+        clearTimeout(pointer);
+      }, 2147483640);
 
       await DaftarKPRepository.createLOGPendaftaranKPById(
         id,

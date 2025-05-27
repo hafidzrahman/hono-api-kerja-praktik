@@ -78,6 +78,7 @@ model instansi {
   nama_pj             String                @db.VarChar(255)
   no_hp_pj            String                @db.VarChar(14)
 
+
   pembimbing_instansi pembimbing_instansi[]
   pendaftaran_kp      pendaftaran_kp[]
 }
@@ -295,7 +296,6 @@ model option {
   tanggal_akhir_pendaftaran_kp        DateTime?
   tanggal_mulai_pendaftaran_kp_lanjut DateTime?
   tanggal_akhir_pendaftaran_kp_lanjut DateTime?
-
 }
 
 enum jenis_dokumen {

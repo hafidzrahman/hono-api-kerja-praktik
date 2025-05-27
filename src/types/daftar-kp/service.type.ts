@@ -1,5 +1,6 @@
 import { CommonResponse } from "../global.type";
 import {
+  $Enums,
   instansi,
   jenis_instansi,
   LOG,
