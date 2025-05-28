@@ -85,67 +85,56 @@ daftarKPRoute.get("/test", async function (c: Context) {
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/pendaftaran-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.createPermohonanPendaftaranKP
 );
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/pendaftaran-instansi",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.createPermohonanPendaftaranInstansi
 );
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/unggah-surat-pengantar-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postSuratPengantarKP
 );
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/unggah-surat-balasan-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postSuratBalasanKP
 );
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/unggah-id-pengajuan-dosen-pembimbing-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postIdPengajuanDosenPembimbingKP
 );
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/unggah-surat-penunjukkan-dosen-pembimbing-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postSuratPenunjukkanDosenPembimbingKP
 );
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/unggah-surat-perpanjangan-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postSuratPerpanjanganKP
 );
 
 daftarKPRoute.get(
   "/mahasiswa/daftar-kp/riwayat-pendaftaran-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getRiwayatPendaftaranKP
 );
 
 daftarKPRoute.get(
   "/mahasiswa/daftar-kp/data-instansi",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getDataInstansi
 );
 
 daftarKPRoute.get(
   "/mahasiswa/daftar-kp/kp-aktif-mahasiswa",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getKPTerbaruMahasiswa
 );
 
 daftarKPRoute.get(
   "/mahasiswa/daftar-kp/log/:idKP",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getLOGKPendaftaranKPById
 );
 
@@ -153,73 +142,66 @@ daftarKPRoute.get(
 
 daftarKPRoute.get(
   "/koordinator-kp/daftar-kp/berkas-mahasiswa",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getBerkasMahasiswa
 );
 
 daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/berkas-mahasiswa",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postBerkasMahasiswa
 );
 
 daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/tolak-berkas-mahasiswa",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postTolakBerkasMahasiswa
 );
 
 daftarKPRoute.get(
   "/koordinator-kp/daftar-kp/get-all-data-instansi",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getAllDataInstansi
 );
 
 daftarKPRoute.get(
   "/koordinator-kp/daftar-kp/get-data-instansi/:id",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getDataDetailInstansi
 );
 
 daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/edit-data-instansi",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postEditDataInstansi
 );
 
 daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/delete-data-instansi",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.deleteDataInstansi
 );
 
 daftarKPRoute.get(
   "/koordinator-kp/daftar-kp/get-data-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getDataKPMahasiswa
 );
 
 daftarKPRoute.get(
   "/koordinator-kp/daftar-kp/get-data-kp/:id",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getDataKPDetailMahasiswa
+);
+
+daftarKPRoute.post(
+  "/koordinator-kp/daftar-kp/edit-daftar-kp-mahasiswa",
+  DaftarKPHandler.editMahasiswa
 );
 
 daftarKPRoute.get(
   "/koordinator-kp/daftar-kp/get-tanggal-daftar-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getTanggalDaftarKP
 );
 
 daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/post-tanggal-daftar-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postTanggalDaftarKP
 );
 
 daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/post-tanggal-daftar-kp-lanjut",
-  AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postTanggalDaftarKPLanjut
 );
 

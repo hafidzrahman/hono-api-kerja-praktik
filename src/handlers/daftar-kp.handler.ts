@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import DaftarKPService from "../services/daftar-kp.service";
 import { APIError } from "../utils/api-error.util";
+import { pendaftaran_kp } from "../generated/prisma";
 
 export default class DaftarKPHandler {
   public static async postTanggalDaftarKP(c: Context) {
@@ -126,8 +127,8 @@ export default class DaftarKPHandler {
   }
 
   public static async getKPTerbaruMahasiswa(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     if (!email) {
       throw new APIError("Email tidak ditemukan");
@@ -137,8 +138,8 @@ export default class DaftarKPHandler {
   }
 
   public static async createPermohonanPendaftaranKP(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     const { tanggalMulai, tujuanSuratInstansi, idInstansi, judul_kp } =
       await c.req.json();
@@ -170,8 +171,8 @@ export default class DaftarKPHandler {
   }
 
   public static async createPermohonanPendaftaranInstansi(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     const {
       namaInstansi,
@@ -216,8 +217,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratPengantarKP(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     const { linkSuratPengantarKP } = await c.req.json();
 
@@ -233,8 +234,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratBalasanKP(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     const { linkSuratBalasanKP } = await c.req.json();
 
@@ -248,8 +249,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postIdPengajuanDosenPembimbingKP(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     const { IdPengajuanDosenPembimbingKP } = await c.req.json();
 
@@ -266,8 +267,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratPenunjukkanDosenPembimbingKP(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     const { linkSuratPenunjukkanDosenPembimbingKP } = await c.req.json();
 
@@ -284,8 +285,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratPerpanjanganKP(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     const { linkSuratPerpanjanganKP, alasan_lanjut_kp } = await c.req.json();
 
@@ -316,9 +317,51 @@ export default class DaftarKPHandler {
     return c.json(await DaftarKPService.postBerkasMahasiswa(id));
   }
 
+  public static async editMahasiswa(c: Context) {
+    const {
+      id,
+      status,
+      kelas_kp,
+      tujuan_surat_instansi,
+      link_surat_pengantar,
+      link_surat_balasan,
+      link_surat_penunjukan_dospem,
+      link_surat_perpanjangan_kp,
+      id_surat_pengajuan_dospem,
+      catatan_penolakan,
+      level_akses,
+      judul_kp,
+      alasan_lanjut_kp,
+      id_instansi,
+    } = (await c.req.json()) as any;
+
+    if (!id) {
+      throw new APIError("ID pendaftaran KP tidak ditemukan");
+    }
+
+    return c.json(
+      await DaftarKPService.editMahasiswa({
+        id,
+        status,
+        kelas_kp,
+        tujuan_surat_instansi,
+        link_surat_pengantar,
+        link_surat_balasan,
+        link_surat_penunjukan_dospem,
+        link_surat_perpanjangan_kp,
+        id_surat_pengajuan_dospem,
+        catatan_penolakan,
+        level_akses,
+        judul_kp,
+        alasan_lanjut_kp,
+        id_instansi,
+      } as pendaftaran_kp)
+    );
+  }
+
   public static async getRiwayatPendaftaranKP(c: Context) {
-    const { email } = c.get("user");
-    // const email = "a@gmail.com";
+    // const { email } = c.get("user");
+    const email = "a@gmail.com";
 
     if (!email) {
       throw new APIError("Data email tidak ditemukan", 404);

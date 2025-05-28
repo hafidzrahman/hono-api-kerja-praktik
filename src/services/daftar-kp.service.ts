@@ -523,6 +523,25 @@ export default class DaftarKPService {
     };
   }
 
+
+
+  public static async editMahasiswa(
+    data: pendaftaran_kp
+  ): Promise<CommonResponse> {
+    const dataKP = await DaftarKPRepository.getPendaftaranKPById(data.id);
+
+    if (!dataKP) {
+      throw new Error("Data KP mahasiswa tidak ditemukan");
+    }
+
+    await DaftarKPRepository.editMahasiswa(data, dataKP);
+
+    return {
+      response: true,
+      message: "Berhasil mengubah data mahasiswa",
+    };
+  }
+
   public static async postBerkasMahasiswa(id: string): Promise<CommonResponse> {
     const dataKP = await DaftarKPRepository.getPendaftaranKPById(id);
 

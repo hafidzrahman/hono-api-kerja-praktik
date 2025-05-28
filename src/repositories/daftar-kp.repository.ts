@@ -488,7 +488,16 @@ export default class DaftarKPRepository {
     const data = await prisma.pendaftaran_kp.findFirst({
       where: {
         nim,
-        status: "Baru",
+        OR: [{ status: "Baru" }, { status: "Lanjut" }],
+      },
+      include: {
+        mahasiswa: true,
+        dosen_pembimbing: true,
+        instansi: {
+          include: {
+            pembimbing_instansi: true,
+          },
+        },
       },
     });
 
@@ -521,44 +530,6 @@ export default class DaftarKPRepository {
       new Date(),
       1
     );
-
-    // TIMEOUT UNTUK 6 BULAN
-
-    const pointer = setTimeout(function () {
-      const pointer1 = setTimeout(function () {
-        const pointer2 = setTimeout(function () {
-          const pointer3 = setTimeout(function () {
-            const pointer4 = setTimeout(function () {
-              const pointer5 = setTimeout(function () {
-                const pointer6 = setTimeout(function () {
-                  const pointer7 = setTimeout(async function () {
-                    {
-                      await prisma.pendaftaran_kp.update({
-                        where: {
-                          id: data.id,
-                          status: "Baru",
-                        },
-                        data: {
-                          status: "Gagal",
-                        },
-                      });
-                      clearTimeout(pointer7);
-                    }
-                  }, 518400000);
-                  clearTimeout(pointer6);
-                }, 2147483640);
-                clearTimeout(pointer5);
-              }, 2147483640);
-              clearTimeout(pointer4);
-            }, 2147483640);
-            clearTimeout(pointer3);
-          }, 2147483640);
-          clearTimeout(pointer2);
-        }, 2147483640);
-        clearTimeout(pointer1);
-      }, 2147483640);
-      clearTimeout(pointer);
-    }, 2147483640);
   }
 
   public static async createPermomohonanInstansi({
@@ -800,6 +771,41 @@ export default class DaftarKPRepository {
     return dataKP;
   }
 
+  public static async editMahasiswa(
+    dataBaru: pendaftaran_kp,
+    dataLama: pendaftaran_kp
+  ) {
+    await prisma.pendaftaran_kp.update({
+      where: {
+        id: dataLama.id,
+      },
+      data: {
+        judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
+        id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
+        kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
+        tujuan_surat_instansi:
+          dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
+        status: dataBaru.status || dataLama.status,
+        level_akses: dataBaru.level_akses || dataLama.level_akses,
+        link_surat_pengantar:
+          dataBaru.link_surat_pengantar || dataLama.link_surat_pengantar,
+        link_surat_balasan:
+          dataBaru.link_surat_balasan || dataLama.link_surat_balasan,
+        id_surat_pengajuan_dospem:
+          dataBaru.id_surat_pengajuan_dospem ||
+          dataLama.id_surat_pengajuan_dospem,
+        link_surat_penunjukan_dospem:
+          dataBaru.link_surat_penunjukan_dospem ||
+          dataLama.link_surat_penunjukan_dospem,
+        link_surat_perpanjangan_kp:
+          dataBaru.link_surat_perpanjangan_kp ||
+          dataLama.link_surat_perpanjangan_kp,
+        alasan_lanjut_kp:
+          dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
+      },
+    });
+  }
+
   public static async postBerkasMahasiswa(id: string, levelAkses: number) {
     if (levelAkses === 10) {
       await prisma.pendaftaran_kp.update({
@@ -890,6 +896,43 @@ export default class DaftarKPRepository {
         1
       );
     } else if (levelAkses === 8) {
+      // TIMEOUT UNTUK 6 BULAN
+
+      const pointer = setTimeout(function () {
+        const pointer1 = setTimeout(function () {
+          const pointer2 = setTimeout(function () {
+            const pointer3 = setTimeout(function () {
+              const pointer4 = setTimeout(function () {
+                const pointer5 = setTimeout(function () {
+                  const pointer6 = setTimeout(function () {
+                    const pointer7 = setTimeout(async function () {
+                      {
+                        await prisma.pendaftaran_kp.update({
+                          where: {
+                            id,
+                            status: "Baru",
+                          },
+                          data: {
+                            status: "Gagal",
+                          },
+                        });
+                        clearTimeout(pointer7);
+                      }
+                    }, 518400000);
+                    clearTimeout(pointer6);
+                  }, 2147483640);
+                  clearTimeout(pointer5);
+                }, 2147483640);
+                clearTimeout(pointer4);
+              }, 2147483640);
+              clearTimeout(pointer3);
+            }, 2147483640);
+            clearTimeout(pointer2);
+          }, 2147483640);
+          clearTimeout(pointer1);
+        }, 2147483640);
+        clearTimeout(pointer);
+      }, 2147483640);
       await DaftarKPRepository.createLOGPendaftaranKPById(
         id,
         `[BERKAS DITERIMA] Pengajuan link surat penunjukkan dosem pembimbing diterima`,
