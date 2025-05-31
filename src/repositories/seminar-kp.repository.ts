@@ -244,4 +244,15 @@ export default class SeminarKpRepository {
       data,
     });
   }
+
+  public static async findNIMByPendaftaranKp(id_pendaftaran_kp: string) {
+    return await prisma.pendaftaran_kp.findUnique({
+      where: {
+        id: id_pendaftaran_kp,
+      },
+      select: {
+        nim: true,
+      },
+    });
+  }
 }

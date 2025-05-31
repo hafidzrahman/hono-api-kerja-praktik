@@ -16,6 +16,5 @@ bimbinganKPRoute.get("/dosen-pembimbing/mahasiswa/:id", BimbinganKPHandler.getDe
 bimbinganKPRoute.post("/dosen-pembimbing/bimbingan-mahasiswa/:id", BimbinganKPHandler.postBimbingan);
 bimbinganKPRoute.post("/dosen-pembimbing/nilai-mahasiswa/:id", BimbinganKPHandler.postNilai);
 bimbinganKPRoute.put("/dosen-pembimbing/nilai-mahasiswa/:id", BimbinganKPHandler.putNilai);
-// bimbinganKPRoute.put("/dosen-pembimbing/bimbingan-mahasiswa", BimbinganKPHandler.putBimbingan);
 
 export default bimbinganKPRoute;

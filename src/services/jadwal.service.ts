@@ -5,16 +5,27 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import DateHelper from "../helpers/date.helper";
-import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput, DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
+import NilaiRepository from "../repositories/nilai.repository";
+import DosenRepository from "../repositories/dosen.repository";
 
 export default class JadwalService {
   public static async postJadwal(data: CreateJadwalDto): Promise<jadwal> {
     const tanggal = new Date(data.tanggal);
     const waktu_mulai = DateHelper.createDateTimeFromStrings(data.tanggal, data.waktu_mulai);
 
-    const waktu_selesai = new Date(waktu_mulai);
-    waktu_selesai.setHours(waktu_selesai.getHours() + 1);
+    let waktu_selesai: Date;
+    if (data.waktu_selesai) {
+      waktu_selesai = DateHelper.createDateTimeFromStrings(data.tanggal, data.waktu_selesai);
+    } else {
+      waktu_selesai = new Date(waktu_mulai);
+      waktu_selesai.setHours(waktu_selesai.getHours() + 1);
+    }
+
+    if (waktu_selesai <= waktu_mulai) {
+      throw new APIError(`Waduh, Waktu selesai harus setelah waktu mulai nih! 😭`, 400);
+    }
 
     const isStudentEligible = await JadwalHelper.isEligibleForScheduling(data.id_pendaftaran_kp);
     if (!isStudentEligible) {
@@ -68,6 +79,7 @@ export default class JadwalService {
     const jadwalInput: CreateJadwalInput = {
       tanggal,
       waktu_mulai,
+      waktu_selesai,
       nim: data.nim,
       nama_ruangan: data.nama_ruangan,
       id_pendaftaran_kp: data.id_pendaftaran_kp,
@@ -84,7 +96,8 @@ export default class JadwalService {
       ruangan_baru: data.nama_ruangan,
       keterangan: `Pembuatan jadwal baru untuk NIM ${data.nim}`,
       id_jadwal: createdJadwal.id,
-      nip: data.nip_penguji,
+      nip_penguji_baru: data.nip_penguji,
+      nip_penguji_lama: null,
     });
 
     return createdJadwal;
@@ -94,6 +107,19 @@ export default class JadwalService {
     const existingJadwal = await JadwalRepository.getJadwalById(data.id);
     if (!existingJadwal) {
       throw new APIError("Waduh, Jadwal tidak ditemukan", 404);
+    }
+
+    const nilaiExist = await NilaiRepository.findNilaiByJadwalId(data.id);
+    if (nilaiExist) {
+      const hasNilaiPenguji = nilaiExist.nilai_penguji !== null && nilaiExist.nilai_penguji !== undefined;
+      const hasNilaiPembimbing = nilaiExist.nilai_pembimbing !== null && nilaiExist.nilai_pembimbing !== undefined;
+
+      if (hasNilaiPenguji || hasNilaiPembimbing) {
+        const inputtedNilai = [];
+        if (hasNilaiPenguji) inputtedNilai.push("nilai penguji");
+        if (hasNilaiPembimbing) inputtedNilai.push("nilai pembimbing");
+        throw new APIError(`Waduh, jadwal tidak dapat diubah karena ${inputtedNilai.join(", ")} sudah diinputkan! 😭`, 400);
+      }
     }
 
     let tanggal = existingJadwal.tanggal;
@@ -109,16 +135,27 @@ export default class JadwalService {
       const tanggalStr = tanggal ? tanggal.toISOString().split("T")[0] : new Date().toISOString().split("T")[0];
       waktu_mulai = DateHelper.createDateTimeFromStrings(tanggalStr, data.waktu_mulai);
 
-      waktu_selesai = new Date(waktu_mulai);
-      waktu_selesai.setHours(waktu_selesai.getHours() + 1);
+      if (!data.waktu_selesai) {
+        waktu_selesai = new Date(waktu_mulai);
+        waktu_selesai.setHours(waktu_selesai.getHours() + 1);
+      }
     }
 
-    if (data.nama_ruangan) {
-      nama_ruangan = data.nama_ruangan;
+    if (data.waktu_selesai) {
+      const tanggalStr = tanggal ? tanggal.toISOString().split("T")[0] : new Date().toISOString().split("T")[0];
+      waktu_selesai = DateHelper.createDateTimeFromStrings(tanggalStr, data.waktu_selesai);
     }
 
     if (!tanggal || !waktu_mulai || !waktu_selesai || !nama_ruangan) {
       throw new APIError("Waduh, Tanggal dan waktu mulai harus diisi", 400);
+    }
+
+    if (waktu_selesai <= waktu_mulai) {
+      throw new APIError(`Waduh, Waktu selesai harus setelah waktu mulai nih! 😭`, 400);
+    }
+
+    if (data.nama_ruangan) {
+      nama_ruangan = data.nama_ruangan;
     }
 
     if (data.nip_penguji) {
@@ -169,13 +206,7 @@ export default class JadwalService {
       }
     }
 
-    const isRoomAvailable = await JadwalRepository.checkRuanganAvailability(
-      nama_ruangan, 
-      tanggal, 
-      waktu_mulai, 
-      waktu_selesai, 
-      data.id
-    );
+    const isRoomAvailable = await JadwalRepository.checkRuanganAvailability(nama_ruangan, tanggal, waktu_mulai, waktu_selesai, data.id);
 
     if (!isRoomAvailable) {
       throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
@@ -201,7 +232,8 @@ export default class JadwalService {
       ruangan_baru: nama_ruangan || "Unknown",
       keterangan: `Perubahan jadwal ${existingJadwal.nim || "unknown"}${data.nip_penguji ? ` dengan pembaruan dosen penguji ${data.nip_penguji}` : ""}`,
       id_jadwal: existingJadwal.id,
-      nip: data.nip_penguji || existingJadwal.pendaftaran_kp?.nip_penguji || null,
+      nip_penguji_lama: existingJadwal.pendaftaran_kp?.nip_penguji,
+      nip_penguji_baru: data.nip_penguji,
     });
 
     return updatedJadwal;
@@ -217,10 +249,21 @@ export default class JadwalService {
     return dosen;
   }
 
-  public static async getJadwalMahasiswaSaya(email: string) {
+  public static async getJadwalMahasiswaSaya(email: string, tahunAjaranId: number = 1) {
     const dosen = await DosenService.getDosenByEmail(email);
 
-    const { statistics, jadwalHariIni, semuaJadwal, mahasiswaDinilaiMap } = await JadwalRepository.getJadwalMahasiswaSaya(dosen.nip);
+    let tahunAjaran;
+    if (tahunAjaranId && tahunAjaranId > 0) {
+      tahunAjaran = await JadwalRepository.getTahunAjaranById(tahunAjaranId);
+    } else {
+      tahunAjaran = await JadwalRepository.getTahunAjaran();
+    }
+
+    if (!tahunAjaran) {
+      throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
+    }
+
+    const { statistics, jadwalHariIni, semuaJadwal, mahasiswaDinilaiMap } = await JadwalRepository.getJadwalMahasiswaSaya(dosen.nip, tahunAjaranId);
 
     const formattedJadwalHariIni = jadwalHariIni.map((jadwal) => JadwalHelper.formatJadwalData(jadwal, mahasiswaDinilaiMap));
 
@@ -233,29 +276,47 @@ export default class JadwalService {
     });
 
     return {
+      tahun_ajaran: {
+        id: tahunAjaran.id,
+        nama: tahunAjaran.nama,
+      },
       statistics,
       jadwalHariIni: formattedJadwalHariIni,
       semuaJadwal: formattedSemuaJadwal,
     };
   }
 
+  public static async getAllTahunAjaran() {
+    return await JadwalRepository.getAllTahunAjaran();
+  }
+
   public static async getTahunAjaran() {
     return JadwalRepository.getTahunAjaran();
   }
 
-  public static async getAllJadwalSeminar(tahunAjaranId: number): Promise<JadwalSeminarResponse> {
+  public static async getAllJadwalSeminar(tahunAjaranId: number = 1): Promise<JadwalSeminarResponse> {
     if (!tahunAjaranId) {
       const tahunAjaranSekarang = await JadwalRepository.getTahunAjaran();
       if (!tahunAjaranSekarang) {
-        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan`);
+        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan, 😭`, 404);
       }
       tahunAjaranId = tahunAjaranSekarang.id;
     }
 
-    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
+    const { totalSeminar, totalSeminarMingguIni, totalJadwalUlang, jadwalList, tahunAjaran, jadwalByRuangan } = await JadwalRepository.getAllJadwalSeminar(tahunAjaranId);
 
     const hariIni = JadwalHelper.filterJadwalHariIni(jadwalList);
     const mingguIni = JadwalHelper.filterJadwalMingguIni(jadwalList);
+
+    const hariIniByRuangan = Object.keys(jadwalByRuangan).reduce((acc, ruangan) => {
+      acc[ruangan] = JadwalHelper.filterJadwalHariIni(jadwalByRuangan[ruangan]);
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
+
+    const mingguIniByRuangan = Object.keys(jadwalByRuangan).reduce((acc, ruangan) => {
+      acc[ruangan] = JadwalHelper.filterJadwalMingguIni(jadwalByRuangan[ruangan]);
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
 
     return {
       total_seminar: totalSeminar,
@@ -265,8 +326,46 @@ export default class JadwalService {
         semua: jadwalList,
         hari_ini: hariIni,
         minggu_ini: mingguIni,
+        by_ruangan: {
+          semua: jadwalByRuangan,
+          hari_ini: hariIniByRuangan,
+          minggu_ini: mingguIniByRuangan,
+        },
       },
       tahun_ajaran: { ...tahunAjaran, nama: tahunAjaran.nama ?? "Unknown" },
+    };
+  }
+
+  public static async getLogJadwal(tahunAjaranId: number = 1) {
+    if (!tahunAjaranId) {
+      const tahunAjaranSekarang = await JadwalRepository.getTahunAjaran();
+      if (!tahunAjaranSekarang) {
+        throw new APIError(`Waduh, Tahun ajaran tidak ditemukan`);
+      }
+      tahunAjaranId = tahunAjaranSekarang.id;
+    }
+
+    const result = await JadwalRepository.getLogJadwal(tahunAjaranId);
+    if (!result.logJadwal || result.logJadwal.length === 0) {
+      throw new APIError(`Waduh, Log jadwal tidak ditemukan, 😭`, 404);
+    }
+
+    const logJadwalWithNames = await Promise.all(
+      result.logJadwalWithJadwal.map(async (log) => {
+        const pengujiLama = log.nip_penguji_lama ? await DosenRepository.findNamaDosenByNip(log.nip_penguji_lama) : null;
+        const pengujiBaru = log.nip_penguji_baru ? await DosenRepository.findNamaDosenByNip(log.nip_penguji_baru) : null;
+
+        return {
+          ...log,
+          nama_penguji_lama: pengujiLama?.nama || null,
+          nama_penguji_baru: pengujiBaru?.nama || null,
+        };
+      })
+    );
+
+    return {
+      logJadwal: logJadwalWithNames,
+      tahunAjaran: result.tahunAjaran,
     };
   }
 }

@@ -3,6 +3,7 @@ import { status_jadwal } from "../../generated/prisma";
 export interface CreateJadwalInput {
   tanggal: Date;
   waktu_mulai: Date;
+  waktu_selesai: Date;
   nim: string;
   nama_ruangan: string;
   id_pendaftaran_kp: string;
@@ -59,7 +60,8 @@ export interface LogJadwalInput {
   ruangan_baru: string;
   keterangan: string;
   id_jadwal: string | null;
-  nip?: string | null;
+  nip_penguji_lama?: string | null;
+  nip_penguji_baru?: string | null;
 }
 
 export interface JadwalSayaParams {
@@ -76,7 +78,8 @@ export interface DataJadwalSeminar {
   }
   status_kp: string;
   ruangan: string;
-  jam: string;
+  waktu_mulai: string;
+  waktu_selesai: string;
   tanggal: string;
   dosen_penguji: string;
   dosen_pembimbing: string;
@@ -90,12 +93,17 @@ export interface JadwalSeminarResponse {
   total_seminar_minggu_ini: number;
   total_jadwal_ulang: number;
   jadwal: {
-    semua: DataJadwalSeminar[],
-    minggu_ini: DataJadwalSeminar[],
-    hari_ini: DataJadwalSeminar[]
-  }
-  tahun_ajaran?: {
+    semua: DataJadwalSeminar[];
+    hari_ini: DataJadwalSeminar[];
+    minggu_ini: DataJadwalSeminar[];
+    by_ruangan: {
+      semua: Record<string, DataJadwalSeminar[]>;
+      hari_ini: Record<string, DataJadwalSeminar[]>;
+      minggu_ini: Record<string, DataJadwalSeminar[]>;
+    };
+  };
+  tahun_ajaran: {
     id: number;
-    nama: string
-  }
+    nama: string;
+  };
 }

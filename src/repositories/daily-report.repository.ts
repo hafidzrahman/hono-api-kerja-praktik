@@ -13,7 +13,30 @@ export default class DailyReportRepository {
     });
   }
 
-  public static async findPendaftaranKP(nim: string) {
+  public static async findIdPendaftaranKP(nim: string) {
+    return await prisma.pendaftaran_kp.findFirst({
+      where: {
+        nim: nim,
+      },
+      select: {
+        id: true,
+        level_akses: true,
+        instansi: {
+          select: {
+            id: true,
+            nama: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
+      },
+      orderBy: {
+        tanggal_pengajuan: "desc",
+      },
+    });
+  }
+
+  public static async findPendaftaranKPByNIM(nim: string) {
     return prisma.pendaftaran_kp.findFirst({
       where: {
         nim: nim,
@@ -77,6 +100,7 @@ export default class DailyReportRepository {
           select: {
             id: true,
             nilai_instansi: true,
+            nilai_pembimbing: true,
             komponen_penilaian_instansi: {
               select: {
                 id: true,
@@ -89,12 +113,32 @@ export default class DailyReportRepository {
                 masukan: true,
               },
             },
+            komponen_penilaian_pembimbing: {
+              select: {
+                id: true,
+                penyelesaian_masalah: true,
+                bimbingan_sikap: true,
+                kualitas_laporan: true,
+                catatan: true,
+              },
+            },
           },
         },
         level_akses: true,
       },
       orderBy: {
         tanggal_pengajuan: "desc",
+      },
+    });
+  }
+
+  public static async findIdDailyReport(id: string) {
+    return prisma.daily_report.findFirst({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
       },
     });
   }
@@ -294,10 +338,12 @@ export default class DailyReportRepository {
       kerjasama_tim: number;
       inisiatif: number;
       masukan: string;
-    }
+    },
+    nim: string
   ) {
     return prisma.nilai.create({
       data: {
+        nim: nim,
         id_pendaftaran_kp: id,
         nilai_instansi: nilai_instansi,
         komponen_penilaian_instansi: {
@@ -315,6 +361,17 @@ export default class DailyReportRepository {
     });
   }
 
+  public static async findIdKomponenPenilaianInstansi(id: string) {
+    return prisma.komponen_penilaian_instansi.findFirst({
+      where: {
+        id_nilai: id,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
   public static async updateNilai(
     id: string,
     nilai_instansi: number,
@@ -326,24 +383,29 @@ export default class DailyReportRepository {
       kerjasama_tim: number;
       inisiatif: number;
       masukan: string;
-    }
+    },
+    id_komponen: string
   ) {
     return prisma.nilai.update({
       where: {
         id: id,
       },
       data: {
-        id_pendaftaran_kp: id,
         nilai_instansi: nilai_instansi,
         komponen_penilaian_instansi: {
-          create: {
-            deliverables: komponen_penilaian.deliverables,
-            ketepatan_waktu: komponen_penilaian.ketepatan_waktu,
-            kedisiplinan: komponen_penilaian.kedisiplinan,
-            attitude: komponen_penilaian.attitude,
-            kerjasama_tim: komponen_penilaian.kerjasama_tim,
-            inisiatif: komponen_penilaian.inisiatif,
-            masukan: komponen_penilaian.masukan,
+          update: {
+            where: {
+              id: id_komponen,
+            },
+            data: {
+              deliverables: komponen_penilaian.deliverables,
+              ketepatan_waktu: komponen_penilaian.ketepatan_waktu,
+              kedisiplinan: komponen_penilaian.kedisiplinan,
+              attitude: komponen_penilaian.attitude,
+              kerjasama_tim: komponen_penilaian.kerjasama_tim,
+              inisiatif: komponen_penilaian.inisiatif,
+              masukan: komponen_penilaian.masukan,
+            },
           },
         },
       },
@@ -556,6 +618,17 @@ export default class DailyReportRepository {
             },
           },
         },
+      },
+    });
+  }
+
+  public static async findNIMById(id: string) {
+    return prisma.pendaftaran_kp.findFirst({
+      where: {
+        id: id,
+      },
+      select: {
+        nim: true,
       },
     });
   }

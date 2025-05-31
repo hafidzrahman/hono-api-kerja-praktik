@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import StepHelper from "./dokumen-step.helper";
-import { fromZonedTime } from "date-fns-tz";
 import DateHelper from "./date.helper";
 import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
 import MahasiswaHelper from "./mahasiswa.helper";
@@ -38,8 +37,10 @@ export default class JadwalHelper {
   }
 
   public static formatWaktu(date: Date): string {
-    const now = new Date();
-    const diffInMilliseconds = now.getTime() - date.getTime();
+    const now = DateHelper.toJakartaTime(new Date())
+    const uploadWaktuJakarta = DateHelper.toJakartaTime(date)
+
+    const diffInMilliseconds = now.getTime() - uploadWaktuJakarta.getTime();
 
     const seconds = Math.floor(diffInMilliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -76,13 +77,14 @@ export default class JadwalHelper {
     const tanggalJkt = jadwal.tanggal ? DateHelper.toJakartaTime(new Date(jadwal.tanggal)) : null
     const waktuMulaiJkt = jadwal.waktu_mulai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_mulai)) : null
     const waktuSelesaiJkt = jadwal.waktu_selesai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_selesai)) : null
+    const waktuDinilai = jadwal.nilai?.komponen_penilaian_penguji?.created_at ? DateHelper.toJakartaTime(new Date(jadwal.nilai.komponen_penilaian_penguji.created_at)) : null
 
     return {
       id: jadwal.id,
       nim: nim || "-",
       nama: jadwal.pendaftaran_kp?.mahasiswa?.nama || "-",
       ruangan: jadwal.ruangan?.nama || "-",
-      tanggal: tanggalJkt ? format(tanggalJkt, "EEEE, MMMM dd yyyy", { locale: id }) : "-",
+      tanggal: tanggalJkt ? this.formatTanggal(tanggalJkt) : "-",
       waktu_mulai: waktuMulaiJkt ? format(waktuMulaiJkt, "HH:mm") : "-",
       waktu_selesai: waktuSelesaiJkt? format(waktuSelesaiJkt, "HH:mm") : "-",
       status: isPenilaianCompleted ? "Dinilai" : "Belum Dinilai",
@@ -99,6 +101,7 @@ export default class JadwalHelper {
       kemampuan_presentasi: jadwal.nilai?.komponen_penilaian_penguji?.kemampuan_presentasi || null,
       kesesuaian_urgensi: jadwal.nilai?.komponen_penilaian_penguji?.kesesuaian_urgensi || null,
       catatan_penguji: jadwal.nilai?.komponen_penilaian_penguji?.catatan || null,
+      waktu_dinilai: waktuDinilai,
       id_pendaftaran_kp: jadwal.pendaftaran_kp?.id || null,
     };
   }

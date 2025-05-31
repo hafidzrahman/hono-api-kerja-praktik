@@ -4,6 +4,8 @@ import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelatio
 import { APIError } from "../utils/api-error.util";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import JadwalHelper from "../helpers/jadwal.helper";
+import { format } from "date-fns";
+import DateHelper from "../helpers/date.helper";
 
 export default class JadwalRepository {
   public static async postJadwal(data: CreateJadwalInput): Promise<jadwal> {
@@ -129,7 +131,8 @@ export default class JadwalRepository {
         ruangan_baru: data.ruangan_baru,
         keterangan: data.keterangan,
         id_jadwal: data.id_jadwal,
-        nip: data.nip || null,
+        nip_penguji_baru: data.nip_penguji_baru,
+        nip_penguji_lama: data.nip_penguji_lama,
         created_at: new Date(),
       },
     });
@@ -139,6 +142,9 @@ export default class JadwalRepository {
     const ruangan = prisma.ruangan.findMany({
       select: {
         nama: true,
+      },
+      orderBy: {
+        nama: "asc",
       },
     });
     return ruangan;
@@ -197,13 +203,23 @@ export default class JadwalRepository {
     });
   }
 
-  public static async getJadwalMahasiswaSaya(nip: string) {
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
+  public static async getJadwalMahasiswaSaya(nip: string, tahunAjaranId: number) {
+    const jakartaDate = DateHelper.toJakartaTime(new Date());
+    const currentDate = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 0, 0, 0, 0);
+
+    const endOfDay = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 23, 59, 59, 999);
+
+    if (tahunAjaranId === 0) {
+      const latestTahunAjaran = await this.getTahunAjaran();
+      if (latestTahunAjaran) {
+        tahunAjaranId = latestTahunAjaran.id;
+      }
+    }
 
     const jadwal = {
       where: {
         pendaftaran_kp: {
+          id_tahun_ajaran: tahunAjaranId,
           nip_penguji: nip,
         },
       },
@@ -231,6 +247,7 @@ export default class JadwalRepository {
             },
             tahun_ajaran: {
               select: {
+                id: true,
                 nama: true,
               },
             },
@@ -252,7 +269,7 @@ export default class JadwalRepository {
               },
             },
           },
-        }
+        },
       },
     };
 
@@ -261,8 +278,15 @@ export default class JadwalRepository {
     const todayJadwal = await prisma.jadwal.findMany({
       ...jadwal,
       where: {
-        ...jadwal.where,
-        tanggal: currentDate,
+        AND: [
+          { ...jadwal.where },
+          {
+            tanggal: {
+              gte: currentDate,
+              lte: endOfDay,
+            },
+          },
+        ],
       },
     });
 
@@ -307,8 +331,21 @@ export default class JadwalRepository {
     };
   }
 
+  public static async getAllTahunAjaran() {
+    return await prisma.tahun_ajaran.findMany({
+      select: {
+        id: true,
+        nama: true,
+      },
+    });
+  }
+
   public static async getTahunAjaran() {
     return prisma.tahun_ajaran.findFirst({
+      select: {
+        id: true,
+        nama: true,
+      },
       orderBy: {
         id: "desc",
       },
@@ -316,6 +353,15 @@ export default class JadwalRepository {
   }
 
   public static async getAllJadwalSeminar(tahunAjaranId: number = 1) {
+    await this.updateJadwalStatus();
+
+    if (tahunAjaranId === 0) {
+      const latestTahunAjaran = await this.getTahunAjaran();
+      if (latestTahunAjaran) {
+        tahunAjaranId = latestTahunAjaran.id;
+      }
+    }
+
     const tahunAjaran = await prisma.tahun_ajaran.findUnique({
       where: {
         id: tahunAjaranId,
@@ -326,6 +372,11 @@ export default class JadwalRepository {
     }
 
     const dataJadwal = await prisma.jadwal.findMany({
+      where: {
+        pendaftaran_kp: {
+          id_tahun_ajaran: tahunAjaranId,
+        },
+      },
       select: {
         id: true,
         mahasiswa: true,
@@ -352,6 +403,10 @@ export default class JadwalRepository {
     const totalJadwalUlang = dataJadwal.filter((jadwal) => jadwal.status === "Jadwal_Ulang").length;
 
     const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map((jadwal) => {
+      const waktuMulai = jadwal.waktu_mulai ? DateHelper.toJakartaTime(jadwal.waktu_mulai) : null;
+      const waktuSelesai = jadwal.waktu_selesai ? DateHelper.toJakartaTime(jadwal.waktu_selesai) : null;
+      const tanggal = jadwal.tanggal ? DateHelper.toJakartaTime(jadwal.tanggal) : null;
+
       return {
         id: jadwal.id,
         mahasiswa: {
@@ -361,8 +416,9 @@ export default class JadwalRepository {
         },
         status_kp: jadwal.pendaftaran_kp?.status || "N/A",
         ruangan: jadwal.ruangan?.nama || "N/A",
-        jam: jadwal.waktu_mulai ? `${jadwal.waktu_mulai.getHours().toString().padStart(2, "0")}:${jadwal.waktu_mulai.getMinutes().toString().padStart(2, "0")}` : "N/A",
-        tanggal: jadwal.tanggal ? JadwalHelper.formatTanggal(jadwal.tanggal) : "N/A",
+        waktu_mulai: waktuMulai ? format(waktuMulai, "HH:mm") : "-",
+        waktu_selesai: waktuSelesai ? format(waktuSelesai, "HH:mm") : "-",
+        tanggal: tanggal ? JadwalHelper.formatTanggal(tanggal) : "N/A",
         dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || "N/A",
         dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || "N/A",
         instansi: jadwal.pendaftaran_kp?.instansi?.nama || "N/A",
@@ -371,15 +427,141 @@ export default class JadwalRepository {
       };
     });
 
+    const jadwalByRuangan = formattedJadwalList.reduce((acc, jadwal) => {
+      const ruangan = jadwal.ruangan;
+      if (!acc[ruangan]) {
+        acc[ruangan] = [];
+      }
+      acc[ruangan].push(jadwal);
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
+
+    const allRuangan = await this.getAllRuangan();
+
+    const jadwalByRuanganComplete = allRuangan.reduce((acc, ruangan) => {
+      acc[ruangan.nama] = jadwalByRuangan[ruangan.nama] || [];
+      return acc;
+    }, {} as Record<string, DataJadwalSeminar[]>);
+
     return {
       totalSeminar: dataJadwal.length,
       totalSeminarMingguIni: JadwalHelper.jumlahJadwalMingguIni(dataJadwal),
       totalJadwalUlang,
       jadwalList: formattedJadwalList,
+      jadwalByRuangan: jadwalByRuanganComplete,
       tahunAjaran: {
         id: tahunAjaran.id,
         nama: tahunAjaran.nama,
       },
     };
+  }
+
+  public static async getLogJadwal(tahunAjaranId: number = 1) {
+    const tahunAjaran = await prisma.tahun_ajaran.findUnique({
+      where: {
+        id: tahunAjaranId,
+      },
+      select: {
+        id: true,
+        nama: true,
+      },
+    });
+
+    const logJadwal = await prisma.log_jadwal.findMany({
+      select: {
+        id: true,
+        log_type: true,
+        tanggal_lama: true,
+        tanggal_baru: true,
+        ruangan_lama: true,
+        ruangan_baru: true,
+        keterangan: true,
+        created_at: true,
+        nip_penguji_lama: true,
+        nip_penguji_baru: true,
+        id_jadwal: true,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    const logJadwalWithJadwal = await Promise.all(
+      logJadwal.map(async (log) => {
+        const jadwal = log.id_jadwal ? await this.findJadwalById(log.id_jadwal) : null;
+        return {
+          ...log,
+          jadwal: jadwal,
+        };
+      })
+    );
+
+    return {
+      logJadwal,
+      logJadwalWithJadwal,
+      tahunAjaran,
+    };
+  }
+
+  public static async findJadwalById(id: string) {
+    return await prisma.jadwal.findUnique({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+        tanggal: true,
+        waktu_mulai: true,
+        waktu_selesai: true,
+        status: true,
+        nama_ruangan: true,
+        pendaftaran_kp: {
+          select: {
+            dosen_pembimbing: {
+              select: {
+                nip: true,
+                nama: true,
+              },
+            },
+            dosen_penguji: {
+              select: {
+                nip: true,
+                nama: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  public static async updateJadwalStatus() {
+    const now = new Date();
+
+    const result = await prisma.jadwal.updateMany({
+      where: {
+        status: "Menunggu",
+        waktu_selesai: {
+          lte: now,
+        },
+      },
+      data: {
+        status: "Selesai",
+      },
+    });
+
+    return result.count;
+  }
+
+  public static async getTahunAjaranById(tahunAjaranId: number = 1) {
+    return await prisma.tahun_ajaran.findUnique({
+      where: {
+        id: tahunAjaranId,
+      },
+      select: {
+        id: true,
+        nama: true,
+      },
+    });
   }
 }

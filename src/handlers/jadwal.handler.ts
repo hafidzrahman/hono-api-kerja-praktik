@@ -47,7 +47,10 @@ export default class JadwalHandler {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
 
-    const result = await JadwalService.getJadwalMahasiswaSaya(email);
+    const tahunAjaranIdParam = c.req.query("tahun_ajaran_id");
+    const tahunAjaranId = tahunAjaranIdParam ? parseInt(tahunAjaranIdParam) : undefined;
+
+    const result = await JadwalService.getJadwalMahasiswaSaya(email, tahunAjaranId);
 
     return c.json(result);
   }
@@ -59,16 +62,29 @@ export default class JadwalHandler {
     return c.json(await JadwalService.getTahunAjaran);
   }
 
+  public static async getAllTahunAjaran(c: Context) {
+    return c.json(await JadwalService.getAllTahunAjaran());
+  }
+
   public static async getAllJadwalSeminar(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
-    
-    const tahunAjaranIdParam = c.req.query('tahun_ajaran_id');
+
+    const tahunAjaranIdParam = c.req.query("tahun_ajaran_id");
 
     const tahunAjaranId = tahunAjaranIdParam ? parseInt(tahunAjaranIdParam) : 0;
 
-    const allJadwal = await JadwalService.getAllJadwalSeminar(tahunAjaranId)
+    const allJadwal = await JadwalService.getAllJadwalSeminar(tahunAjaranId);
 
-    return c.json(allJadwal)
+    return c.json(allJadwal);
+  }
+
+  public static async getLogJadwal(c: Context) {
+    const tahunAjaranIdParam = c.req.query("tahun_ajaran_id");
+    const tahunAjaranId = tahunAjaranIdParam ? parseInt(tahunAjaranIdParam) : 0;
+
+    const logJadwal = await JadwalService.getLogJadwal(tahunAjaranId);
+
+    return c.json(logJadwal);
   }
 }

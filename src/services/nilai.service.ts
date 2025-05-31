@@ -10,7 +10,7 @@ import { string } from "zod";
 import prisma from "../infrastructures/db.infrastructure";
 
 export default class NilaiService {
-  public static async createNilaiPenguji(input: NilaiPengujiInput, id?: string, email?: string) {
+  public static async createUpdateNilaiPenguji(input: NilaiPengujiInput, id?: string, email?: string) {
     if (input.idJadwalSeminar) {
       const jadwal = await NilaiRepository.getJadwalById(input.idJadwalSeminar);
       if (!jadwal) {
@@ -18,7 +18,7 @@ export default class NilaiService {
       }
 
       if (!NilaiHelper.canInputNilai(jadwal.waktu_mulai)) {
-        throw new APIError(`Waduh, Nilai penguji tidak bisa diinput setelah seminar dimulai! 😭`, 400);
+        throw new APIError(`Waduh, Nilai penguji tidak bisa diinput sebelum seminar dimulai! 😭`, 400);
       }
     }
 
@@ -90,7 +90,7 @@ export default class NilaiService {
     };
   }
 
-  public static async createNilaiPembimbing(input: NilaiPembimbingInput, id?: string, email?: string) {
+  public static async createUpdateNilaiPembimbing(input: NilaiPembimbingInput, id?: string, email?: string) {
     if (input.idJadwalSeminar) {
       const jadwal = await NilaiRepository.getJadwalById(input.idJadwalSeminar);
       if (!jadwal) {
@@ -304,7 +304,10 @@ export default class NilaiService {
     const jumlahNilaiApprove = detailMahasiswa.filter((m) => m.status_nilai === StatusNilai.NILAI_APPROVE).length;
 
     return {
-      tahunAjaran: tahunAjaran.nama || "",
+      tahunAjaran: {
+        id: tahunAjaran.id || 0,
+        nama: tahunAjaran.nama || "",
+      },
       jumlahNilaiBelumValid,
       jumlahNilaiValid,
       jumlahNilaiApprove,

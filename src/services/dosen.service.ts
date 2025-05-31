@@ -47,4 +47,13 @@ export default class DosenService {
       conflicts
     }
   }
+
+  public static async getNamaByNip(nip: string) {
+    const dosen = await DosenRepository.findNamaDosenByNip(nip)
+    if (!dosen) {
+      throw new APIError(`Waduh, dosen tidak ditemukan ! 😭`, 404)
+    }
+
+    return dosen
+  }
 }

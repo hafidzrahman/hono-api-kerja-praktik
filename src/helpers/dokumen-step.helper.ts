@@ -2,22 +2,17 @@ import { jenis_dokumen } from "../generated/prisma";
 import SeminarKpRepository from "../repositories/seminar-kp.repository";
 import JadwalSeminarKPRepository from "../repositories/jadwal.repository";
 import { APIError } from "../utils/api-error.util";
+import MahasiswaRepository from "../repositories/mahasiswa.repository";
+import MahasiswaService from "../services/mahasiswa.service";
+import MahasiswaHelper from "./mahasiswa.helper";
 
-const STEP_1: jenis_dokumen[] = [
-  jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, 
-  jenis_dokumen.FORM_KEHADIRAN_SEMINAR, 
-  jenis_dokumen.LAPORAN_TAMBAHAN_KP
-];
+const STEP_1: jenis_dokumen[] = [jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, jenis_dokumen.FORM_KEHADIRAN_SEMINAR, jenis_dokumen.LAPORAN_TAMBAHAN_KP];
 
 const STEP_2: jenis_dokumen[] = [jenis_dokumen.ID_SURAT_UNDANGAN];
 
 const STEP_3: jenis_dokumen[] = [jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP];
 
-const STEP_5: jenis_dokumen[] = [
-  jenis_dokumen.BERITA_ACARA_SEMINAR,
-  jenis_dokumen.LEMBAR_PENGESAHAN_KP,
-  jenis_dokumen.DAFTAR_HADIR_SEMINAR,
-];
+const STEP_5: jenis_dokumen[] = [jenis_dokumen.BERITA_ACARA_SEMINAR, jenis_dokumen.LEMBAR_PENGESAHAN_KP, jenis_dokumen.DAFTAR_HADIR_SEMINAR];
 
 export default class StepHelper {
   public static async cekJadwalSelesai(id_pendaftaran_kp: string): Promise<boolean> {
@@ -53,6 +48,7 @@ export default class StepHelper {
         break;
       case 5:
         dokumenList = STEP_5;
+        break;
       default:
         return false;
     }
@@ -94,13 +90,24 @@ export default class StepHelper {
 
   public static async stepAkses(step: number, id_pendaftaran_kp: string): Promise<boolean> {
     if (step === 1) {
-      return true;
+      const mahasiswa = await SeminarKpRepository.findNIMByPendaftaranKp(id_pendaftaran_kp);
+      const nim = mahasiswa?.nim;
+      if (!nim) {
+        throw new APIError("Waduh, NIM tidak ditemukan! 😭", 404);
+      }
+
+      const validasi = await MahasiswaService.validasiPersyaratanSeminarKp(nim);
+      if (validasi.semua_syarat_terpenuhi){
+        return true;
+      } else {
+        return false;
+      }
     }
 
     if (step === 6) {
       const isValidStep3 = await this.validasiStepDokumen(3, id_pendaftaran_kp);
-      const isValidStep5 = await this.validasiStepDokumen(5, id_pendaftaran_kp)
-      const isJadwalSelesai = await this.cekJadwalSelesai(id_pendaftaran_kp)
+      const isValidStep5 = await this.validasiStepDokumen(5, id_pendaftaran_kp);
+      const isJadwalSelesai = await this.cekJadwalSelesai(id_pendaftaran_kp);
 
       return isValidStep3 && isValidStep5 && isJadwalSelesai;
     }
@@ -141,13 +148,13 @@ export default class StepHelper {
       "surat-keterangan-selesai-kp": jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP,
       "laporan-tambahan-kp": jenis_dokumen.LAPORAN_TAMBAHAN_KP,
       "form-kehadiran-seminar": jenis_dokumen.FORM_KEHADIRAN_SEMINAR,
-      
+
       //pendaftaran-step2
       "id-surat-undangan": jenis_dokumen.ID_SURAT_UNDANGAN,
-      
+
       //pendaftaran-step3
       "surat-undangan-seminar-kp": jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP,
-      
+
       //pasca-seminar-step5
       "berita-acara-seminar": jenis_dokumen.BERITA_ACARA_SEMINAR,
       "daftar-hadir-seminar": jenis_dokumen.DAFTAR_HADIR_SEMINAR,
