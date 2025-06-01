@@ -69,7 +69,7 @@ export default class SeminarKpService {
     }
 
     const stepInfo = {
-      step1_accessible: true,
+      step1_accessible: await StepHelper.stepAkses(1, id_pendaftaran_kp),
       step2_accessible: await StepHelper.stepAkses(2, id_pendaftaran_kp),
       step3_accessible: await StepHelper.stepAkses(3, id_pendaftaran_kp),
       step4_accessible: await StepHelper.stepAkses(4, id_pendaftaran_kp),
