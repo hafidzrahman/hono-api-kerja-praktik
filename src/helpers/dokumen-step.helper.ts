@@ -12,7 +12,13 @@ const STEP_2: jenis_dokumen[] = [jenis_dokumen.ID_SURAT_UNDANGAN];
 
 const STEP_3: jenis_dokumen[] = [jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP];
 
-const STEP_5: jenis_dokumen[] = [jenis_dokumen.BERITA_ACARA_SEMINAR, jenis_dokumen.LEMBAR_PENGESAHAN_KP, jenis_dokumen.DAFTAR_HADIR_SEMINAR];
+const STEP_5: jenis_dokumen[] = [
+  jenis_dokumen.BERITA_ACARA_SEMINAR, 
+  jenis_dokumen.LEMBAR_PENGESAHAN_KP, 
+  jenis_dokumen.DAFTAR_HADIR_SEMINAR,
+  jenis_dokumen.REVISI_LAPORAN_TAMBAHAN,
+  jenis_dokumen.SISTEM_KP_FINAL
+];
 
 export default class StepHelper {
   public static async cekJadwalSelesai(id_pendaftaran_kp: string): Promise<boolean> {
