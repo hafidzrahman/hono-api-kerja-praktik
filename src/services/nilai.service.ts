@@ -8,6 +8,7 @@ import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import DosenRepository from "../repositories/dosen.repository";
 import { string } from "zod";
 import prisma from "../infrastructures/db.infrastructure";
+import StepHelper from "../helpers/dokumen-step.helper";
 
 export default class NilaiService {
   public static async createUpdateNilaiPenguji(input: NilaiPengujiInput, id?: string, email?: string) {
@@ -196,6 +197,15 @@ export default class NilaiService {
     return NilaiRepository.getNilaiById(id);
   }
 
+  private static async cekValidasiDokumen(idPendaftaranKp: string): Promise<boolean> {
+    const step1Valid = await StepHelper.validasiStepDokumen(1, idPendaftaranKp);
+    const step2Valid = await StepHelper.validasiStepDokumen(2, idPendaftaranKp);
+    const step3Valid = await StepHelper.validasiStepDokumen(3, idPendaftaranKp);
+    const step5Valid = await StepHelper.validasiStepDokumen(5, idPendaftaranKp);
+
+    return step1Valid && step2Valid && step3Valid && step5Valid;
+  }
+
   public static async getAllNilai(tahunAjaranId: number = 0): Promise<AllNilaiResponse> {
     const { mahasiswaData, tahunAjaran } = await NilaiRepository.getAllMahasiswaNilai(tahunAjaranId);
 
@@ -207,6 +217,7 @@ export default class NilaiService {
           return null;
         }
 
+        let idNilai: string | undefined = undefined;
         let nilaiInstansi: number | undefined = undefined;
         let nilaiPembimbing: number | undefined = undefined;
         let nilaiPenguji: number | undefined = undefined;
@@ -265,9 +276,8 @@ export default class NilaiService {
         const hasAllNilai = nilaiInstansi !== undefined && nilaiPembimbing !== undefined && nilaiPenguji !== undefined;
 
         if (hasAllNilai) {
-          const allDocumentsValidated = pendaftaranKp?.dokumen_seminar_kp.every((doc) => doc.status === status_dokumen.Divalidasi);
-
-          if (allDocumentsValidated) {
+          const semuaDokumenTervalidasi = await this.cekValidasiDokumen(pendaftaranKp.id);
+          if (semuaDokumenTervalidasi) {
             statusNilai = StatusNilai.NILAI_APPROVE;
           } else {
             statusNilai = StatusNilai.NILAI_VALID;
@@ -287,6 +297,7 @@ export default class NilaiService {
           pembimbing_instansi: pendaftaranKp?.pembimbing_instansi?.nama || undefined,
           dosen_pembimbing: pendaftaranKp?.dosen_pembimbing?.nama || undefined,
           dosen_penguji: pendaftaranKp?.dosen_penguji?.nama || undefined,
+          id_nilai: idNilai,
           nilai_instansi: nilaiInstansi,
           nilai_pembimbing: nilaiPembimbing,
           nilai_penguji: nilaiPenguji,
