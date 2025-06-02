@@ -41,6 +41,7 @@ export interface DetailMahasiswaNilai {
   pembimbing_instansi: string;
   dosen_pembimbing: string;
   dosen_penguji: string;
+  id_nilai: string;
   nilai_instansi: number;
   nilai_pembimbing: number;
   nilai_penguji: number;
