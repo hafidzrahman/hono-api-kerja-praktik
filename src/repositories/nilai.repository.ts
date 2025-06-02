@@ -355,6 +355,13 @@ export default class NilaiRepository {
                 catatan: true,
               },
             },
+            validasi_nilai: {
+              select: {
+                id: true,
+                is_approve: true,
+                created_at: true
+              }
+            }
           },
         },
       },

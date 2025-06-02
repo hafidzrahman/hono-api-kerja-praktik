@@ -303,6 +303,7 @@ export default class NilaiService {
             nilai_penguji: nilaiPenguji,
             nilai_akhir: nilaiAkhir,
             nilai_huruf: nilaiHuruf,
+            validasi_nilai_is_approve: nilaiData.validasi_nilai?.is_approve,
             komponen_nilai_instansi: komponenNilaiInstansi,
             komponen_nilai_pembimbing: komponenNilaiPembimbing,
             komponen_nilai_penguji: komponenNilaiPenguji,

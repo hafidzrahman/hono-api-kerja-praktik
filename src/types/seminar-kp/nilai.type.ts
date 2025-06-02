@@ -47,6 +47,7 @@ export interface DetailMahasiswaNilai {
   nilai_penguji: number;
   nilai_akhir: number;
   nilai_huruf: string;
+  validasi_nilai_is_approve: boolean;
   komponen_nilai_instansi: KomponenNilaiInstansi;
   komponen_nilai_pembimbing: KomponenNilaiPembimbing;
   komponen_nilai_penguji: KomponenNilaiPenguji;
