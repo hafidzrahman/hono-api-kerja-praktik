@@ -218,7 +218,6 @@ export default class NilaiService {
             return null;
           }
 
-          let idNilai: string | undefined = undefined;
           let nilaiInstansi: number | undefined = undefined;
           let nilaiPembimbing: number | undefined = undefined;
           let nilaiPenguji: number | undefined = undefined;
