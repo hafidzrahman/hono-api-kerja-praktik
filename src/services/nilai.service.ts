@@ -298,7 +298,7 @@ export default class NilaiService {
             pembimbing_instansi: pendaftaranKp?.pembimbing_instansi?.nama || undefined,
             dosen_pembimbing: pendaftaranKp?.dosen_pembimbing?.nama || undefined,
             dosen_penguji: pendaftaranKp?.dosen_penguji?.nama || undefined,
-            id_nilai: idNilai,
+            id_nilai: nilaiData.id,
             nilai_instansi: nilaiInstansi,
             nilai_pembimbing: nilaiPembimbing,
             nilai_penguji: nilaiPenguji,
