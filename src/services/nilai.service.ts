@@ -201,7 +201,7 @@ export default class NilaiService {
     const step1Valid = await StepHelper.validasiStepDokumen(1, idPendaftaranKp);
     const step2Valid = await StepHelper.validasiStepDokumen(2, idPendaftaranKp);
     const step3Valid = await StepHelper.validasiStepDokumen(3, idPendaftaranKp);
-    const step5Valid = await StepHelper.validasiStepDokumen(5, idPendaftaranKp);
+    const step5Valid = await StepHelper.validasiStep5(5, idPendaftaranKp);
 
     return step1Valid && step2Valid && step3Valid && step5Valid;
   }
