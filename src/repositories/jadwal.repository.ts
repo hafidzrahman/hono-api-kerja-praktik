@@ -400,7 +400,7 @@ export default class JadwalRepository {
       },
     });
 
-    const totalJadwalUlang = dataJadwal.filter((jadwal) => jadwal.status === "Jadwal_Ulang").length;
+    const totalJadwalUlang = await this.totalJadwalUlang(tahunAjaranId)
 
     const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map((jadwal) => {
       const waktuMulai = jadwal.waktu_mulai ? DateHelper.toJakartaTime(jadwal.waktu_mulai) : null;
@@ -563,5 +563,43 @@ export default class JadwalRepository {
         nama: true,
       },
     });
+  }
+
+  public static async totalJadwalUlang(tahunAjaranId: number): Promise<number> {
+    const jadwalIds = await prisma.jadwal.findMany({
+      where: {
+        pendaftaran_kp: {
+          id_tahun_ajaran: tahunAjaranId,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (jadwalIds.length === 0) {
+      return 0;
+    }
+
+    const jadwalIdList = jadwalIds.map((jadwal) => jadwal.id);
+
+    const logCounts = await prisma.log_jadwal.groupBy({
+      by: ["id_jadwal"],
+      where: {
+        id_jadwal: {
+          in: jadwalIdList,
+        },
+        log_type: "UPDATE",
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    const totalPerubahan = logCounts.reduce((total, log) => {
+      return total + log._count.id;
+    }, 0);
+
+    return totalPerubahan;
   }
 }
