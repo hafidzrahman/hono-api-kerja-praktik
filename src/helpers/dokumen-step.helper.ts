@@ -2,9 +2,7 @@ import { jenis_dokumen } from "../generated/prisma";
 import SeminarKpRepository from "../repositories/seminar-kp.repository";
 import JadwalSeminarKPRepository from "../repositories/jadwal.repository";
 import { APIError } from "../utils/api-error.util";
-import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import MahasiswaService from "../services/mahasiswa.service";
-import MahasiswaHelper from "./mahasiswa.helper";
 
 const STEP_1: jenis_dokumen[] = [jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, jenis_dokumen.FORM_KEHADIRAN_SEMINAR, jenis_dokumen.LAPORAN_TAMBAHAN_KP];
 
