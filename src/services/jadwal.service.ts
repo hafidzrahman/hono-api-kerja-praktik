@@ -37,6 +37,10 @@ export default class JadwalService {
       throw new APIError(`Waduh, pendaftaran KP tidak ditemukan! 😭`, 404);
     }
 
+    if (pendaftaran.nip_pembimbing && data.nip_penguji === pendaftaran.nip_pembimbing) {
+      throw new APIError(`Waduh, dosen penguji tidak boleh sama dengan dosen pembimbing! 😭`, 400);
+    }
+
     await DosenService.getDosenByNIP(data.nip_penguji);
 
     await MahasiswaService.validateMahasiswaExists(data.nim);
@@ -160,6 +164,10 @@ export default class JadwalService {
 
     if (data.nip_penguji) {
       await DosenService.getDosenByNIP(data.nip_penguji);
+
+      if (existingJadwal.pendaftaran_kp?.nip_pembimbing && data.nip_penguji === existingJadwal.pendaftaran_kp.nip_pembimbing) {
+        throw new APIError(`Waduh, dosen penguji tidak boleh sama dengan dosen pembimbing! 😭`, 400);
+      }
     }
 
     if (existingJadwal.nim) {
