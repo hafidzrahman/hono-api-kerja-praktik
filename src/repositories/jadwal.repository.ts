@@ -9,15 +9,11 @@ import DateHelper from "../helpers/date.helper";
 
 export default class JadwalRepository {
   public static async postJadwal(data: CreateJadwalInput): Promise<jadwal> {
-    const waktu_mulai = new Date(data.waktu_mulai);
-    const waktu_selesai = new Date(waktu_mulai);
-    waktu_selesai.setHours(waktu_selesai.getHours() + 1);
-
     const jadwal = await prisma.jadwal.create({
       data: {
         tanggal: data.tanggal,
-        waktu_mulai,
-        waktu_selesai,
+        waktu_mulai: data.waktu_mulai,
+        waktu_selesai: data.waktu_selesai,
         status: "Menunggu" as status_jadwal,
         nim: data.nim,
         nama_ruangan: data.nama_ruangan,
