@@ -6,7 +6,6 @@ import { APIError } from "../utils/api-error.util";
 import NilaiHelper from "../helpers/nilai.helper";
 import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import DosenRepository from "../repositories/dosen.repository";
-import { string } from "zod";
 import prisma from "../infrastructures/db.infrastructure";
 import StepHelper from "../helpers/dokumen-step.helper";
 
@@ -297,13 +296,13 @@ export default class NilaiService {
             pembimbing_instansi: pendaftaranKp?.pembimbing_instansi?.nama || undefined,
             dosen_pembimbing: pendaftaranKp?.dosen_pembimbing?.nama || undefined,
             dosen_penguji: pendaftaranKp?.dosen_penguji?.nama || undefined,
-            id_nilai: nilaiData.id,
+            id_nilai: nilaiData?.id,
             nilai_instansi: nilaiInstansi,
             nilai_pembimbing: nilaiPembimbing,
             nilai_penguji: nilaiPenguji,
             nilai_akhir: nilaiAkhir,
             nilai_huruf: nilaiHuruf,
-            validasi_nilai_is_approve: nilaiData.validasi_nilai?.is_approve,
+            validasi_nilai_is_approve: nilaiData?.validasi_nilai?.is_approve,
             komponen_nilai_instansi: komponenNilaiInstansi,
             komponen_nilai_pembimbing: komponenNilaiPembimbing,
             komponen_nilai_penguji: komponenNilaiPenguji,
