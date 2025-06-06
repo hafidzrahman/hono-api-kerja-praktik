@@ -113,10 +113,12 @@ export default class BimbinganKPService {
       throw new APIError("Dosen pembimbing tidak ditemukan! 😭", 404);
     }
 
-    const nilai_pembimbing =
-      komponen_penilaian.penyelesaian_masalah * 0.4 +
-      komponen_penilaian.bimbingan_sikap * 0.35 +
-      komponen_penilaian.kualitas_laporan * 0.25;
+    const nilai_pembimbing = Math.round(
+      (komponen_penilaian.penyelesaian_masalah * 0.4 +
+        komponen_penilaian.bimbingan_sikap * 0.35 +
+        komponen_penilaian.kualitas_laporan * 0.25) *
+        100
+    ) / 100;
 
     const data = await BimbinganKPRepository.createNilai(
       id,
@@ -160,10 +162,12 @@ export default class BimbinganKPService {
       );
     }
 
-    const nilai_pembimbing =
-      komponen_penilaian.penyelesaian_masalah * 0.4 +
-      komponen_penilaian.bimbingan_sikap * 0.35 +
-      komponen_penilaian.kualitas_laporan * 0.25;
+    const nilai_pembimbing = Math.round(
+      (komponen_penilaian.penyelesaian_masalah * 0.4 +
+        komponen_penilaian.bimbingan_sikap * 0.35 +
+        komponen_penilaian.kualitas_laporan * 0.25) *
+        100
+    ) / 100;
 
     const data = await BimbinganKPRepository.updateNilai(
       id,
