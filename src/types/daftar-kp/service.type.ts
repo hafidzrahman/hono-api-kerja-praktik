@@ -20,6 +20,7 @@ export interface CreatePermohonanPendaftaranKPInterface {
   idInstansi: string;
   tujuanSuratInstansi: string;
   judul_kp?: string;
+  kelas_kp?: string;
 }
 
 export interface CreatePermohonanPendaftaranInstansiInterface {
