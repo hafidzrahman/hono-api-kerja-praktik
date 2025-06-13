@@ -2,9 +2,7 @@ import { jenis_dokumen } from "../generated/prisma";
 import SeminarKpRepository from "../repositories/seminar-kp.repository";
 import JadwalSeminarKPRepository from "../repositories/jadwal.repository";
 import { APIError } from "../utils/api-error.util";
-import MahasiswaRepository from "../repositories/mahasiswa.repository";
 import MahasiswaService from "../services/mahasiswa.service";
-import MahasiswaHelper from "./mahasiswa.helper";
 
 const STEP_1: jenis_dokumen[] = [jenis_dokumen.SURAT_KETERANGAN_SELESAI_KP, jenis_dokumen.FORM_KEHADIRAN_SEMINAR, jenis_dokumen.LAPORAN_TAMBAHAN_KP];
 
@@ -12,7 +10,24 @@ const STEP_2: jenis_dokumen[] = [jenis_dokumen.ID_SURAT_UNDANGAN];
 
 const STEP_3: jenis_dokumen[] = [jenis_dokumen.SURAT_UNDANGAN_SEMINAR_KP];
 
-const STEP_5: jenis_dokumen[] = [jenis_dokumen.BERITA_ACARA_SEMINAR, jenis_dokumen.LEMBAR_PENGESAHAN_KP, jenis_dokumen.DAFTAR_HADIR_SEMINAR];
+const STEP_5: jenis_dokumen[] = [
+  jenis_dokumen.BERITA_ACARA_SEMINAR, 
+  jenis_dokumen.LEMBAR_PENGESAHAN_KP, 
+  jenis_dokumen.DAFTAR_HADIR_SEMINAR,
+  jenis_dokumen.REVISI_LAPORAN_TAMBAHAN,
+  jenis_dokumen.SISTEM_KP_FINAL
+];
+
+const STEP_5_WAJIB: jenis_dokumen[] = [
+  jenis_dokumen.BERITA_ACARA_SEMINAR, 
+  jenis_dokumen.LEMBAR_PENGESAHAN_KP, 
+  jenis_dokumen.DAFTAR_HADIR_SEMINAR,
+];
+
+const STEP_5_OPSIONAL: jenis_dokumen[] = [
+  jenis_dokumen.REVISI_LAPORAN_TAMBAHAN,
+  jenis_dokumen.SISTEM_KP_FINAL
+];
 
 export default class StepHelper {
   public static async cekJadwalSelesai(id_pendaftaran_kp: string): Promise<boolean> {
@@ -63,6 +78,28 @@ export default class StepHelper {
     return true;
   }
 
+  public static async validasiStep5(step: number, id_pendaftaran_kp: string): Promise<boolean> {
+    if (step !== 5) {
+      return await this.validasiStepDokumen(step, id_pendaftaran_kp);
+    }
+
+    for (const jenisDokumen of STEP_5_WAJIB) {
+      const dokumen = await SeminarKpRepository.getDokumenSeminarKPByJenisAndPendaftaranId(jenisDokumen, id_pendaftaran_kp);
+      if (!dokumen || dokumen.status !== "Divalidasi") {
+        return false;
+      }
+    }
+
+    for (const jenisDokumen of STEP_5_OPSIONAL) {
+      const dokumen = await SeminarKpRepository.getDokumenSeminarKPByJenisAndPendaftaranId(jenisDokumen, id_pendaftaran_kp);
+      if (dokumen && dokumen.status !== "Divalidasi") {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public static async validasiStepAksesDokumen(jenis: jenis_dokumen, id_pendaftaran_kp: string): Promise<void> {
     let currentStep = 1;
 
@@ -106,7 +143,7 @@ export default class StepHelper {
 
     if (step === 6) {
       const isValidStep3 = await this.validasiStepDokumen(3, id_pendaftaran_kp);
-      const isValidStep5 = await this.validasiStepDokumen(5, id_pendaftaran_kp);
+      const isValidStep5 = await this.validasiStep5(5, id_pendaftaran_kp);
       const isJadwalSelesai = await this.cekJadwalSelesai(id_pendaftaran_kp);
 
       return isValidStep3 && isValidStep5 && isJadwalSelesai;
@@ -192,9 +229,21 @@ export default class StepHelper {
     for (let step = maxStep; step >= 1; step--) {
       const docsInStep = documents.filter((doc) => this.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === step);
 
-      const allValidated = docsInStep.every((doc) => doc.status === "Divalidasi");
-      if (allValidated) {
-        return step + 1 <= 5 ? step + 1 : 5;
+      if (step === 5) {
+        const wajibDocs = docsInStep.filter((doc) => STEP_5_WAJIB.includes(doc.jenis_dokumen as jenis_dokumen));
+        const opsionalDocs = docsInStep.filter((doc) => STEP_5_OPSIONAL.includes(doc.jenis_dokumen as jenis_dokumen));
+        
+        const allWajibValidated = wajibDocs.every((doc) => doc.status === "Divalidasi");
+        const allOpsionalValidated = opsionalDocs.every((doc) => doc.status === "Divalidasi");
+        
+        if (allWajibValidated && allOpsionalValidated) {
+          return step + 1 <= 6 ? step + 1 : 6;
+        }
+      } else {
+        const allValidated = docsInStep.every((doc) => doc.status === "Divalidasi");
+        if (allValidated) {
+          return step + 1 <= 6 ? step + 1 : 6;
+        }
       }
 
       if (docsInStep.length > 0) {

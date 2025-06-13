@@ -10,6 +10,7 @@ import MahasiswaService from "./mahasiswa.service";
 import JadwalRepository from "../repositories/jadwal.repository";
 import prisma from "../infrastructures/db.infrastructure";
 import { validateLinkPath } from "../validators/dokumen.validator";
+import NilaiHelper from "../helpers/nilai.helper";
 
 export default class SeminarKpService {
   public static async postDokumenSeminarKp(email: string, jenis_dokumen: jenis_dokumen, input: CreateDokumenSeminarKPInput) {
@@ -69,7 +70,7 @@ export default class SeminarKpService {
     }
 
     const stepInfo = {
-      step1_accessible: true,
+      step1_accessible: await StepHelper.stepAkses(1, id_pendaftaran_kp),
       step2_accessible: await StepHelper.stepAkses(2, id_pendaftaran_kp),
       step3_accessible: await StepHelper.stepAkses(3, id_pendaftaran_kp),
       step4_accessible: await StepHelper.stepAkses(4, id_pendaftaran_kp),
@@ -94,6 +95,10 @@ export default class SeminarKpService {
       data: {
         persyaratan_seminar_kp: validasiPersyaratan,
         ...dokumen,
+        nilai: dokumen.nilai.map((n) => ({
+          ...n,
+          nilai_huruf: NilaiHelper.getNilaiHuruf(n.nilai_akhir)
+        })),
         ...dokumenDenganHitungMundur,
         dokumen_seminar_kp: dokumensByStep,
         steps_info: stepInfo,

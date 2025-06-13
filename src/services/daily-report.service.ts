@@ -1,5 +1,6 @@
 import DailyReportRepository from "../repositories/daily-report.repository";
 import { APIError } from "../utils/api-error.util";
+import NilaiService from "./nilai.service";
 
 export default class DailyReportService {
   public static async getDailyReportSaya(email: string) {
@@ -297,7 +298,7 @@ export default class DailyReportService {
       throw new APIError("Mahasiswa tidak ditemukan nih! 😭", 404);
     }
 
-    const nilai_akhir =
+    const nilai_instansi =
       komponen_penilaian.deliverables * 0.15 +
       komponen_penilaian.ketepatan_waktu * 0.1 +
       komponen_penilaian.kedisiplinan * 0.15 +
@@ -305,8 +306,11 @@ export default class DailyReportService {
       komponen_penilaian.kerjasama_tim * 0.25 +
       komponen_penilaian.inisiatif * 0.2;
 
-    const result = await DailyReportRepository.createNilai(
+    const nilai_akhir = nilai_instansi * 0.4;
+
+    const data = await DailyReportRepository.createNilai(
       id,
+      nilai_instansi,
       nilai_akhir,
       komponen_penilaian,
       mahasiswa.nim
@@ -315,7 +319,7 @@ export default class DailyReportService {
     return {
       response: true,
       message: "Nilai berhasil disimpan! 😁",
-      data: result,
+      data: data,
     };
   }
 
@@ -340,7 +344,7 @@ export default class DailyReportService {
         404
       );
     }
-    const nilai_akhir =
+    const nilai_instansi =
       komponen_penilaian.deliverables * 0.15 +
       komponen_penilaian.ketepatan_waktu * 0.1 +
       komponen_penilaian.kedisiplinan * 0.15 +
@@ -348,17 +352,19 @@ export default class DailyReportService {
       komponen_penilaian.kerjasama_tim * 0.25 +
       komponen_penilaian.inisiatif * 0.2;
 
-    const result = await DailyReportRepository.updateNilai(
+    const data = await DailyReportRepository.updateNilai(
       id,
-      nilai_akhir,
+      nilai_instansi,
       komponen_penilaian,
       komponen.id
     );
 
+    await NilaiService.updateNilaiAkhir(id);
+
     return {
       response: true,
       message: "Nilai berhasil disimpan! 😁",
-      data: result,
+      data: data,
     };
   }
 

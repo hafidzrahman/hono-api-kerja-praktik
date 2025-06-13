@@ -26,7 +26,7 @@ export default class SeminarKpRepository {
           some: {
             id_tahun_ajaran: tahunAjaranId > 0 ? tahunAjaranId : undefined,
           },
-        }
+        },
       },
       select: {
         nim: true,
@@ -133,7 +133,7 @@ export default class SeminarKpRepository {
   }
 
   public static async getDataSeminarKPSaya(nim: string): Promise<SeminarKPSaya | null> {
-    return await prisma.mahasiswa.findUnique({
+    const result = await prisma.mahasiswa.findUnique({
       where: {
         nim: nim,
       },
@@ -219,6 +219,28 @@ export default class SeminarKpRepository {
         },
       },
     });
+
+    if (!result) {
+      return null;
+    }
+
+    const formatNilai = (nilai: number | null): number | null => {
+      if (nilai === null || nilai === undefined) return null;
+      return parseFloat(parseFloat(nilai.toString()).toFixed(2));
+    };
+
+    const formattedNilai = result.nilai.map((nilai) => ({
+      ...nilai,
+      nilai_penguji: formatNilai(nilai.nilai_penguji),
+      nilai_instansi: formatNilai(nilai.nilai_instansi),
+      nilai_pembimbing: formatNilai(nilai.nilai_pembimbing),
+      nilai_akhir: formatNilai(nilai.nilai_akhir),
+    }));
+
+    return {
+      ...result,
+      nilai: formattedNilai,
+    };
   }
 
   public static async getDokumenSeminarKPById(id: string) {

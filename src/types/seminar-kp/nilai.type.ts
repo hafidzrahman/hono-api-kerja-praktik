@@ -41,11 +41,13 @@ export interface DetailMahasiswaNilai {
   pembimbing_instansi: string;
   dosen_pembimbing: string;
   dosen_penguji: string;
+  id_nilai: string;
   nilai_instansi: number;
   nilai_pembimbing: number;
   nilai_penguji: number;
   nilai_akhir: number;
   nilai_huruf: string;
+  validasi_nilai_is_approve: boolean;
   komponen_nilai_instansi: KomponenNilaiInstansi;
   komponen_nilai_pembimbing: KomponenNilaiPembimbing;
   komponen_nilai_penguji: KomponenNilaiPenguji;

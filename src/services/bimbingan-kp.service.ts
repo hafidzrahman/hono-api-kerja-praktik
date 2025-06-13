@@ -1,6 +1,7 @@
 import BimbinganKPRepository from "../repositories/bimbingan-kp.repository";
 import DailyReportRepository from "../repositories/daily-report.repository";
 import { APIError } from "../utils/api-error.util";
+import NilaiService from "./nilai.service";
 
 export default class BimbinganKPService {
   public static async getBimbinganSaya(email: string) {
@@ -112,22 +113,26 @@ export default class BimbinganKPService {
       throw new APIError("Dosen pembimbing tidak ditemukan! 😭", 404);
     }
 
-    const nilai_akhir =
-      komponen_penilaian.penyelesaian_masalah * 0.4 +
-      komponen_penilaian.bimbingan_sikap * 0.35 +
-      komponen_penilaian.kualitas_laporan * 0.25;
+    const nilai_pembimbing = Math.round(
+      (komponen_penilaian.penyelesaian_masalah * 0.4 +
+        komponen_penilaian.bimbingan_sikap * 0.35 +
+        komponen_penilaian.kualitas_laporan * 0.25) *
+        100
+    ) / 100;
 
-    const result = await BimbinganKPRepository.createNilai(
+    const data = await BimbinganKPRepository.createNilai(
       id,
       dosen.nip,
-      nilai_akhir,
+      nilai_pembimbing,
       komponen_penilaian
     );
+
+    await NilaiService.updateNilaiAkhir(id);
 
     return {
       response: true,
       message: "Nilai berhasil disimpan! 😁",
-      data: result,
+      data: data,
     };
   }
 
@@ -157,22 +162,26 @@ export default class BimbinganKPService {
       );
     }
 
-    const nilai_akhir =
-      komponen_penilaian.penyelesaian_masalah * 0.4 +
-      komponen_penilaian.bimbingan_sikap * 0.35 +
-      komponen_penilaian.kualitas_laporan * 0.25;
+    const nilai_pembimbing = Math.round(
+      (komponen_penilaian.penyelesaian_masalah * 0.4 +
+        komponen_penilaian.bimbingan_sikap * 0.35 +
+        komponen_penilaian.kualitas_laporan * 0.25) *
+        100
+    ) / 100;
 
-    const result = await BimbinganKPRepository.updateNilai(
+    const data = await BimbinganKPRepository.updateNilai(
       id,
-      nilai_akhir,
+      nilai_pembimbing,
       komponen_penilaian,
       komponen.id
     );
 
+    await NilaiService.updateNilaiAkhir(id);
+
     return {
       response: true,
       message: "Nilai berhasil diperbarui! 😁",
-      data: result,
+      data: data,
     };
   }
 }

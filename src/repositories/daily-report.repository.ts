@@ -317,19 +317,10 @@ export default class DailyReportRepository {
     });
   }
 
-  // public static async countDailyReport(nim: string): Promise<number> {
-  //   return prisma.daily_report.count({
-  //     where: {
-  //       mahasiswa: {
-  //         nim: nim,
-  //       },
-  //     },
-  //   });
-  // }
-
   public static async createNilai(
     id: string,
     nilai_instansi: number,
+    nilai_akhir: number,
     komponen_penilaian: {
       deliverables: number;
       ketepatan_waktu: number;
@@ -346,6 +337,7 @@ export default class DailyReportRepository {
         nim: nim,
         id_pendaftaran_kp: id,
         nilai_instansi: nilai_instansi,
+        nilai_akhir: nilai_akhir,
         komponen_penilaian_instansi: {
           create: {
             deliverables: komponen_penilaian.deliverables,
