@@ -137,8 +137,8 @@ export default class DaftarKPHandler {
   }
 
   public static async getKPTerbaruMahasiswa(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     if (!email) {
       throw new APIError("Email tidak ditemukan");
@@ -148,8 +148,8 @@ export default class DaftarKPHandler {
   }
 
   public static async updatePermohonanPendaftaranKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const { judul_kp, kelas_kp } = await c.req.json();
 
@@ -165,14 +165,14 @@ export default class DaftarKPHandler {
       await DaftarKPService.updatePermohonanPendaftaranKP(
         email,
         judul_kp,
-        kelas_kp,
+        kelas_kp
       )
     );
   }
 
   public static async createPermohonanPendaftaranKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const {
       tanggalMulai,
@@ -214,8 +214,8 @@ export default class DaftarKPHandler {
   }
 
   public static async createPermohonanPendaftaranInstansi(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const {
       namaInstansi,
@@ -260,8 +260,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratPengantarKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const { linkSuratPengantarKP } = await c.req.json();
 
@@ -276,8 +276,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratPenolakanInstansi(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const { link_surat_penolakan_instansi } = await c.req.json();
 
@@ -296,8 +296,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratBalasanKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const { linkSuratBalasanKP } = await c.req.json();
 
@@ -311,8 +311,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postIdPengajuanDosenPembimbingKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const { IdPengajuanDosenPembimbingKP } = await c.req.json();
 
@@ -329,8 +329,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratPenunjukkanDosenPembimbingKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const { linkSuratPenunjukkanDosenPembimbingKP } = await c.req.json();
 
@@ -347,8 +347,8 @@ export default class DaftarKPHandler {
   }
 
   public static async postSuratPerpanjanganKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     const { linkSuratPerpanjanganKP, alasan_lanjut_kp } = await c.req.json();
 
@@ -474,8 +474,8 @@ export default class DaftarKPHandler {
   }
 
   public static async getRiwayatPendaftaranKP(c: Context) {
-    // const { email } = c.get("user");
-    const email = "a@gmail.com";
+    const { email } = c.get("user");
+    // const email = "a@gmail.com";
 
     if (!email) {
       throw new APIError("Data email tidak ditemukan", 404);
