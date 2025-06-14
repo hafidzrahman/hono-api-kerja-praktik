@@ -24,6 +24,22 @@ import {
 } from "../validators/batas-waktu-pendaftaran..validator";
 
 export default class DaftarKPRepository {
+  public static async updatePermohonanPendaftaranKP(
+    id: string,
+    judul_kp?: string,
+    kelas_kp?: string
+  ) {
+    await prisma.pendaftaran_kp.update({
+      where: {
+        id,
+      },
+      data: {
+        judul_kp,
+        kelas_kp,
+      },
+    });
+  }
+
   public static async accBerkasMahasiswa(
     id: string,
     levelAkses: number,
@@ -186,6 +202,15 @@ export default class DaftarKPRepository {
         level_akses: levelAkses % 2 === 0 ? fitLevelAkses() + 1 : levelAkses,
       },
     });
+
+    await DaftarKPRepository.createLOGPendaftaranKPById(
+      id,
+      `[SUKSES] Berkas ${
+        documents[levelAkses / 2].data
+      } mahasiswa telah divalidasi oleh Koordinator Kerja Praktek`,
+      new Date(),
+      1
+    );
   }
 
   public static async getDocumentsKPById(id: string) {
@@ -220,6 +245,15 @@ export default class DaftarKPRepository {
     //     "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
     //   );
     // }
+
+    // bisa masalah gk karena log dulu baru update?
+
+    await DaftarKPRepository.createLOGPendaftaranKPById(
+      id,
+      "[SUKSES] Berhasil mengunggah surat penolakan instansi",
+      new Date(),
+      1
+    );
 
     return await prisma.pendaftaran_kp.update({
       where: {
@@ -448,7 +482,7 @@ export default class DaftarKPRepository {
               for await (const dataKP of manyDataKP) {
                 await DaftarKPRepository.createLOGPendaftaranKPById(
                   dataKP.id,
-                  "Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
+                  "[Gagal] Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
                   new Date(),
                   2
                 );
@@ -659,7 +693,8 @@ export default class DaftarKPRepository {
               update: {
                 where: {
                   idKriteria_idPendaftaranKP: {
-                    idKriteria: levelAkses / 2,
+                    idKriteria:
+                      documents[0].status === "Terkirim" ? 0 : levelAkses / 2,
                     idPendaftaranKP: id,
                   },
                 },
@@ -677,40 +712,19 @@ export default class DaftarKPRepository {
         });
       }
 
-      if (levelAkses === 2) {
-        await DaftarKPRepository.createLOGPendaftaranKPById(
-          id,
-          `[BERKAS DITOLAK] ${message}`,
-          new Date(),
-          2
-        );
-      } else if (levelAkses === 4) {
-        await DaftarKPRepository.createLOGPendaftaranKPById(
-          id,
-          `[BERKAS DITOLAK] ${message}`,
-          new Date(),
-          2
-        );
-      } else if (levelAkses === 6) {
-        await DaftarKPRepository.createLOGPendaftaranKPById(
-          id,
-          `[BERKAS DITOLAK] ${message}`,
-          new Date(),
-          2
-        );
-      } else if (levelAkses === 8) {
-        await DaftarKPRepository.createLOGPendaftaranKPById(
-          id,
-          `[BERKAS DITOLAK] ${message}`,
-          new Date(),
-          2
-        );
-      }
+      await DaftarKPRepository.createLOGPendaftaranKPById(
+        id,
+        `[BERKAS DITOLAK] Berkas ${
+          documents[levelAkses / 2].data
+        } mahasiswa ditolak. ${message}`,
+        new Date(),
+        2
+      );
 
       if (isClosed) {
         await DaftarKPRepository.createLOGPendaftaranKPById(
           id,
-          "Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
+          "[GAGAL] Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
           new Date(),
           2
         );
@@ -756,7 +770,7 @@ export default class DaftarKPRepository {
       if (isClosed) {
         await DaftarKPRepository.createLOGPendaftaranKPById(
           id,
-          "Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
+          "[GAGAL] Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
           new Date(),
           2
         );

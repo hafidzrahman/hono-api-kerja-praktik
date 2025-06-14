@@ -27,6 +27,31 @@ import {
 import { cekKPTerbaruMahasiswa } from "../validators/cek-kp-terbaru-mahasiswa";
 
 export default class DaftarKPService {
+  public static async updatePermohonanPendaftaranKP(
+    email: string,
+    judul_kp?: string,
+    kelas_kp?: string
+  ): Promise<CommonResponse> {
+    const dataMhs = await MahasiswaRepository.findByEmail({ email });
+
+    if (!dataMhs) {
+      throw new APIError("Data mahasiswa tidak ditemukan", 404);
+    }
+
+    const dataKP = await DaftarKPRepository.getKPTerbaruMahasiswa(dataMhs.nim);
+
+    if (!dataKP) {
+      throw new APIError("Data kerja praktek mahasiswa tidak ditemukan", 404);
+    }
+
+    await DaftarKPRepository.updatePermohonanPendaftaranKP(dataKP.id, judul_kp, kelas_kp)
+
+    return {
+      response: true,
+      message: "Berhasil memperbarui data kerja praktek",
+    };
+  }
+
   public static async accBerkasMahasiswa(
     id: string,
     catatan?: string | null
