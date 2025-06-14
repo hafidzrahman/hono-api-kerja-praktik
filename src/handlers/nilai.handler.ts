@@ -1,6 +1,5 @@
 import { Context } from "hono";
 import NilaiService from "../services/nilai.service";
-import NilaiHelper from "../helpers/nilai.helper";
 import { APIError } from "../utils/api-error.util";
 
 export default class NilaiHandler {
