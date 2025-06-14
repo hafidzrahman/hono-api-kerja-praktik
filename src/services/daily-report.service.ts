@@ -298,15 +298,15 @@ export default class DailyReportService {
       throw new APIError("Mahasiswa tidak ditemukan nih! 😭", 404);
     }
 
-    const nilai_instansi =
+    const nilai_instansi = parseFloat((
       komponen_penilaian.deliverables * 0.15 +
       komponen_penilaian.ketepatan_waktu * 0.1 +
       komponen_penilaian.kedisiplinan * 0.15 +
       komponen_penilaian.attitude * 0.15 +
       komponen_penilaian.kerjasama_tim * 0.25 +
-      komponen_penilaian.inisiatif * 0.2;
+      komponen_penilaian.inisiatif * 0.2).toFixed(2));
 
-    const nilai_akhir = nilai_instansi * 0.4;
+    const nilai_akhir = parseFloat((nilai_instansi * 0.4).toFixed(2));
 
     const data = await DailyReportRepository.createNilai(
       id,
@@ -344,13 +344,13 @@ export default class DailyReportService {
         404
       );
     }
-    const nilai_instansi =
+    const nilai_instansi = parseFloat((
       komponen_penilaian.deliverables * 0.15 +
       komponen_penilaian.ketepatan_waktu * 0.1 +
       komponen_penilaian.kedisiplinan * 0.15 +
       komponen_penilaian.attitude * 0.15 +
       komponen_penilaian.kerjasama_tim * 0.25 +
-      komponen_penilaian.inisiatif * 0.2;
+      komponen_penilaian.inisiatif * 0.2).toFixed(2));
 
     const data = await DailyReportRepository.updateNilai(
       id,
