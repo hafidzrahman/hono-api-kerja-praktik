@@ -69,9 +69,17 @@ export default class MahasiswaService {
     };
   }
 
-  public static async validasiMurojaah(email: string) {}
+  public static async checkMurojaah(nim: string): Promise<boolean> {
+    // hit to endpoint {{URL_API}}{{BASE_URL_PUBLIC}}/internal/check-murojaah/:nim?syarat=KP.SEMKP
+    const selesai_murojaah = await fetch(`${process.env.MUROJAAH_API_URL}/mahasiswa/check-murojaah/${nim}?syarat=KP.SEMKP`).then((res) => res.json());
+    if (!selesai_murojaah || !selesai_murojaah.response) {
+      return false;
+    }
+    return selesai_murojaah.data.is_done;
+  }
 
   public static async validasiPersyaratanSeminarKp(nim: string) {
+    const selesaiMurojaah = await MahasiswaService.checkMurojaah(nim);
     const pendaftaranKp = await MahasiswaRepository.getPendaftaranKP(nim);
 
     const masihTerdaftarKP = pendaftaranKp && ["Baru", "Lanjut"].includes(pendaftaranKp.status || "");
@@ -91,11 +99,12 @@ export default class MahasiswaService {
     const sudahNilaiInstansi = nilai && nilai.nilai_instansi !== null;
 
     return {
+      sudah_selesai_murojaah: selesaiMurojaah,
       masih_terdaftar_kp: masihTerdaftarKP,
       minimal_lima_bimbingan: cukupBimbingan,
       daily_report_sudah_approve: semuaDailyReportDisetujui,
       sudah_mendapat_nilai_instansi: sudahNilaiInstansi,
-      semua_syarat_terpenuhi: masihTerdaftarKP && cukupBimbingan && semuaDailyReportDisetujui && sudahNilaiInstansi,
+      semua_syarat_terpenuhi: selesaiMurojaah && masihTerdaftarKP && cukupBimbingan && semuaDailyReportDisetujui && sudahNilaiInstansi,
     };
   }
 }
