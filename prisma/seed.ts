@@ -11,9 +11,6 @@ async function main() {
 			{ nama: "FST-303" },
 			{ nama: "FST-304" },
 			{ nama: "FST-305" },
-			{ nama: "FST-306" },
-			{ nama: "FST-307" },
-			{ nama: "FST-308" },
 		],
 		skipDuplicates: true,
 	});

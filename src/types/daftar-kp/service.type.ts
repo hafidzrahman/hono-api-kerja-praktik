@@ -1,5 +1,6 @@
 import { CommonResponse } from "../global.type";
 import {
+  $Enums,
   instansi,
   jenis_instansi,
   LOG,
@@ -18,6 +19,8 @@ export interface CreatePermohonanPendaftaranKPInterface {
   tanggalMulai: Date;
   idInstansi: string;
   tujuanSuratInstansi: string;
+  judul_kp?: string;
+  kelas_kp?: string;
 }
 
 export interface CreatePermohonanPendaftaranInstansiInterface {

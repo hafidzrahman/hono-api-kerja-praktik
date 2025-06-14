@@ -24,9 +24,66 @@ import {
   IsPendaftaranKPClosed,
   IsPendaftaranKPLanjutClosed,
 } from "../validators/batas-waktu-pendaftaran..validator";
-import MahasiswaService from "./mahasiswa.service";
+import { cekKPTerbaruMahasiswa } from "../validators/cek-kp-terbaru-mahasiswa";
 
 export default class DaftarKPService {
+  public static async accBerkasMahasiswa(
+    id: string,
+    catatan?: string | null
+  ): Promise<CommonResponse> {
+    const dataKP = await DaftarKPRepository.getPendaftaranKPById(id);
+
+    const documents = await DaftarKPRepository.getDocumentsKPById(id);
+
+    if (!dataKP) {
+      throw new APIError("Data pendaftaran kerja praktek tidak ditemukan");
+    } else if (
+      dataKP.level_akses % 2 !== 0 &&
+      documents[0].status !== "Terkirim"
+    ) {
+      throw new APIError("Level akses mahasiswa tidak memenuhi syarat");
+    }
+
+    await DaftarKPRepository.accBerkasMahasiswa(
+      dataKP.id,
+      dataKP.level_akses,
+      documents,
+      catatan
+    );
+
+    return {
+      response: true,
+      message: "Berkas mahasiswa berhasil disetujui",
+    };
+  }
+
+  public static async postSuratPenolakanInstansi(
+    email: string,
+    link_surat_penolakan_instansi: string
+  ): Promise<CommonResponse> {
+    const dataMhs = await MahasiswaRepository.findByEmail({ email });
+
+    if (!dataMhs) {
+      throw new APIError("Data mahasiswa tidak ditemukan", 404);
+    }
+
+    const dataKP = await DaftarKPRepository.getKPTerbaruMahasiswa(dataMhs.nim);
+
+    if (!dataKP) {
+      throw new APIError("Data KP Mahasiswa tidak ditemukan", 404);
+    }
+
+    await DaftarKPRepository.postSuratPenolakanInstansi(
+      dataKP.id,
+      link_surat_penolakan_instansi
+    );
+
+    return {
+      response: true,
+      message: "Berhasil mengunggah link surat penolakan instansi",
+    };
+  }
+
   public static async getLOGKPendaftaranKPById(
     idKP: string
   ): Promise<ServiceLOGPendaftaranKPById> {
@@ -167,7 +224,7 @@ export default class DaftarKPService {
     };
   }
 
-  public static async postEditDataInstansi(
+  public static async editDataInstansi(
     id: string,
     status?: string,
     profil_singkat?: string,
@@ -186,7 +243,7 @@ export default class DaftarKPService {
       throw new APIError("Data instansi tidak ditemukan", 404);
     }
 
-    const result = await DaftarKPRepository.postEditDataInstansi(
+    const result = await DaftarKPRepository.editDataInstansi(
       dataInstansi.id,
       status,
       profil_singkat,
@@ -221,12 +278,15 @@ export default class DaftarKPService {
     email: string
   ): Promise<GetPendaftaranKPTerbaru> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
-
     if (!dataMhs || !dataMhs.nim) {
       throw new APIError("Data mahasiswa tidak ditemukan", 404);
     }
 
     const data = await DaftarKPRepository.getKPTerbaruMahasiswa(dataMhs.nim);
+
+    if (!data) {
+      throw new APIError("Data kerja praktek mahasiswa tidak ditemukan", 404);
+    }
 
     return {
       response: true,
@@ -240,6 +300,8 @@ export default class DaftarKPService {
     tanggalMulai,
     idInstansi,
     tujuanSuratInstansi,
+    judul_kp,
+    kelas_kp,
   }: CreatePermohonanPendaftaranKPInterface): Promise<CommonResponse> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
 
@@ -247,15 +309,27 @@ export default class DaftarKPService {
       throw new APIError("Data mahasiswa tidak ditemukan", 404);
     }
 
-    const cekKPTerbaruMahasiswa = (
-      await DaftarKPService.getKPTerbaruMahasiswa(email)
-    ).data;
+    const dataKPMahasiswa = await cekKPTerbaruMahasiswa(dataMhs.nim);
 
-    if (cekKPTerbaruMahasiswa) {
+    if (
+      dataKPMahasiswa &&
+      dataKPMahasiswa.level_akses > 0 &&
+      dataKPMahasiswa.level_akses !== -1
+    ) {
       throw new APIError(
         "Mahasiswa sudah melakukan pendaftaran KP pada periode ini",
         404
       );
+    }
+
+    const dataInstansi = await DaftarKPRepository.findInstansiById(idInstansi);
+
+    if (!dataInstansi) {
+      throw new APIError("Data instansi tidak ditemukan");
+    } else if (dataInstansi.status === "Pending") {
+      throw new APIError("Instansi belum disetujui oleh koordinator KP");
+    } else if (dataInstansi.status === "Tidak_Aktif") {
+      throw new APIError("Instansi yang dipilih tidak aktif");
     }
 
     const isPendaftaranKPClosed = await IsPendaftaranKPClosed();
@@ -265,10 +339,13 @@ export default class DaftarKPService {
     }
 
     await DaftarKPRepository.createPermomohonanKP({
+      dataKPMahasiswa,
       nim: dataMhs.nim,
       tanggalMulai,
       idInstansi,
       tujuanSuratInstansi,
+      judul_kp,
+      kelas_kp,
     });
 
     return {
@@ -286,6 +363,7 @@ export default class DaftarKPService {
     jenisInstansi,
     longitude,
     latitude,
+    radius,
     profilSingkat,
   }: CreatePermohonanPendaftaranInstansiInterface): Promise<CommonResponse> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
@@ -303,6 +381,7 @@ export default class DaftarKPService {
       jenisInstansi,
       longitude,
       latitude,
+      radius,
       profilSingkat,
     });
 
@@ -480,7 +559,8 @@ export default class DaftarKPService {
 
   public static async postSuratPerpanjanganKP(
     email: string,
-    linkSuratPerpanjanganKP: string
+    linkSuratPerpanjanganKP: string,
+    alasan_lanjut_kp?: string
   ): Promise<CommonResponse> {
     // [NOTE] Validasi dulu apakah fitur perpanjangan KP sudah dibuka oleh koordinator KP?
 
@@ -498,7 +578,8 @@ export default class DaftarKPService {
 
     await DaftarKPRepository.postSuratPerpanjanganKP(
       dataMhs.nim,
-      linkSuratPerpanjanganKP
+      linkSuratPerpanjanganKP,
+      alasan_lanjut_kp
     );
     return {
       response: true,
@@ -506,17 +587,57 @@ export default class DaftarKPService {
     };
   }
 
-  public static async postBerkasMahasiswa(id: string): Promise<CommonResponse> {
-    const dataKP = await DaftarKPRepository.getPendaftaranKPById(id);
+  // public static async editMahasiswa(
+  //   data: pendaftaran_kp
+  // ): Promise<CommonResponse> {
+  //   const dataKP = await DaftarKPRepository.getPendaftaranKPById(data.id);
+
+  //   if (!dataKP) {
+  //     throw new Error("Data KP mahasiswa tidak ditemukan");
+  //   }
+
+  //   await DaftarKPRepository.editMahasiswa(data, dataKP);
+
+  //   return {
+  //     response: true,
+  //     message: "Berhasil mengubah data mahasiswa",
+  //   };
+  // }
+
+  // public static async putBerkasMahasiswa(
+  //   dataBaru: any
+  // ): Promise<CommonResponse> {
+  //   const dataKP = await DaftarKPRepository.getPendaftaranKPById(dataBaru.id);
+
+  //   if (!dataKP) {
+  //     throw new APIError("Data pendaftaran kerja praktek tidak ditemukan");
+  //   }
+  //   else if (
+  //     dataKP.document.find(
+  //       (item) => item.idKriteria === 0 && item.status === "Terkirim"
+  //     )
+  //   ) {
+  //     await DaftarKPRepository.putBerkasMahasiswa(dataBaru, dataKP, false);
+  //   } else if (dataKP.level_akses % 2 !== 0 || dataKP.level_akses <= 0) {
+  //     await DaftarKPRepository.putBerkasMahasiswa(dataBaru, dataKP, true);
+  //   } else {
+  //     await DaftarKPRepository.putBerkasMahasiswa(dataBaru, dataKP, false);
+  //   }
+  //   return {
+  //     response: true,
+  //     message: "Berkas mahasiswa berhasil disetujui",
+  //   };
+  // }
+
+  public static async putBerkasMahasiswa(
+    dataBaru: any
+  ): Promise<CommonResponse> {
+    const dataKP = await DaftarKPRepository.getPendaftaranKPById(dataBaru.id);
 
     if (!dataKP) {
       throw new APIError("Data pendaftaran kerja praktek tidak ditemukan");
-    } else if (dataKP.level_akses % 2 !== 0 || dataKP.level_akses <= 0) {
-      throw new APIError("Level akses mahasiswa tidak memenuhi syarat");
     }
-
-    await DaftarKPRepository.postBerkasMahasiswa(dataKP.id, dataKP.level_akses);
-
+    await DaftarKPRepository.putBerkasMahasiswa(dataBaru, dataKP);
     return {
       response: true,
       message: "Berkas mahasiswa berhasil disetujui",

@@ -15,7 +15,7 @@ export default class NilaiHelper {
     this.validateNilaiInput(kemampuanPresentasi, "Kemampuan Presentasi");
     this.validateNilaiInput(kesesuaianUrgensi, "Kesesuaian Urgensi");
 
-    return penguasaanKeilmuan * 0.4 + kemampuanPresentasi * 0.2 + kesesuaianUrgensi * 0.4;
+    return parseFloat((penguasaanKeilmuan * 0.4 + kemampuanPresentasi * 0.2 + kesesuaianUrgensi * 0.4).toFixed(2));
   }
 
   public static async calculateNilaiPembimbing(penyelesaianMasalah: number, bimbinganSikap: number, kualitasLaporan: number) {
@@ -31,7 +31,7 @@ export default class NilaiHelper {
       return null;
     }
 
-    return nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4;
+    return parseFloat((nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4).toFixed(2));
   }
 
   public static formatStatusNilai(status: StatusNilai): string {

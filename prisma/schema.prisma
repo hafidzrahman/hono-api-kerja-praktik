@@ -71,12 +71,13 @@ model instansi {
   alamat              String                @db.VarChar(255)
   longitude           Float
   latitude            Float
-  radius Float?
+  radius              Float?                @default(500)
   jenis               jenis_instansi
   profil_singkat      String?               @db.VarChar(255)
   status              status_instansi?      @default(Pending)
   nama_pj             String                @db.VarChar(255)
   no_hp_pj            String                @db.VarChar(14)
+
 
   pembimbing_instansi pembimbing_instansi[]
   pendaftaran_kp      pendaftaran_kp[]
@@ -180,6 +181,8 @@ model pembimbing_instansi {
   instansi instansi? @relation(fields: [id_instansi], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+
+
 model pendaftaran_kp {
   id                           String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   status                       status_pendaftaran?  @default(Baru)
@@ -188,11 +191,6 @@ model pendaftaran_kp {
   tanggal_selesai              DateTime?            @db.Date
   kelas_kp                     String?              @db.Char(1)
   tujuan_surat_instansi        String               @db.VarChar(255)
-  link_surat_pengantar         String?              @db.VarChar(255)
-  link_surat_balasan           String?              @db.VarChar(255)
-  link_surat_penunjukan_dospem String?              @db.VarChar(255)
-  link_surat_perpanjangan_kp   String?              @db.VarChar(255)
-  id_surat_pengajuan_dospem    String?              @db.VarChar(25)
   catatan_penolakan            String?              @db.VarChar(255)
   level_akses                  Int                  @default(1)
   judul_kp                     String?              @db.VarChar(255)
@@ -217,7 +215,32 @@ model pendaftaran_kp {
   dosen_pembimbing    dosen?               @relation("pembimbing", fields: [nip_pembimbing], references: [nip], onDelete: NoAction, onUpdate: NoAction)
   dosen_penguji       dosen?               @relation("penguji", fields: [nip_penguji], references: [nip], onDelete: NoAction, onUpdate: NoAction)
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
+  
   log LOG[]
+
+  document Document[]
+}
+
+model Kriteria {
+  id Int @id
+  nama String
+
+  document Document[]
+}
+
+model Document {
+  idKriteria Int 
+  idPendaftaranKP String @db.Uuid
+  data String @db.VarChar(255) @default("")
+  status status_dokumen?
+  catatan String? @db.VarChar(255)
+  tanggal_upload DateTime @default(now())
+
+  kriteria Kriteria @relation(fields: [idKriteria], references: [id])
+  pendaftaran_kp pendaftaran_kp @relation(fields: [idPendaftaranKP], references: [id])
+  
+
+  @@id([idKriteria, idPendaftaranKP])
 }
 
 model ruangan {
@@ -296,7 +319,6 @@ model option {
   tanggal_akhir_pendaftaran_kp        DateTime?
   tanggal_mulai_pendaftaran_kp_lanjut DateTime?
   tanggal_akhir_pendaftaran_kp_lanjut DateTime?
-
 }
 
 enum jenis_dokumen {

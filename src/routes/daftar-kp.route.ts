@@ -5,82 +5,7 @@ import AuthMiddleware from "../middlewares/auth.middleware";
 
 const daftarKPRoute = new Hono({ router: new RegExpRouter() });
 
-// daftarKPRoute.use("/", AuthMiddleware.JWTBearerTokenExtraction);
-
 // mahasiswa route
-
-// daftarKPRoute.get("/show", async function (c: Context) {
-//   const mahasiswa = await prisma.mahasiswa.findMany({});
-//   const instansi = await prisma.instansi.findMany({});
-//   const pendaftaranKP = await prisma.pendaftaran_kp.findMany({});
-
-//   return c.json({ mahasiswa, instansi, pendaftaranKP });
-// });
-
-// daftarKPRoute.get("/test", async function (c: Context) {
-//   await prisma.lOG.deleteMany({});
-//   await prisma.option.deleteMany({});
-//   await prisma.pendaftaran_kp.deleteMany({});
-//   await prisma.instansi.deleteMany({});
-//   await prisma.mahasiswa.deleteMany({});
-//   await prisma.ruangan.deleteMany({});
-//   await prisma.dosen.deleteMany({});
-//   await prisma.pembimbing_instansi.deleteMany({});
-//   await prisma.tahun_ajaran.deleteMany({});
-
-//   await prisma.dosen.create({
-//     data: {
-//       nip: "123321",
-//       nama: "Olav",
-//       email: "a@gmail.com",
-//     },
-//   });
-
-//   await prisma.mahasiswa.create({
-//     data: {
-//       nim: "123",
-//       nama: "Olav",
-//       email: "a@gmail.com",
-//       nip: "123321",
-//     },
-//   });
-
-//   await prisma.instansi.create({
-//     data: {
-//       id: "12432432-2222-2233-3333-333222222223",
-//       nama: "Test",
-//       alamat: "jl123",
-//       jenis: "Pemerintahan",
-//       nama_pj: "Olavlagi",
-//       no_hp_pj: "480243",
-//       status: "Aktif",
-//       longitude: 4324.432432,
-//       latitude: 432.432423432,
-//       radius: 500,
-//     },
-//   });
-
-//   await prisma.tahun_ajaran.create({
-//     data: {
-//       id: 202420251,
-//     },
-//   });
-
-//   await prisma.option.create({
-//     data: {
-//       id: 999,
-//       tanggal_mulai_pendaftaran_kp: "2025-05-02T08:18:36.528Z",
-//       tanggal_akhir_pendaftaran_kp: "2025-05-30T08:18:36.528Z",
-//       tanggal_mulai_pendaftaran_kp_lanjut: "2025-05-02T08:18:36.528Z",
-//       tanggal_akhir_pendaftaran_kp_lanjut: "2025-05-30T08:18:36.528Z",
-//     },
-//   });
-
-//   const mahasiswa = await prisma.mahasiswa.findMany({});
-//   const instansi = await prisma.instansi.findMany({});
-
-//   return c.json({ mahasiswa, instansi });
-// });
 
 daftarKPRoute.post(
   "/mahasiswa/daftar-kp/pendaftaran-kp",
@@ -124,6 +49,12 @@ daftarKPRoute.post(
   DaftarKPHandler.postSuratPerpanjanganKP
 );
 
+daftarKPRoute.post(
+  "/mahasiswa/daftar-kp/unggah-surat-penolakan-instansi",
+  AuthMiddleware.JWTBearerTokenExtraction,
+  DaftarKPHandler.postSuratPenolakanInstansi
+);
+
 daftarKPRoute.get(
   "/mahasiswa/daftar-kp/riwayat-pendaftaran-kp",
   AuthMiddleware.JWTBearerTokenExtraction,
@@ -137,7 +68,7 @@ daftarKPRoute.get(
 );
 
 daftarKPRoute.get(
-  "/mahasiswa/daftar-kp/kp-aktif-mahasiswa",
+  "/mahasiswa/daftar-kp/kp-saya",
   AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getKPTerbaruMahasiswa
 );
@@ -157,9 +88,15 @@ daftarKPRoute.get(
 );
 
 daftarKPRoute.post(
+  "/koordinator-kp/daftar-kp/acc-berkas-mahasiswa",
+  AuthMiddleware.JWTBearerTokenExtraction,
+  DaftarKPHandler.accBerkasMahasiswa
+);
+
+daftarKPRoute.put(
   "/koordinator-kp/daftar-kp/berkas-mahasiswa",
   AuthMiddleware.JWTBearerTokenExtraction,
-  DaftarKPHandler.postBerkasMahasiswa
+  DaftarKPHandler.putBerkasMahasiswa
 );
 
 daftarKPRoute.post(
@@ -169,25 +106,25 @@ daftarKPRoute.post(
 );
 
 daftarKPRoute.get(
-  "/koordinator-kp/daftar-kp/get-all-data-instansi",
+  "/koordinator-kp/daftar-kp/instansi",
   AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getAllDataInstansi
 );
 
 daftarKPRoute.get(
-  "/koordinator-kp/daftar-kp/get-data-instansi/:id",
+  "/koordinator-kp/daftar-kp/instansi/:id",
   AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.getDataDetailInstansi
 );
 
-daftarKPRoute.post(
-  "/koordinator-kp/daftar-kp/edit-data-instansi",
+daftarKPRoute.put(
+  "/koordinator-kp/daftar-kp/instansi",
   AuthMiddleware.JWTBearerTokenExtraction,
-  DaftarKPHandler.postEditDataInstansi
+  DaftarKPHandler.editDataInstansi
 );
 
-daftarKPRoute.post(
-  "/koordinator-kp/daftar-kp/delete-data-instansi",
+daftarKPRoute.delete(
+  "/koordinator-kp/daftar-kp/instansi/:id",
   AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.deleteDataInstansi
 );
@@ -204,12 +141,6 @@ daftarKPRoute.get(
   DaftarKPHandler.getDataKPDetailMahasiswa
 );
 
-daftarKPRoute.get(
-  "/koordinator-kp/daftar-kp/get-tanggal-daftar-kp",
-  AuthMiddleware.JWTBearerTokenExtraction,
-  DaftarKPHandler.getTanggalDaftarKP
-);
-
 daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/post-tanggal-daftar-kp",
   AuthMiddleware.JWTBearerTokenExtraction,
@@ -220,6 +151,14 @@ daftarKPRoute.post(
   "/koordinator-kp/daftar-kp/post-tanggal-daftar-kp-lanjut",
   AuthMiddleware.JWTBearerTokenExtraction,
   DaftarKPHandler.postTanggalDaftarKPLanjut
+);
+
+// all
+
+daftarKPRoute.get(
+  "/daftar-kp/get-tanggal-daftar-kp",
+  AuthMiddleware.JWTBearerTokenExtraction,
+  DaftarKPHandler.getTanggalDaftarKP
 );
 
 export default daftarKPRoute;
