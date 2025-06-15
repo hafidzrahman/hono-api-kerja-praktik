@@ -164,26 +164,29 @@ export default class JadwalHelper {
   }
 
   public static filterJadwalHariIni(jadwalList: DataJadwalSeminar[]): DataJadwalSeminar[] {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Definisikan timezone target Anda
+    const timeZone = 'Asia/Jakarta';
+
+    // Buat formatter untuk mendapatkan tanggal dalam format YYYY-MM-DD
+    // locale 'sv-SE' (Swedia) secara kebetulan menghasilkan format YYYY-MM-DD
+    const dateFormatter = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    // Dapatkan string tanggal untuk "hari ini" di timezone target
+    const todayString = dateFormatter.format(new Date());
 
     return jadwalList.filter((jadwal) => {
       const jadwalDate = jadwal.tanggal;
       if (!jadwalDate) return false;
 
-      const jadwalLokalTahun = jadwalDate.getFullYear();
-      const jadwalLokalBulan = jadwalDate.getMonth();
-      const jadwalLokalHari = jadwalDate.getDate();
+      // Dapatkan string tanggal untuk data jadwal di timezone yang sama
+      const jadwalDateString = dateFormatter.format(jadwalDate);
 
-      const hariIniTahun = today.getFullYear();
-      const hariIniBulan = today.getMonth();
-      const hariIniHari = today.getDate();
-
-      return (
-        jadwalLokalTahun === hariIniTahun &&
-        jadwalLokalBulan === hariIniBulan &&
-        jadwalLokalHari === hariIniHari
-      );
+      return jadwalDateString === todayString;
     });
   }
 
