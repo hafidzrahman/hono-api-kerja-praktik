@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { id } from "date-fns/locale";
 import StepHelper from "./dokumen-step.helper";
 import DateHelper from "./date.helper";
 import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
@@ -169,7 +168,7 @@ export default class JadwalHelper {
     today.setHours(0, 0, 0, 0);
 
     return jadwalList.filter((jadwal) => {
-      const jadwalDate = this.parseTanggalString(jadwal.tanggal);
+      const jadwalDate = jadwal.tanggal;
       if (!jadwalDate) return false;
 
       return jadwalDate.getTime() === today.getTime();
@@ -187,7 +186,7 @@ export default class JadwalHelper {
     endOfWeek.setHours(23, 59, 59, 999);
 
     return jadwalList.filter((jadwal) => {
-      const jadwalDate = this.parseTanggalString(jadwal.tanggal);
+      const jadwalDate = jadwal.tanggal;
       if (!jadwalDate) return false;
 
       return jadwalDate >= startOfWeek && jadwalDate <= endOfWeek;
