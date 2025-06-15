@@ -171,7 +171,19 @@ export default class JadwalHelper {
       const jadwalDate = jadwal.tanggal;
       if (!jadwalDate) return false;
 
-      return jadwalDate.getTime() === today.getTime();
+      const jadwalLokalTahun = jadwalDate.getFullYear();
+      const jadwalLokalBulan = jadwalDate.getMonth();
+      const jadwalLokalHari = jadwalDate.getDate();
+
+      const hariIniTahun = today.getFullYear();
+      const hariIniBulan = today.getMonth();
+      const hariIniHari = today.getDate();
+
+      return (
+        jadwalLokalTahun === hariIniTahun &&
+        jadwalLokalBulan === hariIniBulan &&
+        jadwalLokalHari === hariIniHari
+      );
     });
   }
 
