@@ -4,8 +4,6 @@ import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelatio
 import { APIError } from "../utils/api-error.util";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import JadwalHelper from "../helpers/jadwal.helper";
-import { format } from "date-fns";
-import DateHelper from "../helpers/date.helper";
 
 export default class JadwalRepository {
   public static async postJadwal(data: CreateJadwalInput): Promise<jadwal> {
@@ -200,7 +198,7 @@ export default class JadwalRepository {
   }
 
   public static async getJadwalMahasiswaSaya(nip: string, tahunAjaranId: number) {
-    const jakartaDate = DateHelper.toJakartaTime(new Date());
+    const jakartaDate = new Date();
     const currentDate = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 0, 0, 0, 0);
 
     const endOfDay = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 23, 59, 59, 999);
@@ -399,9 +397,9 @@ export default class JadwalRepository {
     const totalJadwalUlang = await this.totalJadwalUlang(tahunAjaranId)
 
     const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map((jadwal) => {
-      const waktuMulai = jadwal.waktu_mulai ? DateHelper.toJakartaTime(jadwal.waktu_mulai) : null;
-      const waktuSelesai = jadwal.waktu_selesai ? DateHelper.toJakartaTime(jadwal.waktu_selesai) : null;
-      const tanggal = jadwal.tanggal ? DateHelper.toJakartaTime(jadwal.tanggal) : null;
+      const waktuMulai = jadwal.waktu_mulai;
+      const waktuSelesai = jadwal.waktu_selesai;
+      const tanggal = jadwal.tanggal;
 
       return {
         id: jadwal.id,
@@ -412,9 +410,9 @@ export default class JadwalRepository {
         },
         status_kp: jadwal.pendaftaran_kp?.status || "N/A",
         ruangan: jadwal.ruangan?.nama || "N/A",
-        waktu_mulai: waktuMulai ? format(waktuMulai, "HH:mm") : "-",
-        waktu_selesai: waktuSelesai ? format(waktuSelesai, "HH:mm") : "-",
-        tanggal: tanggal ? JadwalHelper.formatTanggal(tanggal) : "N/A",
+        waktu_mulai: waktuMulai,
+        waktu_selesai: waktuSelesai,
+        tanggal: tanggal,
         dosen_penguji: jadwal.pendaftaran_kp?.dosen_penguji?.nama || "N/A",
         dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || "N/A",
         instansi: jadwal.pendaftaran_kp?.instansi?.nama || "N/A",
