@@ -198,11 +198,24 @@ export default class JadwalRepository {
   }
 
   public static async getJadwalMahasiswaSaya(nip: string, tahunAjaranId: number) {
-    const jakartaDate = new Date();
-    const currentDate = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 0, 0, 0, 0);
 
-    const endOfDay = new Date(jakartaDate.getFullYear(), jakartaDate.getMonth(), jakartaDate.getDate(), 23, 59, 59, 999);
+    const timeZone = 'Asia/Jakarta';
+    const today = new Date();
 
+    // 1. Buat "Mesin Konversi" yang berpikir dalam timezone Asia/Jakarta
+    const dateFormatter = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: timeZone,
+    });
+
+    // 2. Dapatkan string tanggal untuk awal rentang (hari ini)
+    const currentDate = new Date(dateFormatter.format(today)); // -> "2025-06-16"
+
+    // 3. Dapatkan string tanggal untuk akhir rentang (2 hari dari sekarang)
+    const endDateObject = new Date();
+    endDateObject.setDate(today.getDate() + 2);
+    const endOfDay = new Date(dateFormatter.format(endDateObject)); // -> "2025-06-18"
+
+    // Ambil tahun ajaran terakhir
     if (tahunAjaranId === 0) {
       const latestTahunAjaran = await this.getTahunAjaran();
       if (latestTahunAjaran) {
