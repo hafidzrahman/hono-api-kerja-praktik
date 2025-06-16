@@ -304,7 +304,7 @@ export default class JadwalRepository {
         nim: {
           in: mahasiswaNimList,
         },
-        nip,
+        // nip,
       },
       select: {
         id: true,
