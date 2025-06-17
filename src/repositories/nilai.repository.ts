@@ -42,8 +42,13 @@ export default class NilaiRepository {
       where: { nim },
       include: {
         komponen_penilaian_penguji: true,
+        validasi_nilai: true
       },
     });
+
+    if (existingNilai?.validasi_nilai?.is_approve === true) {
+      throw new APIError(`Waduh, Nilai ini sudah divalidasi! 😭`, 400);
+    }
 
     let nilai;
 
@@ -142,8 +147,13 @@ export default class NilaiRepository {
       where: { nim },
       include: {
         komponen_penilaian_pembimbing: true,
+        validasi_nilai: true,
       },
     });
+
+    if (existingNilai?.validasi_nilai?.is_approve === true) {
+      throw new APIError(`Waduh, Nilai ini sudah divalidasi! 😭`, 400);
+    }
 
     let nilai;
 

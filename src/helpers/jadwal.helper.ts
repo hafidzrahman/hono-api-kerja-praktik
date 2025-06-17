@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { id } from "date-fns/locale";
 import StepHelper from "./dokumen-step.helper";
 import DateHelper from "./date.helper";
 import { DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
@@ -74,19 +73,19 @@ export default class JadwalHelper {
 
     const semester = MahasiswaHelper.getSemesterByNIM(nim)
 
-    const tanggalJkt = jadwal.tanggal ? DateHelper.toJakartaTime(new Date(jadwal.tanggal)) : null
-    const waktuMulaiJkt = jadwal.waktu_mulai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_mulai)) : null
-    const waktuSelesaiJkt = jadwal.waktu_selesai ? DateHelper.toJakartaTime(new Date(jadwal.waktu_selesai)) : null
-    const waktuDinilai = jadwal.nilai?.komponen_penilaian_penguji?.created_at ? DateHelper.toJakartaTime(new Date(jadwal.nilai.komponen_penilaian_penguji.created_at)) : null
+    const tanggalJkt = jadwal.tanggal;
+    const waktuMulaiJkt = jadwal.waktu_mulai;
+    const waktuSelesaiJkt = jadwal.waktu_selesai;
+    const waktuDinilai = jadwal.nilai?.komponen_penilaian_penguji?.created_at
 
     return {
       id: jadwal.id,
       nim: nim || "-",
       nama: jadwal.pendaftaran_kp?.mahasiswa?.nama || "-",
       ruangan: jadwal.ruangan?.nama || "-",
-      tanggal: tanggalJkt ? this.formatTanggal(tanggalJkt) : "-",
-      waktu_mulai: waktuMulaiJkt ? format(waktuMulaiJkt, "HH:mm") : "-",
-      waktu_selesai: waktuSelesaiJkt? format(waktuSelesaiJkt, "HH:mm") : "-",
+      tanggal: tanggalJkt,
+      waktu_mulai: waktuMulaiJkt,
+      waktu_selesai: waktuSelesaiJkt,
       status: isPenilaianCompleted ? "Dinilai" : "Belum Dinilai",
       semester: semester || "-",
       dosen_pembimbing: jadwal.pendaftaran_kp?.dosen_pembimbing?.nama || "-",
@@ -165,32 +164,61 @@ export default class JadwalHelper {
   }
 
   public static filterJadwalHariIni(jadwalList: DataJadwalSeminar[]): DataJadwalSeminar[] {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Definisikan timezone target Anda
+    const timeZone = 'Asia/Jakarta';
+
+    // Buat formatter untuk mendapatkan tanggal dalam format YYYY-MM-DD
+    // locale 'sv-SE' (Swedia) secara kebetulan menghasilkan format YYYY-MM-DD
+    const dateFormatter = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    // Dapatkan string tanggal untuk "hari ini" di timezone target
+    const todayString = dateFormatter.format(new Date());
 
     return jadwalList.filter((jadwal) => {
-      const jadwalDate = this.parseTanggalString(jadwal.tanggal);
+      const jadwalDate = jadwal.tanggal;
       if (!jadwalDate) return false;
 
-      return jadwalDate.getTime() === today.getTime();
+      // Dapatkan string tanggal untuk data jadwal di timezone yang sama
+      const jadwalDateString = dateFormatter.format(jadwalDate);
+
+      return jadwalDateString === todayString;
     });
   }
 
   public static filterJadwalMingguIni(jadwalList: DataJadwalSeminar[]): DataJadwalSeminar[] {
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
-    startOfWeek.setHours(0, 0, 0, 0);
+    const timeZone = 'Asia/Jakarta';
+    const today = new Date(); // Ambil timestamp saat ini
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
+    // 1. Tentukan tanggal awal dan akhir (sebagai objek Date)
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate()); // Mundur 2 hari
+
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + 4); // Maju 4 hari
+
+    // 2. Buat "Mesin Konversi" yang berpikir dalam timezone Asia/Jakarta
+    const dateFormatter = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: timeZone,
+    });
+
+    // 3. Konversi semua tanggal ke format string YYYY-MM-DD
+    const startDateString = dateFormatter.format(startDate); // Misal: "2025-06-14"
+    const endDateString = dateFormatter.format(endDate);   // Misal: "2025-06-20"
 
     return jadwalList.filter((jadwal) => {
-      const jadwalDate = this.parseTanggalString(jadwal.tanggal);
+      const jadwalDate = jadwal.tanggal;
       if (!jadwalDate) return false;
 
-      return jadwalDate >= startOfWeek && jadwalDate <= endOfWeek;
+      // Konversi juga tanggal jadwal menggunakan mesin yang sama
+      const jadwalDateString = dateFormatter.format(jadwalDate); // Misal: "2025-06-16"
+
+      // 4. Bandingkan sebagai string (ini aman dan andal)
+      return jadwalDateString >= startDateString && jadwalDateString <= endDateString;
     });
   }
 }

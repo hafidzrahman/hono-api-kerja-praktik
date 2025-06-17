@@ -71,7 +71,7 @@ model instansi {
   alamat              String                @db.VarChar(255)
   longitude           Float
   latitude            Float
-  radius Float?
+  radius              Float?                @default(500)
   jenis               jenis_instansi
   profil_singkat      String?               @db.VarChar(255)
   status              status_instansi?      @default(Pending)

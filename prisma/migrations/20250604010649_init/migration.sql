@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Document" ADD COLUMN     "tanggal_upload" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
