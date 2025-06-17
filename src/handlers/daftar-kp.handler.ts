@@ -1,11 +1,15 @@
 import { Context } from "hono";
 import DaftarKPService from "../services/daftar-kp.service";
 import { APIError } from "../utils/api-error.util";
-import { pendaftaran_kp } from "../generated/prisma";
+import {
+  AccBerkasMahasiswaInterface,
+  PutDataInstansiInterface,
+  PutMahasiswaParamsInterface,
+} from "../types/daftar-kp/handler.type";
 
 export default class DaftarKPHandler {
   public static async accBerkasMahasiswa(c: Context) {
-    const { id, catatan } = (await c.req.json()) as any;
+    const { id, catatan } = (await c.req.json()) as AccBerkasMahasiswaInterface;
 
     if (!id) {
       throw new APIError("ID pendaftaran KP tidak ditemukan");
@@ -92,7 +96,7 @@ export default class DaftarKPHandler {
       jenis,
       nama_pj,
       no_hp_pj,
-    } = (await c.req.json()) as any;
+    } = (await c.req.json()) as PutDataInstansiInterface;
 
     if (!id) {
       throw new APIError("ID data instansi kosong");
@@ -207,6 +211,10 @@ export default class DaftarKPHandler {
         kelas_kp,
       })
     );
+  }
+
+  public static async getTahunAjaran(c: Context) {
+    return c.json(await DaftarKPService.getTahunAjaran());
   }
 
   public static async getDataInstansi(c: Context) {
@@ -378,19 +386,19 @@ export default class DaftarKPHandler {
       link_surat_penolakan_instansi,
       link_surat_pengantar,
       link_surat_balasan,
-      link_surat_penunjukan_dospem,
+      link_surat_penunjukkan_dospem,
       link_surat_perpanjangan_kp,
       id_surat_pengajuan_dospem,
       status_link_surat_penolakan_instansi,
       status_link_surat_pengantar,
       status_link_surat_balasan,
-      status_link_surat_penunjukan_dospem,
+      status_link_surat_penunjukkan_dospem,
       status_link_surat_perpanjangan_kp,
       status_id_surat_pengajuan_dospem,
       catatan_link_surat_penolakan_instansi,
       catatan_link_surat_pengantar,
       catatan_link_surat_balasan,
-      catatan_link_surat_penunjukan_dospem,
+      catatan_link_surat_penunjukkan_dospem,
       catatan_link_surat_perpanjangan_kp,
       catatan_id_surat_pengajuan_dospem,
       catatan_penolakan,
@@ -398,7 +406,8 @@ export default class DaftarKPHandler {
       judul_kp,
       alasan_lanjut_kp,
       id_instansi,
-    } = (await c.req.json()) as any;
+      tanggal_selesai,
+    } = (await c.req.json()) as PutMahasiswaParamsInterface;
 
     if (!id) {
       throw new APIError("ID pendaftaran KP tidak ditemukan");
@@ -411,27 +420,27 @@ export default class DaftarKPHandler {
         status_link_surat_penolakan_instansi !== "Terkirim" &&
         status_link_surat_penolakan_instansi !== "Ditolak") ||
       (status_link_surat_pengantar !== null &&
-        status_link_surat_penolakan_instansi !== undefined &&
+        status_link_surat_pengantar !== undefined &&
         status_link_surat_pengantar !== "Divalidasi" &&
         status_link_surat_pengantar !== "Terkirim" &&
         status_link_surat_pengantar !== "Ditolak") ||
       (status_link_surat_balasan !== null &&
-        status_link_surat_penolakan_instansi !== undefined &&
+        status_link_surat_balasan !== undefined &&
         status_link_surat_balasan !== "Divalidasi" &&
         status_link_surat_balasan !== "Terkirim" &&
         status_link_surat_balasan !== "Ditolak") ||
       (status_id_surat_pengajuan_dospem !== null &&
-        status_link_surat_penolakan_instansi !== undefined &&
+        status_id_surat_pengajuan_dospem !== undefined &&
         status_id_surat_pengajuan_dospem !== "Divalidasi" &&
         status_id_surat_pengajuan_dospem !== "Terkirim" &&
         status_id_surat_pengajuan_dospem !== "Ditolak") ||
-      (status_link_surat_penunjukan_dospem !== null &&
-        status_link_surat_penolakan_instansi !== undefined &&
-        status_link_surat_penunjukan_dospem !== "Divalidasi" &&
-        status_link_surat_penunjukan_dospem !== "Terkirim" &&
-        status_link_surat_penunjukan_dospem !== "Ditolak") ||
+      (status_link_surat_penunjukkan_dospem !== null &&
+        status_link_surat_penunjukkan_dospem !== undefined &&
+        status_link_surat_penunjukkan_dospem !== "Divalidasi" &&
+        status_link_surat_penunjukkan_dospem !== "Terkirim" &&
+        status_link_surat_penunjukkan_dospem !== "Ditolak") ||
       (status_link_surat_perpanjangan_kp !== null &&
-        status_link_surat_penolakan_instansi !== undefined &&
+        status_link_surat_perpanjangan_kp !== undefined &&
         status_link_surat_perpanjangan_kp !== "Divalidasi" &&
         status_link_surat_perpanjangan_kp !== "Terkirim" &&
         status_link_surat_perpanjangan_kp !== "Ditolak")
@@ -449,19 +458,19 @@ export default class DaftarKPHandler {
         link_surat_penolakan_instansi,
         link_surat_pengantar,
         link_surat_balasan,
-        link_surat_penunjukan_dospem,
+        link_surat_penunjukkan_dospem,
         link_surat_perpanjangan_kp,
         id_surat_pengajuan_dospem,
         status_link_surat_penolakan_instansi,
         status_link_surat_pengantar,
         status_link_surat_balasan,
-        status_link_surat_penunjukan_dospem,
+        status_link_surat_penunjukkan_dospem,
         status_link_surat_perpanjangan_kp,
         status_id_surat_pengajuan_dospem,
         catatan_link_surat_penolakan_instansi,
         catatan_link_surat_pengantar,
         catatan_link_surat_balasan,
-        catatan_link_surat_penunjukan_dospem,
+        catatan_link_surat_penunjukkan_dospem,
         catatan_link_surat_perpanjangan_kp,
         catatan_id_surat_pengajuan_dospem,
         catatan_penolakan,
@@ -469,6 +478,7 @@ export default class DaftarKPHandler {
         judul_kp,
         alasan_lanjut_kp,
         id_instansi,
+        tanggal_selesai,
       })
     );
   }

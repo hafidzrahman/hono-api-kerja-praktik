@@ -6,6 +6,9 @@ import {
   RepositoryRiwayatPendaftaranKPInterface,
   RepositoryDetailPendaftaranKPMahasiswa,
   GetAllDataInstansiRepository,
+  PutMahasiswaParamsInterface,
+  dataLamaPutBerkasMahasiswa,
+  getTahunAjaran,
 } from "../types/daftar-kp/repository.type";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import { APIError } from "../utils/api-error.util";
@@ -935,6 +938,12 @@ export default class DaftarKPRepository {
     return data;
   }
 
+  public static async getTahunAjaran(): Promise<getTahunAjaran[]> {
+    const dataTahunAjaran = await prisma.tahun_ajaran.findMany({});
+
+    return dataTahunAjaran;
+  }
+
   public static async createPermomohonanKP({
     dataKPMahasiswa,
     nim,
@@ -955,7 +964,7 @@ export default class DaftarKPRepository {
           tanggal_mulai: tanggalMulai,
           id_instansi: idInstansi,
           tujuan_surat_instansi: tujuanSuratInstansi,
-          id_tahun_ajaran: MahasiswaHelper.getTahunAjaran(),
+          id_tahun_ajaran: await MahasiswaHelper.getTahunAjaran(),
           judul_kp,
           level_akses: 1,
           kelas_kp,
@@ -978,7 +987,7 @@ export default class DaftarKPRepository {
         tanggal_mulai: tanggalMulai,
         id_instansi: idInstansi,
         tujuan_surat_instansi: tujuanSuratInstansi,
-        id_tahun_ajaran: MahasiswaHelper.getTahunAjaran(),
+        id_tahun_ajaran: await MahasiswaHelper.getTahunAjaran(),
         judul_kp,
         level_akses: 1,
         kelas_kp,
@@ -1059,7 +1068,6 @@ export default class DaftarKPRepository {
     nim: string,
     linkSuratPengantarKP: string
   ): Promise<void> {
-    console.log(linkSuratPengantarKP);
     const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim);
 
     // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
@@ -1363,121 +1371,156 @@ export default class DaftarKPRepository {
     return dataKP;
   }
 
-  // public static async editMahasiswa(dataBaru: any, dataLama: any) {
-  //   await prisma.pendaftaran_kp.update({
-  //     where: {
-  //       id: dataLama.id,
-  //     },
-  //     data: {
-  //       judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
-  //       id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
-  //       kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
-  //       tujuan_surat_instansi:
-  //         dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
-  //       status: dataBaru.status || dataLama.status,
-  //       level_akses: dataBaru.level_akses || dataLama.level_akses,
-  //       document: {
-  //         update: [
-  //           {
-  //             where: {
-  //               idKriteria_idPendaftaranKP: {
-  //                 idKriteria: 0,
-  //                 idPendaftaranKP: dataLama.id,
-  //               },
-  //             },
-  //             data: {
-  //               data:
-  //                 dataBaru.link_surat_penolakan_instansi ||
-  //                 dataLama.link_surat_penolakan_instansi,
-  //             },
-  //           },
-  //           {
-  //             where: {
-  //               idKriteria_idPendaftaranKP: {
-  //                 idKriteria: 1,
-  //                 idPendaftaranKP: dataLama.id,
-  //               },
-  //             },
-  //             data: {
-  //               data:
-  //                 dataBaru.link_surat_pengantar ||
-  //                 dataLama.link_surat_pengantar,
-  //             },
-  //           },
-  //           {
-  //             where: {
-  //               idKriteria_idPendaftaranKP: {
-  //                 idKriteria: 2,
-  //                 idPendaftaranKP: dataLama.id,
-  //               },
-  //             },
-  //             data: {
-  //               data:
-  //                 dataBaru.link_surat_balasan || dataLama.link_surat_balasan,
-  //             },
-  //           },
-  //           {
-  //             where: {
-  //               idKriteria_idPendaftaranKP: {
-  //                 idKriteria: 3,
-  //                 idPendaftaranKP: dataLama.id,
-  //               },
-  //             },
-  //             data: {
-  //               data:
-  //                 dataBaru.id_surat_pengajuan_dospem ||
-  //                 dataLama.id_surat_pengajuan_dospem,
-  //             },
-  //           },
-  //           {
-  //             where: {
-  //               idKriteria_idPendaftaranKP: {
-  //                 idKriteria: 4,
-  //                 idPendaftaranKP: dataLama.id,
-  //               },
-  //             },
-  //             data: {
-  //               data:
-  //                 dataBaru.link_surat_penunjukan_dospem ||
-  //                 dataLama.link_surat_penunjukan_dospem,
-  //             },
-  //           },
-  //           {
-  //             where: {
-  //               idKriteria_idPendaftaranKP: {
-  //                 idKriteria: 5,
-  //                 idPendaftaranKP: dataLama.id,
-  //               },
-  //             },
-  //             data: {
-  //               data:
-  //                 dataBaru.link_surat_perpanjangan_kp ||
-  //                 dataLama.link_surat_perpanjangan_kp,
-  //             },
-  //           },
-  //         ],
-  //       },
-  //       alasan_lanjut_kp:
-  //         dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
-  //     },
-  //   });
-  // }
-
-  public static async putBerkasMahasiswa(dataBaru: any, dataLama: any) {
+  public static async putBerkasMahasiswa(
+    dataBaru: PutMahasiswaParamsInterface,
+    dataLama: dataLamaPutBerkasMahasiswa
+  ) {
     console.log(dataBaru);
-    const dataDocumentPendaftaranKP =
-      await DaftarKPRepository.getDocumentsKPById(dataLama.id);
-    if (dataLama.levelAkses === 10) {
-      // yg ini perlu?
+    if (
+      (dataLama.document[0].status !== "Divalidasi" &&
+        dataBaru.status_link_surat_penolakan_instansi === "Divalidasi") ||
+      (dataLama.level_akses !== 0 && dataBaru.level_akses === 0)
+    ) {
       await prisma.pendaftaran_kp.update({
         where: {
           id: dataLama.id,
         },
         data: {
-          level_akses:
-            dataBaru.level_akses % 2 === 1
-              ? dataBaru.level_akses
-              : dataLama.level_akses,
+          status: dataBaru.status || dataLama.status,
+          level_akses: 0,
+          document: {
+            update: [
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 0,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  status:
+                    dataBaru.status_link_surat_penolakan_instansi ===
+                    "Divalidasi"
+                      ? "Divalidasi"
+                      : null,
+                  catatan: dataBaru.catatan_link_surat_penolakan_instansi,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 1,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data: undefined,
+                  status: null,
+                  catatan: null,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 2,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data: undefined,
+                  status: null,
+                  catatan: null,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 3,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data: undefined,
+                  status: null,
+                  catatan: null,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 4,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data: undefined,
+                  status: null,
+                  catatan: null,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 5,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data: undefined,
+                  status: null,
+                  catatan: null,
+                },
+              },
+            ],
+          },
+        },
+      });
+      return;
+    }
+    if (dataLama.level_akses % 2 === 0) {
+      let final_level_akses = dataLama.level_akses;
+      if (dataLama.level_akses === 0) final_level_akses = dataBaru.level_akses;
+      if (dataLama.level_akses / 2 === 1) {
+        if (dataBaru.status_link_surat_pengantar === "Ditolak") {
+          final_level_akses = final_level_akses - 1;
+        } else if (dataBaru.status_link_surat_pengantar === "Divalidasi") {
+          final_level_akses = final_level_akses + 1;
+        }
+      } else if (dataLama.level_akses / 2 === 2) {
+        if (dataBaru.status_link_surat_balasan === "Ditolak") {
+          final_level_akses = final_level_akses - 1;
+        } else if (dataBaru.status_link_surat_balasan === "Divalidasi") {
+          final_level_akses = final_level_akses + 1;
+        }
+      } else if (dataLama.level_akses / 2 === 3) {
+        if (dataBaru.status_id_surat_pengajuan_dospem === "Ditolak") {
+          final_level_akses = final_level_akses - 1;
+        } else if (dataBaru.status_id_surat_pengajuan_dospem === "Divalidasi") {
+          final_level_akses = final_level_akses + 1;
+        }
+      } else if (dataLama.level_akses / 2 === 4) {
+        if (dataBaru.status_link_surat_penunjukkan_dospem === "Ditolak") {
+          final_level_akses = final_level_akses - 1;
+        } else if (
+          dataBaru.status_link_surat_penunjukkan_dospem === "Divalidasi"
+        ) {
+          final_level_akses = final_level_akses + 1;
+        }
+      } else if (dataLama.level_akses / 2 === 5) {
+        if (dataBaru.status_link_surat_perpanjangan_kp === "Ditolak") {
+          final_level_akses = final_level_akses - 1;
+        } else if (
+          dataBaru.status_link_surat_perpanjangan_kp === "Divalidasi"
+        ) {
+          final_level_akses = final_level_akses + 1;
+        }
+      }
+      await prisma.pendaftaran_kp.update({
+        where: {
+          id: dataLama.id,
+        },
+        data: {
+          status: dataBaru.status || dataLama.status,
           alasan_lanjut_kp:
             dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
           id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
@@ -1485,6 +1528,7 @@ export default class DaftarKPRepository {
             dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
           judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
           kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
+          level_akses: final_level_akses,
           document: {
             update: [
               {
@@ -1497,12 +1541,12 @@ export default class DaftarKPRepository {
                 data: {
                   data:
                     dataBaru.link_surat_penolakan_instansi ||
-                    dataLama.link_surat_penolakan_instansi,
+                    dataLama.document[0].data,
                   status:
-                    dataBaru.level_akses === -1
+                    dataBaru.level_akses === 0
                       ? "Ditolak"
                       : dataBaru.status_link_surat_penolakan_instansi ||
-                        dataDocumentPendaftaranKP[0].status,
+                        dataLama.document[0].status,
                   catatan: dataBaru.catatan_link_surat_penolakan_instansi,
                 },
               },
@@ -1515,13 +1559,12 @@ export default class DaftarKPRepository {
                 },
                 data: {
                   data:
-                    dataBaru.link_surat_pengantar ||
-                    dataLama.link_surat_pengantar,
+                    dataBaru.link_surat_pengantar || dataLama.document[1].data,
                   status:
                     dataBaru.level_akses === 1
                       ? "Ditolak"
                       : dataBaru.status_link_surat_pengantar ||
-                        dataDocumentPendaftaranKP[1].status,
+                        dataLama.document[1].status,
                   catatan: dataBaru.catatan_link_surat_pengantar,
                 },
               },
@@ -1534,12 +1577,12 @@ export default class DaftarKPRepository {
                 },
                 data: {
                   data:
-                    dataBaru.link_surat_balasan || dataLama.link_surat_balasan,
+                    dataBaru.link_surat_balasan || dataLama.document[2].data,
                   status:
                     dataBaru.level_akses === 3
                       ? "Ditolak"
                       : dataBaru.status_link_surat_balasan ||
-                        dataDocumentPendaftaranKP[2].status,
+                        dataLama.document[2].status,
                   catatan: dataBaru.catatan_link_surat_balasan,
                 },
               },
@@ -1553,12 +1596,12 @@ export default class DaftarKPRepository {
                 data: {
                   data:
                     dataBaru.id_surat_pengajuan_dospem ||
-                    dataLama.id_surat_pengajuan_dospem,
+                    dataLama.document[3].data,
                   status:
                     dataBaru.level_akses === 5
                       ? "Ditolak"
                       : dataBaru.status_id_surat_pengajuan_dospem ||
-                        dataDocumentPendaftaranKP[3].status,
+                        dataLama.document[3].status,
                   catatan: dataBaru.catatan_id_surat_pengajuan_dospem,
                 },
               },
@@ -1571,14 +1614,14 @@ export default class DaftarKPRepository {
                 },
                 data: {
                   data:
-                    dataBaru.link_surat_penunjukan_dospem ||
-                    dataLama.link_surat_penunjukan_dospem,
+                    dataBaru.link_surat_penunjukkan_dospem ||
+                    dataLama.document[4].data,
                   status:
                     dataBaru.level_akses === 7
                       ? "Ditolak"
-                      : dataBaru.status_link_surat_penunjukan_dospem ||
-                        dataDocumentPendaftaranKP[4].status,
-                  catatan: dataBaru.catatan_link_surat_penunjukan_dospem,
+                      : dataBaru.status_link_surat_penunjukkan_dospem ||
+                        dataLama.document[4].status,
+                  catatan: dataBaru.catatan_link_surat_penunjukkan_dospem,
                 },
               },
               {
@@ -1591,245 +1634,348 @@ export default class DaftarKPRepository {
                 data: {
                   data:
                     dataBaru.link_surat_perpanjangan_kp ||
-                    dataLama.link_surat_perpanjangan_kp,
+                    dataLama.document[5].data,
                   status:
                     dataBaru.level_akses === 9
                       ? "Ditolak"
                       : dataBaru.status_link_surat_perpanjangan_kp ||
-                        dataDocumentPendaftaranKP[5].status,
+                        dataLama.document[5].status,
                   catatan: dataBaru.catatan_link_surat_perpanjangan_kp,
                 },
               },
             ],
           },
-          status: dataBaru.status || "Lanjut",
+        },
+      });
+    } else {
+      if (dataLama.level_akses === 10) {
+        // yg ini perlu?
+        await prisma.pendaftaran_kp.update({
+          where: {
+            id: dataLama.id,
+          },
+          data: {
+            tanggal_selesai:
+              dataBaru.tanggal_selesai || dataLama.tanggal_selesai,
+            level_akses:
+              dataBaru.level_akses % 2 === 1
+                ? dataBaru.level_akses
+                : dataLama.level_akses,
+            alasan_lanjut_kp:
+              dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
+            id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
+            tujuan_surat_instansi:
+              dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
+            judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
+            kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
+            document: {
+              update: [
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 0,
+                      idPendaftaranKP: dataLama.id,
+                    },
+                  },
+                  data: {
+                    data:
+                      dataBaru.link_surat_penolakan_instansi ||
+                      dataLama.document[0].data,
+                    status:
+                      dataBaru.level_akses === -1
+                        ? "Ditolak"
+                        : dataBaru.status_link_surat_penolakan_instansi ||
+                          dataLama.document[0].status,
+                    catatan: dataBaru.catatan_link_surat_penolakan_instansi,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 1,
+                      idPendaftaranKP: dataLama.id,
+                    },
+                  },
+                  data: {
+                    data:
+                      dataBaru.link_surat_pengantar ||
+                      dataLama.document[1].data,
+                    status:
+                      dataBaru.level_akses === 1
+                        ? "Ditolak"
+                        : dataBaru.status_link_surat_pengantar ||
+                          dataLama.document[1].status,
+                    catatan: dataBaru.catatan_link_surat_pengantar,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 2,
+                      idPendaftaranKP: dataLama.id,
+                    },
+                  },
+                  data: {
+                    data:
+                      dataBaru.link_surat_balasan || dataLama.document[2].data,
+                    status:
+                      dataBaru.level_akses === 3
+                        ? "Ditolak"
+                        : dataBaru.status_link_surat_balasan ||
+                          dataLama.document[2].status,
+                    catatan: dataBaru.catatan_link_surat_balasan,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 3,
+                      idPendaftaranKP: dataLama.id,
+                    },
+                  },
+                  data: {
+                    data:
+                      dataBaru.id_surat_pengajuan_dospem ||
+                      dataLama.document[3].data,
+                    status:
+                      dataBaru.level_akses === 5
+                        ? "Ditolak"
+                        : dataBaru.status_id_surat_pengajuan_dospem ||
+                          dataLama.document[3].status,
+                    catatan: dataBaru.catatan_id_surat_pengajuan_dospem,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 4,
+                      idPendaftaranKP: dataLama.id,
+                    },
+                  },
+                  data: {
+                    data:
+                      dataBaru.link_surat_penunjukkan_dospem ||
+                      dataLama.document[4].data,
+                    status:
+                      dataBaru.level_akses === 7
+                        ? "Ditolak"
+                        : dataBaru.status_link_surat_penunjukkan_dospem ||
+                          dataLama.document[4].status,
+                    catatan: dataBaru.catatan_link_surat_penunjukkan_dospem,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 5,
+                      idPendaftaranKP: dataLama.id,
+                    },
+                  },
+                  data: {
+                    data:
+                      dataBaru.link_surat_perpanjangan_kp ||
+                      dataLama.document[5].data,
+                    status:
+                      dataBaru.level_akses === 9
+                        ? "Ditolak"
+                        : dataBaru.status_link_surat_perpanjangan_kp ||
+                          dataLama.document[5].status,
+                    catatan: dataBaru.catatan_link_surat_perpanjangan_kp,
+                  },
+                },
+              ],
+            },
+            status: dataBaru.status || "Lanjut",
+          },
+        });
+
+        // TIMEOUT UNTUK 6 BULAN
+
+        await DaftarKPRepository.createLOGPendaftaranKPById(
+          dataLama.id,
+          `[BERKAS DITERIMA] Pengajuan link surat perpanjangan kerja praktek diterima`,
+          new Date(),
+          1
+        );
+        return;
+      }
+
+      if (dataLama.document.length === 0) {
+        console.log(
+          "belum melalui proses create, harusnya jika melalui proses create, maka document akan dibuatkan"
+        );
+      }
+
+      // setting di FE aja utk bagian acc berkas yang di edit
+
+      // sistem akan rusak bila berkas merupakan bilangan genap dan mahasiswa belum mengirimkan berkas
+      await prisma.pendaftaran_kp.update({
+        where: {
+          id: dataLama.id,
+        },
+        data: {
+          status: dataBaru.status || dataLama.status,
+          alasan_lanjut_kp:
+            dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
+          id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
+          tujuan_surat_instansi:
+            dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
+          judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
+          kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
+          level_akses:
+            dataBaru.level_akses % 2 === 1
+              ? dataBaru.level_akses
+              : dataLama.level_akses,
+          document: {
+            update: [
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 0,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data:
+                    dataBaru.link_surat_penolakan_instansi ||
+                    dataLama.document[0].data,
+                  status:
+                    dataBaru.level_akses === 0
+                      ? "Ditolak"
+                      : dataBaru.status_link_surat_penolakan_instansi ||
+                        dataLama.document[0].status,
+                  catatan: dataBaru.catatan_link_surat_penolakan_instansi,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 1,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data:
+                    dataBaru.link_surat_pengantar || dataLama.document[1].data,
+                  status:
+                    dataBaru.level_akses === 1
+                      ? "Ditolak"
+                      : dataBaru.status_link_surat_pengantar ||
+                        dataLama.document[1].status,
+                  catatan: dataBaru.catatan_link_surat_pengantar,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 2,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data:
+                    dataBaru.link_surat_balasan || dataLama.document[2].data,
+                  status:
+                    dataBaru.level_akses === 3
+                      ? "Ditolak"
+                      : dataBaru.status_link_surat_balasan ||
+                        dataLama.document[2].status,
+                  catatan: dataBaru.catatan_link_surat_balasan,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 3,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data:
+                    dataBaru.id_surat_pengajuan_dospem ||
+                    dataLama.document[3].data,
+                  status:
+                    dataBaru.level_akses === 5
+                      ? "Ditolak"
+                      : dataBaru.status_id_surat_pengajuan_dospem ||
+                        dataLama.document[3].status,
+                  catatan: dataBaru.catatan_id_surat_pengajuan_dospem,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 4,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data:
+                    dataBaru.link_surat_penunjukkan_dospem ||
+                    dataLama.document[4].data,
+                  status:
+                    dataBaru.level_akses === 7
+                      ? "Ditolak"
+                      : dataBaru.status_link_surat_penunjukkan_dospem ||
+                        dataLama.document[4].status,
+                  catatan: dataBaru.catatan_link_surat_penunjukkan_dospem,
+                },
+              },
+              {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 5,
+                    idPendaftaranKP: dataLama.id,
+                  },
+                },
+                data: {
+                  data:
+                    dataBaru.link_surat_perpanjangan_kp ||
+                    dataLama.document[5].data,
+                  status:
+                    dataBaru.level_akses === 9
+                      ? "Ditolak"
+                      : dataBaru.status_link_surat_perpanjangan_kp ||
+                        dataLama.document[5].status,
+                  catatan: dataBaru.catatan_link_surat_perpanjangan_kp,
+                },
+              },
+            ],
+          },
         },
       });
 
-      // TIMEOUT UNTUK 6 BULAN
-
-      // const pointer = setTimeout(function () {
-      //   const pointer1 = setTimeout(function () {
-      //     const pointer2 = setTimeout(function () {
-      //       const pointer3 = setTimeout(function () {
-      //         const pointer4 = setTimeout(function () {
-      //           const pointer5 = setTimeout(function () {
-      //             const pointer6 = setTimeout(function () {
-      //               const pointer7 = setTimeout(async function () {
-      //                 {
-      //                   await prisma.pendaftaran_kp.update({
-      //                     where: {
-      //                       id: dataLama.id,
-      //                       status: "Lanjut",
-      //                     },
-      //                     data: {
-      //                       status: "Gagal",
-      //                     },
-      //                   });
-      //                   clearTimeout(pointer7);
-      //                 }
-      //               }, 518400000);
-      //               clearTimeout(pointer6);
-      //             }, 2147483640);
-      //             clearTimeout(pointer5);
-      //           }, 2147483640);
-      //           clearTimeout(pointer4);
-      //         }, 2147483640);
-      //         clearTimeout(pointer3);
-      //       }, 2147483640);
-      //       clearTimeout(pointer2);
-      //     }, 2147483640);
-      //     clearTimeout(pointer1);
-      //   }, 2147483640);
-      //   clearTimeout(pointer);
-      // }, 2147483640);
-
-      await DaftarKPRepository.createLOGPendaftaranKPById(
-        dataLama.id,
-        `[BERKAS DITERIMA] Pengajuan link surat perpanjangan kerja praktek diterima`,
-        new Date(),
-        1
-      );
-      return;
-    }
-
-    if (dataDocumentPendaftaranKP.length === 0) {
-      console.log(
-        "belum melalui proses create, harusnya jika melalui proses create, maka document akan dibuatkan"
-      );
-    }
-
-    // setting di FE aja utk bagian acc berkas yang di edit
-
-    // sistem akan rusak bila berkas merupakan bilangan genap dan mahasiswa belum mengirimkan berkas
-
-    await prisma.pendaftaran_kp.update({
-      where: {
-        id: dataLama.id,
-      },
-      data: {
-        alasan_lanjut_kp:
-          dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
-        id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
-        tujuan_surat_instansi:
-          dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
-        judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
-        kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
-        level_akses:
-          dataBaru.level_akses % 2 === 1
-            ? dataBaru.level_akses
-            : dataLama.level_akses,
-        document: {
-          update: [
-            {
-              where: {
-                idKriteria_idPendaftaranKP: {
-                  idKriteria: 0,
-                  idPendaftaranKP: dataLama.id,
-                },
-              },
-              data: {
-                data:
-                  dataBaru.link_surat_penolakan_instansi ||
-                  dataLama.link_surat_penolakan_instansi,
-                status:
-                  dataBaru.level_akses === 0
-                    ? "Ditolak"
-                    : dataBaru.status_link_surat_penolakan_instansi ||
-                      dataDocumentPendaftaranKP[0].status,
-                catatan: dataBaru.catatan_link_surat_penolakan_instansi,
-              },
-            },
-            {
-              where: {
-                idKriteria_idPendaftaranKP: {
-                  idKriteria: 1,
-                  idPendaftaranKP: dataLama.id,
-                },
-              },
-              data: {
-                data:
-                  dataBaru.link_surat_pengantar ||
-                  dataLama.link_surat_pengantar,
-                status:
-                  dataBaru.level_akses === 1
-                    ? "Ditolak"
-                    : dataBaru.status_link_surat_pengantar ||
-                      dataDocumentPendaftaranKP[1].status,
-                catatan: dataBaru.catatan_link_surat_pengantar,
-              },
-            },
-            {
-              where: {
-                idKriteria_idPendaftaranKP: {
-                  idKriteria: 2,
-                  idPendaftaranKP: dataLama.id,
-                },
-              },
-              data: {
-                data:
-                  dataBaru.link_surat_balasan || dataLama.link_surat_balasan,
-                status:
-                  dataBaru.level_akses === 3
-                    ? "Ditolak"
-                    : dataBaru.status_link_surat_balasan ||
-                      dataDocumentPendaftaranKP[2].status,
-                catatan: dataBaru.catatan_link_surat_balasan,
-              },
-            },
-            {
-              where: {
-                idKriteria_idPendaftaranKP: {
-                  idKriteria: 3,
-                  idPendaftaranKP: dataLama.id,
-                },
-              },
-              data: {
-                data:
-                  dataBaru.id_surat_pengajuan_dospem ||
-                  dataLama.id_surat_pengajuan_dospem,
-                status:
-                  dataBaru.level_akses === 5
-                    ? "Ditolak"
-                    : dataBaru.status_id_surat_pengajuan_dospem ||
-                      dataDocumentPendaftaranKP[3].status,
-                catatan: dataBaru.catatan_id_surat_pengajuan_dospem,
-              },
-            },
-            {
-              where: {
-                idKriteria_idPendaftaranKP: {
-                  idKriteria: 4,
-                  idPendaftaranKP: dataLama.id,
-                },
-              },
-              data: {
-                data:
-                  dataBaru.link_surat_penunjukan_dospem ||
-                  dataLama.link_surat_penunjukan_dospem,
-                status:
-                  dataBaru.level_akses === 7
-                    ? "Ditolak"
-                    : dataBaru.status_link_surat_penunjukan_dospem ||
-                      dataDocumentPendaftaranKP[4].status,
-                catatan: dataBaru.catatan_link_surat_penunjukan_dospem,
-              },
-            },
-            {
-              where: {
-                idKriteria_idPendaftaranKP: {
-                  idKriteria: 5,
-                  idPendaftaranKP: dataLama.id,
-                },
-              },
-              data: {
-                data:
-                  dataBaru.link_surat_perpanjangan_kp ||
-                  dataLama.link_surat_perpanjangan_kp,
-                status:
-                  dataBaru.level_akses === 9
-                    ? "Ditolak"
-                    : dataBaru.status_link_surat_perpanjangan_kp ||
-                      dataDocumentPendaftaranKP[5].status,
-                catatan: dataBaru.catatan_link_surat_perpanjangan_kp,
-              },
-            },
-          ],
-        },
-      },
-    });
-
-    if (dataLama.level_akses === 2) {
-      await DaftarKPRepository.createLOGPendaftaranKPById(
-        dataLama.id,
-        `[BERKAS DITERIMA] Pengajuan link surat pengantar kerja praktek diterima`,
-        new Date(),
-        1
-      );
-    } else if (dataLama.level_akses === 4) {
-      await DaftarKPRepository.createLOGPendaftaranKPById(
-        dataLama.id,
-        `[BERKAS DITERIMA] Pengajuan link surat balasan instansi diterima`,
-        new Date(),
-        1
-      );
-    } else if (dataLama.level_akses === 6) {
-      await DaftarKPRepository.createLOGPendaftaranKPById(
-        dataLama.id,
-        `[BERKAS DITERIMA] Pengajuan ID penunjukkan dosen pembimbing diterima`,
-        new Date(),
-        1
-      );
-    } else if (dataLama.level_akses === 8) {
-      await DaftarKPRepository.createLOGPendaftaranKPById(
-        dataLama.id,
-        `[BERKAS DITERIMA] Pengajuan link surat penunjukkan dosem pembimbing diterima`,
-        new Date(),
-        1
-      );
+      if (dataLama.level_akses === 2) {
+        await DaftarKPRepository.createLOGPendaftaranKPById(
+          dataLama.id,
+          `[BERKAS DITERIMA] Pengajuan link surat pengantar kerja praktek diterima`,
+          new Date(),
+          1
+        );
+      } else if (dataLama.level_akses === 4) {
+        await DaftarKPRepository.createLOGPendaftaranKPById(
+          dataLama.id,
+          `[BERKAS DITERIMA] Pengajuan link surat balasan instansi diterima`,
+          new Date(),
+          1
+        );
+      } else if (dataLama.level_akses === 6) {
+        await DaftarKPRepository.createLOGPendaftaranKPById(
+          dataLama.id,
+          `[BERKAS DITERIMA] Pengajuan ID penunjukkan dosen pembimbing diterima`,
+          new Date(),
+          1
+        );
+      } else if (dataLama.level_akses === 8) {
+        await DaftarKPRepository.createLOGPendaftaranKPById(
+          dataLama.id,
+          `[BERKAS DITERIMA] Pengajuan link surat penunjukkan dosem pembimbing diterima`,
+          new Date(),
+          1
+        );
+      }
     }
   }
-
   // public static async putBerkasMahasiswa(
   //   dataBaru: any,
   //   dataLama: any,
@@ -1862,7 +2008,7 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.link_surat_penolakan_instansi ||
-  //                   dataLama.link_surat_penolakan_instansi,
+  //                   dataLama.document[0].data,
 
   //               },
   //             },
@@ -1876,7 +2022,7 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.link_surat_pengantar ||
-  //                   dataLama.link_surat_pengantar,
+  //                   dataLama.document[1].data,
   //               },
   //             },
   //             {
@@ -1888,7 +2034,7 @@ export default class DaftarKPRepository {
   //               },
   //               data: {
   //                 data:
-  //                   dataBaru.link_surat_balasan || dataLama.link_surat_balasan,
+  //                   dataBaru.link_surat_balasan || dataLama.document[2].data,
   //               },
   //             },
   //             {
@@ -1901,7 +2047,7 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.id_surat_pengajuan_dospem ||
-  //                   dataLama.id_surat_pengajuan_dospem,
+  //                   dataLama.document[3].data,
   //               },
   //             },
   //             {
@@ -1913,8 +2059,8 @@ export default class DaftarKPRepository {
   //               },
   //               data: {
   //                 data:
-  //                   dataBaru.link_surat_penunjukan_dospem ||
-  //                   dataLama.link_surat_penunjukan_dospem,
+  //                   dataBaru.link_surat_penunjukkan_dospem ||
+  //                   dataLama.document[4].data,
   //               },
   //             },
   //             {
@@ -1927,7 +2073,7 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.link_surat_perpanjangan_kp ||
-  //                   dataLama.link_surat_perpanjangan_kp,
+  //                   dataLama.document[5].data,
   //               },
   //             },
   //           ],
@@ -1960,7 +2106,7 @@ export default class DaftarKPRepository {
   //                 data: {
   //                   data:
   //                     dataBaru.link_surat_penolakan_instansi ||
-  //                     dataLama.link_surat_penolakan_instansi,
+  //                     dataLama.document[0].data,
   //                 },
   //               },
   //               {
@@ -1973,7 +2119,7 @@ export default class DaftarKPRepository {
   //                 data: {
   //                   data:
   //                     dataBaru.link_surat_pengantar ||
-  //                     dataLama.link_surat_pengantar,
+  //                     dataLama.document[1].data,
   //                 },
   //               },
   //               {
@@ -1986,7 +2132,7 @@ export default class DaftarKPRepository {
   //                 data: {
   //                   data:
   //                     dataBaru.link_surat_balasan ||
-  //                     dataLama.link_surat_balasan,
+  //                     dataLama.document[2].data,
   //                 },
   //               },
   //               {
@@ -1999,7 +2145,7 @@ export default class DaftarKPRepository {
   //                 data: {
   //                   data:
   //                     dataBaru.id_surat_pengajuan_dospem ||
-  //                     dataLama.id_surat_pengajuan_dospem,
+  //                     dataLama.document[3].data,
   //                 },
   //               },
   //               {
@@ -2011,8 +2157,8 @@ export default class DaftarKPRepository {
   //                 },
   //                 data: {
   //                   data:
-  //                     dataBaru.link_surat_penunjukan_dospem ||
-  //                     dataLama.link_surat_penunjukan_dospem,
+  //                     dataBaru.link_surat_penunjukkan_dospem ||
+  //                     dataLama.document[4].data,
   //                 },
   //               },
   //               {
@@ -2025,7 +2171,7 @@ export default class DaftarKPRepository {
   //                 data: {
   //                   data:
   //                     dataBaru.link_surat_perpanjangan_kp ||
-  //                     dataLama.link_surat_perpanjangan_kp,
+  //                     dataLama.document[5].data,
   //                 },
   //               },
   //             ],
@@ -2082,7 +2228,7 @@ export default class DaftarKPRepository {
   //       return;
   //     }
 
-  //     const dataDocumentPendaftaranKP = await prisma.document.findMany({
+  //     const dataLama.document = await prisma.document.findMany({
   //       where: {
   //         idPendaftaranKP: dataLama.id,
   //       },
@@ -2091,7 +2237,7 @@ export default class DaftarKPRepository {
   //       },
   //     });
 
-  //     if (dataDocumentPendaftaranKP.length === 0) {
+  //     if (dataLama.document.length === 0) {
   //       console.log(
   //         "belum melalui proses create, harusnya jika melalui proses create, maka document akan dibuatkan"
   //       );
@@ -2121,11 +2267,11 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.link_surat_penolakan_instansi ||
-  //                   dataLama.link_surat_penolakan_instansi,
+  //                   dataLama.document[0].data,
   //                 status:
-  //                   dataDocumentPendaftaranKP[0].status === "Terkirim"
+  //                   dataLama.document[0].status === "Terkirim"
   //                     ? "Divalidasi"
-  //                     : dataDocumentPendaftaranKP[0].status,
+  //                     : dataLama.document[0].status,
   //               },
   //             },
   //             {
@@ -2138,11 +2284,11 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.link_surat_pengantar ||
-  //                   dataLama.link_surat_pengantar,
+  //                   dataLama.document[1].data,
   //                 status:
-  //                   dataDocumentPendaftaranKP[1].status === "Terkirim"
+  //                   dataLama.document[1].status === "Terkirim"
   //                     ? "Divalidasi"
-  //                     : dataDocumentPendaftaranKP[1].status,
+  //                     : dataLama.document[1].status,
   //               },
   //             },
   //             {
@@ -2154,11 +2300,11 @@ export default class DaftarKPRepository {
   //               },
   //               data: {
   //                 data:
-  //                   dataBaru.link_surat_balasan || dataLama.link_surat_balasan,
+  //                   dataBaru.link_surat_balasan || dataLama.document[2].data,
   //                 status:
-  //                   dataDocumentPendaftaranKP[2].status === "Terkirim"
+  //                   dataLama.document[2].status === "Terkirim"
   //                     ? "Divalidasi"
-  //                     : dataDocumentPendaftaranKP[2].status,
+  //                     : dataLama.document[2].status,
   //               },
   //             },
   //             {
@@ -2171,11 +2317,11 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.id_surat_pengajuan_dospem ||
-  //                   dataLama.id_surat_pengajuan_dospem,
+  //                   dataLama.document[3].data,
   //                 status:
-  //                   dataDocumentPendaftaranKP[3].status === "Terkirim"
+  //                   dataLama.document[3].status === "Terkirim"
   //                     ? "Divalidasi"
-  //                     : dataDocumentPendaftaranKP[3].status,
+  //                     : dataLama.document[3].status,
   //               },
   //             },
   //             {
@@ -2187,12 +2333,12 @@ export default class DaftarKPRepository {
   //               },
   //               data: {
   //                 data:
-  //                   dataBaru.link_surat_penunjukan_dospem ||
-  //                   dataLama.link_surat_penunjukan_dospem,
+  //                   dataBaru.link_surat_penunjukkan_dospem ||
+  //                   dataLama.document[4].data,
   //                 status:
-  //                   dataDocumentPendaftaranKP[4].status === "Terkirim"
+  //                   dataLama.document[4].status === "Terkirim"
   //                     ? "Divalidasi"
-  //                     : dataDocumentPendaftaranKP[4].status,
+  //                     : dataLama.document[4].status,
   //               },
   //             },
   //             {
@@ -2205,11 +2351,11 @@ export default class DaftarKPRepository {
   //               data: {
   //                 data:
   //                   dataBaru.link_surat_perpanjangan_kp ||
-  //                   dataLama.link_surat_perpanjangan_kp,
+  //                   dataLama.document[5].data,
   //                 status:
-  //                   dataDocumentPendaftaranKP[5].status === "Terkirim"
+  //                   dataLama.document[5].status === "Terkirim"
   //                     ? "Divalidasi"
-  //                     : dataDocumentPendaftaranKP[5].status,
+  //                     : dataLama.document[5].status,
   //               },
   //             },
   //           ],

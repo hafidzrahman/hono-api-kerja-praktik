@@ -17,6 +17,8 @@ import {
   ServiceTanggalDaftarKP,
   ServiceUpdateInstansiKP,
   ServiceLOGPendaftaranKPById,
+  PutMahasiswaParamsInterface,
+  getTahunAjaranService,
 } from "../types/daftar-kp/service.type";
 import { CommonResponse } from "../types/global.type";
 import { APIError } from "../utils/api-error.util";
@@ -25,6 +27,7 @@ import {
   IsPendaftaranKPLanjutClosed,
 } from "../validators/batas-waktu-pendaftaran..validator";
 import { cekKPTerbaruMahasiswa } from "../validators/cek-kp-terbaru-mahasiswa";
+import { cekTerdaftarTahunAjaran } from "../validators/cek-terdaftar-tahun-ajaran.validator";
 
 export default class DaftarKPService {
   public static async updatePermohonanPendaftaranKP(
@@ -44,7 +47,11 @@ export default class DaftarKPService {
       throw new APIError("Data kerja praktek mahasiswa tidak ditemukan", 404);
     }
 
-    await DaftarKPRepository.updatePermohonanPendaftaranKP(dataKP.id, judul_kp, kelas_kp)
+    await DaftarKPRepository.updatePermohonanPendaftaranKP(
+      dataKP.id,
+      judul_kp,
+      kelas_kp
+    );
 
     return {
       response: true,
@@ -320,6 +327,16 @@ export default class DaftarKPService {
     };
   }
 
+  public static async getTahunAjaran() : Promise<getTahunAjaranService> {
+    const dataTahunAjaran = await DaftarKPRepository.getTahunAjaran();
+
+    return {
+      response : true,
+      message : "Berhasil mendapatkan data tahun ajaran",
+      data : dataTahunAjaran
+    }
+  }
+
   public static async createPermohonanPendaftaranKP({
     email,
     tanggalMulai,
@@ -361,6 +378,14 @@ export default class DaftarKPService {
 
     if (isPendaftaranKPClosed) {
       throw new APIError("Tanggal Pendaftaran KP Sudah ditutup", 404);
+    }
+
+    const isAlreadyRegistered = await cekTerdaftarTahunAjaran();
+
+    if (isAlreadyRegistered) {
+      throw new APIError(
+        "Anda sudah pernah terdaftar dalam kerja praktek pada tahun ajaran ini"
+      );
     }
 
     await DaftarKPRepository.createPermomohonanKP({
@@ -655,12 +680,16 @@ export default class DaftarKPService {
   // }
 
   public static async putBerkasMahasiswa(
-    dataBaru: any
+    dataBaru: PutMahasiswaParamsInterface
   ): Promise<CommonResponse> {
     const dataKP = await DaftarKPRepository.getPendaftaranKPById(dataBaru.id);
 
     if (!dataKP) {
       throw new APIError("Data pendaftaran kerja praktek tidak ditemukan");
+    }
+
+    if (dataKP.level_akses > 11 && dataKP.level_akses < 0) {
+      throw new APIError("Level akses mahasiswa tidak memenuhi syarat");
     }
     await DaftarKPRepository.putBerkasMahasiswa(dataBaru, dataKP);
     return {

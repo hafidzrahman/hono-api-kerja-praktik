@@ -272,4 +272,10 @@ daftarKPRoute.get(
   DaftarKPHandler.getTanggalDaftarKP
 );
 
+daftarKPRoute.get(
+  "/daftar-kp/get-tahun-ajaran",
+  AuthMiddleware.JWTBearerTokenExtraction,
+  DaftarKPHandler.getTahunAjaran
+);
+
 export default daftarKPRoute;
