@@ -26,7 +26,6 @@ seminarKpRoute.post("/dokumen/ditolak", AuthMiddleware.JWTBearerTokenExtraction,
 
 seminarKpRoute.get("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllJadwalSeminar)
 seminarKpRoute.get("/jadwal-saya", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getJadwalMahasiswaSaya)
-seminarKpRoute.get("/jadwal-saya/tahun-ajaran", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getTahunAjaran)
 seminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.postJadwal);
 seminarKpRoute.put("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.putJadwal);
 seminarKpRoute.get("/jadwal/log-jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getLogJadwal);

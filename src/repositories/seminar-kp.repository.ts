@@ -202,13 +202,31 @@ export default class SeminarKpRepository {
               select: {
                 id: true,
                 catatan: true,
+                bimbingan_sikap: true,
+                kualitas_laporan: true,
+                penyelesaian_masalah: true,
               },
             },
             komponen_penilaian_penguji: {
               select: {
                 id: true,
                 catatan: true,
+                penguasaan_keilmuan: true,
+                kemampuan_presentasi: true,
+                kesesuaian_urgensi: true,
               },
+            },
+            komponen_penilaian_instansi: {
+              select: {
+                id: true,
+                masukan: true,
+                deliverables: true,
+                ketepatan_waktu: true,
+                kedisiplinan: true,
+                attitude: true,
+                kerjasama_tim: true,
+                inisiatif: true,
+              }
             },
             nilai_penguji: true,
             nilai_instansi: true,

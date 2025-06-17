@@ -30,11 +30,11 @@ export default class DailyReportHandler {
     if (!latitude || !longitude)
       throw new APIError("Data koordinat kamu tidak lengkap! 😭", 400);
 
-    // const isPresent = await DailyReportService.checkPresensiSaya(email);
+    const isPresent = await DailyReportService.checkPresensiSaya(email);
 
-    // if (isPresent) {
-    //   throw new APIError("Kamu sudah presensi untuk hari ini! 😡", 400);
-    // }
+    if (isPresent) {
+      throw new APIError("Kamu sudah presensi untuk hari ini! 😡", 400);
+    }
 
     const instansi = await DailyReportService.getInstansiSaya(email);
 
