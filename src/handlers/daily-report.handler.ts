@@ -137,10 +137,10 @@ export default class DailyReportHandler {
   }
 
   public static async getMahasiswaInstansiSaya(c: Context) {
-    const email = c.req.param("email");
-    if (!email) throw new APIError("Waduh, butuh param email cuy! 😭", 400);
+    const id = c.req.param("id");
+    if (!id) throw new APIError("Waduh, butuh param id cuy! 😭", 400);
 
-    return c.json(await DailyReportService.getMahasiswaInstansiSaya(email));
+    return c.json(await DailyReportService.getMahasiswaInstansiSaya(id));
   }
 
   public static async getDetailMahasiswaInstansiSaya(c: Context) {
