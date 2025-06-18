@@ -327,14 +327,14 @@ export default class DaftarKPService {
     };
   }
 
-  public static async getTahunAjaran() : Promise<getTahunAjaranService> {
+  public static async getTahunAjaran(): Promise<getTahunAjaranService> {
     const dataTahunAjaran = await DaftarKPRepository.getTahunAjaran();
 
     return {
-      response : true,
-      message : "Berhasil mendapatkan data tahun ajaran",
-      data : dataTahunAjaran
-    }
+      response: true,
+      message: "Berhasil mendapatkan data tahun ajaran",
+      data: dataTahunAjaran,
+    };
   }
 
   public static async createPermohonanPendaftaranKP({
@@ -382,7 +382,7 @@ export default class DaftarKPService {
 
     const isAlreadyRegistered = await cekTerdaftarTahunAjaran();
 
-    if (isAlreadyRegistered) {
+    if (isAlreadyRegistered && dataKPMahasiswa?.level_akses !== 0) {
       throw new APIError(
         "Anda sudah pernah terdaftar dalam kerja praktek pada tahun ajaran ini"
       );

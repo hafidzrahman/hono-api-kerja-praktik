@@ -1,4 +1,4 @@
-import { $Enums, status_pendaftaran } from "../../generated/prisma";
+import { $Enums, status_pendaftaran } from "../generated/prisma/index";
 import {
   CreatePermohonanPendaftaranKPInterface,
   CreatePermohonanPendaftaranInstansiInterface,

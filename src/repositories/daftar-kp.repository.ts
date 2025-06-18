@@ -1528,7 +1528,7 @@ export default class DaftarKPRepository {
             dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
           judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
           kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
-          level_akses: final_level_akses,
+          level_akses: dataBaru.level_akses || final_level_akses,
           document: {
             update: [
               {
