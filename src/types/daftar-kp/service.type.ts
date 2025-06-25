@@ -15,6 +15,18 @@ import {
   RepositoryRiwayatPendaftaranKPInterface,
 } from "./repository.type";
 
+export interface ServiceStatistikPendaftaran extends CommonResponse {
+  data: {
+    pendaftarPerTahunAjaran: {
+      _count: number;
+      id_tahun_ajaran: number | null;
+    }[];
+    pendaftarPerAngkatan: {
+      [key: string]: number;
+    };
+  };
+}
+
 export interface CreatePermohonanPendaftaranKPInterface {
   email: string;
   tanggalMulai: Date;
@@ -22,6 +34,13 @@ export interface CreatePermohonanPendaftaranKPInterface {
   tujuanSuratInstansi: string;
   judul_kp?: string;
   kelas_kp?: string;
+}
+
+export interface ServiceDataDosenInterface extends CommonResponse {
+  data: {
+    nip: string;
+    nama: string;
+  }[];
 }
 
 export interface CreatePermohonanPendaftaranInstansiInterface {
@@ -85,6 +104,7 @@ export interface ServiceLOGPendaftaranKPById extends CommonResponse {
 
 export interface PutMahasiswaParamsInterface {
   id: string;
+  nip_pembimbing?: string | null;
   status?: "Gagal" | "Baru" | "Lanjut";
   kelas_kp: string;
   tujuan_surat_instansi: string;
@@ -127,6 +147,7 @@ export interface PutMahasiswaParamsInterface {
   judul_kp: string;
   alasan_lanjut_kp: string;
   id_instansi?: string | null;
+  tanggal_mulai?: string | null;
   tanggal_selesai?: string | null;
 }
 

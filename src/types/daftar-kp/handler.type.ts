@@ -1,6 +1,7 @@
 export interface PutMahasiswaParamsInterface {
   id: string;
   status?: "Gagal" | "Baru" | "Lanjut";
+  nip_pembimbing?: string | null;
   kelas_kp: string;
   tujuan_surat_instansi: string;
   link_surat_penolakan_instansi: string;
@@ -42,7 +43,8 @@ export interface PutMahasiswaParamsInterface {
   judul_kp: string;
   alasan_lanjut_kp: string;
   id_instansi?: string | null;
-  tanggal_selesai? : string | null
+  tanggal_mulai?: string | null;
+  tanggal_selesai?: string | null;
 }
 
 export interface PutDataInstansiInterface {
@@ -59,7 +61,9 @@ export interface PutDataInstansiInterface {
   no_hp_pj: string;
 }
 
-export interface AccBerkasMahasiswaInterface {
+export interface PatchBerkasMahasiswaInterface {
   id: string;
-  catatan: string;
+  nomorBerkas: number;
+  status: "Divalidasi" | "Ditolak";
+  catatan?: string;
 }

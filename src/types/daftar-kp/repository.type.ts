@@ -1,6 +1,7 @@
 import {
   $Enums,
   pendaftaran_kp,
+  status_dokumen,
   status_pendaftaran,
 } from "../../generated/prisma";
 import {
@@ -9,9 +10,14 @@ import {
 } from "./service.type";
 
 // utk params
-export interface RepositoryPendaftaranKPInterface
+export interface RepositoryCreatePendaftaranKPInterface
   extends Omit<CreatePermohonanPendaftaranKPInterface, "email"> {
-  dataKPMahasiswa?: pendaftaran_kp | null;
+  nim: string;
+}
+
+export interface RepositoryUpdatePendaftaranKPInterface
+  extends Omit<CreatePermohonanPendaftaranKPInterface, "email"> {
+  dataKPMahasiswa: pendaftaran_kp;
   nim: string;
 }
 
@@ -81,6 +87,7 @@ export interface GetAllDataInstansiRepository {
 export interface PutMahasiswaParamsInterface {
   id: string;
   status?: "Gagal" | "Baru" | "Lanjut";
+  nip_pembimbing?: string | null;
   kelas_kp: string;
   tujuan_surat_instansi: string;
   link_surat_penolakan_instansi: string;
@@ -122,6 +129,7 @@ export interface PutMahasiswaParamsInterface {
   judul_kp: string;
   alasan_lanjut_kp: string;
   id_instansi?: string | null;
+  tanggal_mulai?: string | null;
   tanggal_selesai?: string | null;
 }
 
@@ -130,8 +138,8 @@ export interface dataLamaPutBerkasMahasiswa extends pendaftaran_kp {
     idPendaftaranKP: string;
     idKriteria: number;
     data: string;
-    status?: "Divalidasi" | "Ditolak" | "Terkirim" | null;
-    catatan?: string | null;
+    status: status_dokumen | null;
+    catatan: string | null;
     tanggal_upload: Date;
   }[];
 }
@@ -141,4 +149,3 @@ export interface getTahunAjaran {
   nama?: string | null;
   created_at?: Date | null;
 }
-

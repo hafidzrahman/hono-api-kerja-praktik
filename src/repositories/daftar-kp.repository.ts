@@ -2,566 +2,418 @@ import prisma from "../infrastructures/db.infrastructure";
 import {
   RepositoryPendaftaranInstansiInterface,
   RepositoryPendaftaranKPMahasiswaInterface,
-  RepositoryPendaftaranKPInterface,
   RepositoryRiwayatPendaftaranKPInterface,
   RepositoryDetailPendaftaranKPMahasiswa,
   GetAllDataInstansiRepository,
   PutMahasiswaParamsInterface,
   dataLamaPutBerkasMahasiswa,
   getTahunAjaran,
+  RepositoryUpdatePendaftaranKPInterface,
+  RepositoryCreatePendaftaranKPInterface,
 } from "../types/daftar-kp/repository.type";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import { APIError } from "../utils/api-error.util";
 import {
   Document,
   instansi,
+  jenis_instansi,
   LOG,
   option,
   pendaftaran_kp,
-  status_dokumen,
   status_instansi,
 } from "../generated/prisma";
 import {
   IsPendaftaranKPClosed,
   IsPendaftaranKPLanjutClosed,
 } from "../validators/batas-waktu-pendaftaran..validator";
+import { blackListInstansi } from "../validators/instansi-blacklist.validator";
 
 export default class DaftarKPRepository {
-  public static async updatePermohonanPendaftaranKP(
-    id: string,
-    judul_kp?: string,
-    kelas_kp?: string
-  ) {
-    await prisma.pendaftaran_kp.update({
-      where: {
-        id,
-      },
-      data: {
-        judul_kp,
-        kelas_kp,
-      },
-    });
+  public static postLOGPPencetakanSuratPengantar(id: string) {
+    DaftarKPRepository.createLOGPendaftaranKPById(
+      id,
+      "Berkas surat pengantar telah dicetak oleh bagian umum",
+      new Date(),
+      999
+    );
   }
 
-  public static async accBerkasMahasiswa(
-    id: string,
-    levelAkses: number,
-    documents: Document[],
-    catatan?: string | null
+  public static async getStatistikPendaftaran() {
+    const pendaftarPerTahunAjaran = await prisma.pendaftaran_kp.groupBy({
+      by: ["id_tahun_ajaran"],
+      _count: true,
+    });
+    const allPendaftarKP = await prisma.pendaftaran_kp.findMany({
+      where: {
+        status: "Baru",
+      },
+    });
+    const pendaftarPerAngkatan = {} as any;
+    let initialYear = new Date().getFullYear() % 100;
+    for (let i = initialYear; i > initialYear - 6; i--) {
+      pendaftarPerAngkatan[`${i}`] = allPendaftarKP.filter(
+        (item) => item.nim?.slice(1, 3) === `${i}`
+      ).length;
+    }
+
+    return { pendaftarPerTahunAjaran, pendaftarPerAngkatan };
+  }
+
+  public static async getDataDosen() {
+    return await prisma.dosen.findMany({});
+  }
+
+  public static async patchBerkasDaftarKP(
+    dataKPTerbaru: pendaftaran_kp,
+    data: string,
+    nomorBerkas: number,
+    tanggalMulai?: string,
+    tanggalSelesai?: string,
+    nipDospem?: string
   ) {
-    // Penyesuaian level akses mahasiswa terhadap dokumen yang telah mereka upload dan divalidasi oleh koordinator kp
-
-    if (documents[0].status === "Terkirim") {
-      await prisma.pendaftaran_kp.update({
-        where: {
-          id,
-        },
-        data: {
-          level_akses: 0,
-          document: {
-            update: [
-              {
-                where: {
-                  idKriteria_idPendaftaranKP: {
-                    idKriteria: 0,
-                    idPendaftaranKP: id,
-                  },
-                },
-                data: {
-                  status: "Divalidasi",
-                  catatan,
-                },
-              },
-              {
-                where: {
-                  idKriteria_idPendaftaranKP: {
-                    idKriteria: 1,
-                    idPendaftaranKP: id,
-                  },
-                },
-                data: {
-                  data: undefined,
-                  status: null,
-                  catatan: null,
-                },
-              },
-              {
-                where: {
-                  idKriteria_idPendaftaranKP: {
-                    idKriteria: 2,
-                    idPendaftaranKP: id,
-                  },
-                },
-                data: {
-                  data: undefined,
-                  status: null,
-                  catatan: null,
-                },
-              },
-              {
-                where: {
-                  idKriteria_idPendaftaranKP: {
-                    idKriteria: 3,
-                    idPendaftaranKP: id,
-                  },
-                },
-                data: {
-                  data: undefined,
-                  status: null,
-                  catatan: null,
-                },
-              },
-              {
-                where: {
-                  idKriteria_idPendaftaranKP: {
-                    idKriteria: 4,
-                    idPendaftaranKP: id,
-                  },
-                },
-                data: {
-                  data: undefined,
-                  status: null,
-                  catatan: null,
-                },
-              },
-              {
-                where: {
-                  idKriteria_idPendaftaranKP: {
-                    idKriteria: 5,
-                    idPendaftaranKP: id,
-                  },
-                },
-                data: {
-                  data: undefined,
-                  status: null,
-                  catatan: null,
-                },
-              },
-            ],
-          },
-        },
-      });
-      return;
+    let namaBerkas = "Surat Penolakan Instansi";
+    let final_level_akses = dataKPTerbaru.level_akses;
+    if (dataKPTerbaru.level_akses === 1 && nomorBerkas === 1) {
+      namaBerkas = "Surat Pengantar Kerja Praktik";
+      final_level_akses = 2;
+    } else if (dataKPTerbaru.level_akses === 3 && nomorBerkas === 2) {
+      namaBerkas = "Surat Balasan Kerja Praktik";
+      final_level_akses = 4;
+    } else if (dataKPTerbaru.level_akses === 5 && nomorBerkas === 3) {
+      namaBerkas = "ID Pengajuan Dosen Pembimbing";
+      final_level_akses = 6;
+    } else if (dataKPTerbaru.level_akses === 7 && nomorBerkas === 4) {
+      namaBerkas = "Surat Penunjukkan Dosen Pembimbing";
+      final_level_akses = 8;
+    } else if (dataKPTerbaru.level_akses === 9 && nomorBerkas === 5) {
+      namaBerkas = "Surat Perpanjangan Kerja Praktik";
+      final_level_akses = 10;
     }
-
-    function fitLevelAkses(): number {
-      let levelAkses = 0;
-      if (documents[2].status === "Ditolak" || documents[2].status === null) {
-        levelAkses = 2;
-      } else if (
-        documents[3].status === "Ditolak" ||
-        documents[3].status === null
-      ) {
-        levelAkses = 4;
-      } else if (
-        documents[4].status === "Ditolak" ||
-        documents[4].status === null
-      ) {
-        levelAkses = 6;
-      } else if (
-        documents[5].status === "Ditolak" ||
-        documents[5].status === null
-      ) {
-        levelAkses = 8;
-      } else {
-        if (documents[1].status === "Divalidasi") {
-          levelAkses = 2;
-        }
-        if (documents[2].status === "Divalidasi") {
-          levelAkses = 4;
-        }
-        if (documents[3].status === "Divalidasi") {
-          levelAkses = 6;
-        }
-        if (documents[4].status === "Divalidasi") {
-          levelAkses = 8;
-        }
-        if (documents[5].status === "Divalidasi") {
-          levelAkses = 10;
-        }
-      }
-      return levelAkses;
-    }
-
     await prisma.pendaftaran_kp.update({
       where: {
-        id,
+        id: dataKPTerbaru.id,
       },
       data: {
+        tanggal_mulai:
+          dataKPTerbaru.level_akses === 3
+            ? tanggalMulai
+            : dataKPTerbaru.tanggal_mulai,
+        tanggal_selesai:
+          dataKPTerbaru.level_akses === 3
+            ? tanggalSelesai
+            : dataKPTerbaru.tanggal_selesai,
+        nip_pembimbing:
+          dataKPTerbaru.level_akses === 7
+            ? nipDospem
+            : dataKPTerbaru.nip_pembimbing,
+        catatan_penolakan: null,
+        level_akses: final_level_akses,
         document: {
           update: {
             where: {
               idKriteria_idPendaftaranKP: {
-                idKriteria: levelAkses / 2,
-                idPendaftaranKP: id,
+                idKriteria: nomorBerkas,
+                idPendaftaranKP: dataKPTerbaru.id,
               },
             },
             data: {
-              status: "Divalidasi",
-              catatan,
-            },
-          },
-        },
-        level_akses: levelAkses % 2 === 0 ? fitLevelAkses() + 1 : levelAkses,
-      },
-    });
-
-    await DaftarKPRepository.createLOGPendaftaranKPById(
-      id,
-      `[SUKSES] Berkas ${
-        documents[levelAkses / 2].data
-      } mahasiswa telah divalidasi oleh Koordinator Kerja Praktek`,
-      new Date(),
-      1
-    );
-  }
-
-  public static async getDocumentsKPById(id: string) {
-    return await prisma.document.findMany({
-      where: {
-        idPendaftaranKP: id,
-      },
-      orderBy: {
-        idKriteria: "asc",
-      },
-    });
-  }
-
-  public static async postSuratPenolakanInstansi(
-    id: string,
-    link_surat_penolakan_instansi: string
-  ) {
-    // const documentSuratPenolakanInstansi = await prisma.document.findUnique({
-    //   where: {
-    //     idKriteria_idPendaftaranKP: {
-    //       idKriteria: 0,
-    //       idPendaftaranKP: id,
-    //     },
-    //     status: {
-    //       not: "Terkirim",
-    //     },
-    //   },
-    // });
-
-    // if (documentSuratPenolakanInstansi) {
-    //   throw new APIError(
-    //     "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-    //   );
-    // }
-
-    // bisa masalah gk karena log dulu baru update?
-
-    await DaftarKPRepository.createLOGPendaftaranKPById(
-      id,
-      "[SUKSES] Berhasil mengunggah surat penolakan instansi",
-      new Date(),
-      1
-    );
-
-    return await prisma.pendaftaran_kp.update({
-      where: {
-        id,
-      },
-      data: {
-        document: {
-          update: {
-            where: {
-              idKriteria_idPendaftaranKP: {
-                idKriteria: 0,
-                idPendaftaranKP: id,
-              },
-            },
-            data: {
-              data: link_surat_penolakan_instansi,
+              data,
               status: "Terkirim",
             },
           },
         },
       },
     });
+
+    await DaftarKPRepository.createLOGPendaftaranKPById(
+      dataKPTerbaru.id,
+      `[SUKSES] Berhasil mengajukan berkas ${namaBerkas} dengan link : ${
+        data || ""
+      }`,
+      new Date(),
+      1
+    );
   }
 
-  public static async postTanggalDaftarKP(
-    tanggalMulaiDaftarKP: string,
-    tanggalTerakhirDaftarKP: string
-  ) {
-    const tanggalKP = await prisma.option.findUnique({
-      where: {
-        id: 999,
-      },
-    });
-
-    if (!tanggalKP) {
-      await prisma.option.create({
+  public static async updatePermohonanPendaftaranKP({
+    dataKPMahasiswa,
+    nim,
+    idInstansi,
+    tujuanSuratInstansi,
+    tanggalMulai,
+    judul_kp,
+    kelas_kp,
+  }: RepositoryUpdatePendaftaranKPInterface): Promise<void> {
+    if (dataKPMahasiswa.level_akses === 0) {
+      await prisma.pendaftaran_kp.update({
+        where: {
+          id: dataKPMahasiswa.id,
+        },
         data: {
+          nim,
+          tanggal_pengajuan: new Date(),
+          tanggal_mulai: tanggalMulai,
+          id_instansi: idInstansi,
+          tujuan_surat_instansi: tujuanSuratInstansi,
+          id_tahun_ajaran: await MahasiswaHelper.getTahunAjaran(),
+          judul_kp,
+          level_akses: 1,
+          kelas_kp,
+        },
+      });
+
+      await DaftarKPRepository.createLOGPendaftaranKPById(
+        dataKPMahasiswa.id,
+        `[SUKSES] Berhasil mengubah instansi kerja praktik dengan ID Instansi ${
+          idInstansi || ""
+        }`,
+        new Date(),
+        1
+      );
+    } else if (dataKPMahasiswa.level_akses > 0) {
+      await prisma.pendaftaran_kp.update({
+        where: {
+          id: dataKPMahasiswa.id,
+        },
+        data: {
+          judul_kp,
+          kelas_kp,
+        },
+      });
+
+      await DaftarKPRepository.createLOGPendaftaranKPById(
+        dataKPMahasiswa.id,
+        `[SUKSES] Berhasil mengubah data kerja praktik`,
+        new Date(),
+        1
+      );
+    }
+  }
+
+  public static async patchTanggalDaftarKP(
+    tanggalMulaiDaftarKP: string,
+    tanggalTerakhirDaftarKP: string,
+    type: "Regular" | "Lanjut"
+  ) {
+    if (type === "Regular") {
+      const tanggalKP = await prisma.option.findUnique({
+        where: {
           id: 999,
+        },
+      });
+
+      if (!tanggalKP) {
+        await prisma.option.create({
+          data: {
+            id: 999,
+            tanggal_mulai_pendaftaran_kp: tanggalMulaiDaftarKP,
+            tanggal_akhir_pendaftaran_kp: tanggalTerakhirDaftarKP,
+          },
+        });
+      }
+
+      await prisma.option.update({
+        where: {
+          id: 999,
+        },
+        data: {
           tanggal_mulai_pendaftaran_kp: tanggalMulaiDaftarKP,
           tanggal_akhir_pendaftaran_kp: tanggalTerakhirDaftarKP,
         },
       });
-    }
 
-    await prisma.option.update({
-      where: {
-        id: 999,
-      },
-      data: {
-        tanggal_mulai_pendaftaran_kp: tanggalMulaiDaftarKP,
-        tanggal_akhir_pendaftaran_kp: tanggalTerakhirDaftarKP,
-      },
-    });
+      // TIMEOUT UNTUK 6 BULAN
+      // step 1-8 tidak langsung gagal
+      // ASUMSI TANGGAL PENDAFTARAN 5 BULAN
 
-    // TIMEOUT UNTUK 6 BULAN
-    // step 1-8 tidak langsung gagal
-    // ASUMSI TANGGAL PENDAFTARAN 5 BULAN
-
-    const recurse = (time: number) => {
-      if (time > 2147483640) {
-        setTimeout(function () {
-          recurse(time - 2147483640);
-        }, 2147483640);
-      } else {
-        const pointer = setTimeout(async function () {
-          // kalau tanggal pendaftaran diubah 10 kali, berarti ada 10 fungsi yang berjalan [1]
-          const tanggalDaftarKP = await DaftarKPRepository.getTanggalDaftarKP();
-          if (tanggalDaftarKP && tanggalDaftarKP.tanggal_akhir_pendaftaran_kp) {
-            const checkTime =
-              tanggalDaftarKP.tanggal_akhir_pendaftaran_kp.getTime() -
-              new Date().getTime();
-            if (checkTime >= 0) {
-              clearTimeout(pointer); // solusi masalah [1] ?
-              // recurse(checkTime);
-            } else {
-              const manyDataKP =
-                await prisma.pendaftaran_kp.updateManyAndReturn({
-                  where: {
-                    status: "Baru",
-                  },
-                  data: {
-                    status: "Gagal",
-                  },
-                });
-              for await (const dataKP of manyDataKP) {
-                await DaftarKPRepository.createLOGPendaftaranKPById(
-                  dataKP.id,
-                  "Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
-                  new Date(),
-                  2
-                );
+      const recurse = (time: number) => {
+        if (time > 2147483640) {
+          setTimeout(function () {
+            recurse(time - 2147483640);
+          }, 2147483640);
+        } else {
+          const pointer = setTimeout(async function () {
+            // kalau tanggal pendaftaran diubah 10 kali, berarti ada 10 fungsi yang berjalan [1]
+            const tanggalDaftarKP =
+              await DaftarKPRepository.getTanggalDaftarKP();
+            if (
+              tanggalDaftarKP &&
+              tanggalDaftarKP.tanggal_akhir_pendaftaran_kp
+            ) {
+              const checkTime =
+                tanggalDaftarKP.tanggal_akhir_pendaftaran_kp.getTime() -
+                new Date().getTime();
+              if (checkTime >= 0) {
+                clearTimeout(pointer); // solusi masalah [1] ?
+                // recurse(checkTime);
+              } else {
+                const manyDataKP =
+                  await prisma.pendaftaran_kp.updateManyAndReturn({
+                    where: {
+                      status: "Baru",
+                    },
+                    data: {
+                      status: "Gagal",
+                    },
+                  });
+                for await (const dataKP of manyDataKP) {
+                  await DaftarKPRepository.createLOGPendaftaranKPById(
+                    dataKP.id,
+                    "Pendaftaran kerja praktik gagal karena sudah melewati batas waktu",
+                    new Date(),
+                    2
+                  );
+                }
               }
             }
-          }
-        }, time);
-      }
-    };
+          }, time);
+        }
+      };
 
-    const recurseByDay = (time: number) => {
-      if (time > 86400000) {
-        setTimeout(function () {
-          recurse(time - 86400000);
-        }, 86400000);
-      } else {
-        const pointer = setTimeout(async function () {
-          // kalau tanggal pendaftaran diubah 10 kali, berarti ada 10 fungsi yang berjalan [1]
-          const tanggalDaftarKP = await DaftarKPRepository.getTanggalDaftarKP();
-          if (tanggalDaftarKP && tanggalDaftarKP.tanggal_mulai_pendaftaran_kp) {
-            const checkTime =
-              tanggalDaftarKP.tanggal_mulai_pendaftaran_kp.getTime() -
-              new Date().getTime();
-            if (checkTime > 0) {
-              clearTimeout(pointer); // solusi masalah [1] ?
-              // recurse(checkTime);
-            } else {
-              const tenggatWaktu =
-                new Date(tanggalTerakhirDaftarKP).getTime() + 15778800000;
+      const recurseByDay = (time: number) => {
+        if (time > 86400000) {
+          setTimeout(function () {
+            recurse(time - 86400000);
+          }, 86400000);
+        } else {
+          const pointer = setTimeout(async function () {
+            // kalau tanggal pendaftaran diubah 10 kali, berarti ada 10 fungsi yang berjalan [1]
+            const tanggalDaftarKP =
+              await DaftarKPRepository.getTanggalDaftarKP();
+            if (
+              tanggalDaftarKP &&
+              tanggalDaftarKP.tanggal_mulai_pendaftaran_kp
+            ) {
+              const checkTime =
+                tanggalDaftarKP.tanggal_mulai_pendaftaran_kp.getTime() -
+                new Date().getTime();
+              if (checkTime > 0) {
+                clearTimeout(pointer); // solusi masalah [1] ?
+                // recurse(checkTime);
+              } else {
+                const tenggatWaktu =
+                  new Date(tanggalTerakhirDaftarKP).getTime() + 15778800000;
 
-              recurse(tenggatWaktu);
+                recurse(tenggatWaktu);
+              }
             }
-          }
-        }, time);
-      }
-    };
+          }, time);
+        }
+      };
 
-    const tanggalSaatIni = new Date().getTime();
-    const tanggalMulai = new Date(tanggalMulaiDaftarKP).getTime();
+      const tanggalSaatIni = new Date().getTime();
+      const tanggalMulai = new Date(tanggalMulaiDaftarKP).getTime();
 
-    recurseByDay(tanggalMulai - tanggalSaatIni);
-
-    // let time =
-    //   new Date(tanggalTerakhirDaftarKP).getTime() - new Date().getTime();
-
-    // if (time <= 0) {
-    //   time = 0;
-    // }
-
-    // const pointer = setTimeout(async function () {
-    //   const manyDataKP = await prisma.pendaftaran_kp.updateManyAndReturn({
-    //     where: {
-    //       status: "Baru",
-    //       level_akses: {
-    //         gte: 1,
-    //         lt: 9,
-    //       },
-    //     },
-    //     data: {
-    //       status: "Gagal",
-    //     },
-    //   });
-
-    //   for await (const dataKP of manyDataKP) {
-    //     await DaftarKPRepository.createLOGPendaftaranKPById(
-    //       dataKP.id,
-    //       "Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
-    //       new Date(),
-    //       2
-    //     );
-    //   }
-
-    //   clearTimeout(pointer);
-    // }, time);
-  }
-
-  public static async postTanggalDaftarKPLanjut(
-    tanggalMulaiDaftarKP: string,
-    tanggalTerakhirDaftarKP: string
-  ) {
-    const tanggalKP = await prisma.option.findUnique({
-      where: {
-        id: 999,
-      },
-    });
-
-    if (!tanggalKP) {
-      await prisma.option.create({
-        data: {
+      recurseByDay(tanggalMulai - tanggalSaatIni);
+    } else if (type === "Lanjut") {
+      const tanggalKP = await prisma.option.findUnique({
+        where: {
           id: 999,
+        },
+      });
+
+      if (!tanggalKP) {
+        await prisma.option.create({
+          data: {
+            id: 999,
+            tanggal_mulai_pendaftaran_kp_lanjut: tanggalMulaiDaftarKP,
+            tanggal_akhir_pendaftaran_kp_lanjut: tanggalTerakhirDaftarKP,
+          },
+        });
+      }
+
+      await prisma.option.update({
+        where: {
+          id: 999,
+        },
+        data: {
           tanggal_mulai_pendaftaran_kp_lanjut: tanggalMulaiDaftarKP,
           tanggal_akhir_pendaftaran_kp_lanjut: tanggalTerakhirDaftarKP,
         },
       });
-    }
 
-    await prisma.option.update({
-      where: {
-        id: 999,
-      },
-      data: {
-        tanggal_mulai_pendaftaran_kp_lanjut: tanggalMulaiDaftarKP,
-        tanggal_akhir_pendaftaran_kp_lanjut: tanggalTerakhirDaftarKP,
-      },
-    });
+      // TIMEOUT UNTUK 6 BULAN
 
-    // TIMEOUT UNTUK 6 BULAN
+      // ASUMSI TANGGAL PENDAFTARAN 5 BULAN
 
-    // ASUMSI TANGGAL PENDAFTARAN 5 BULAN
-
-    const recurse = (time: number) => {
-      if (time > 2147483640) {
-        setTimeout(function () {
-          recurse(time - 2147483640);
-        }, 2147483640);
-      } else {
-        setTimeout(async function () {
-          const tanggalDaftarKP = await DaftarKPRepository.getTanggalDaftarKP();
-          if (
-            tanggalDaftarKP &&
-            tanggalDaftarKP.tanggal_akhir_pendaftaran_kp_lanjut
-          ) {
-            const checkTime =
-              tanggalDaftarKP.tanggal_akhir_pendaftaran_kp_lanjut.getTime() -
-              new Date().getTime();
-            if (checkTime >= 0) {
-              recurse(checkTime);
-            } else {
-              const manyDataKP =
-                await prisma.pendaftaran_kp.updateManyAndReturn({
-                  where: {
-                    status: "Lanjut",
-                  },
-                  data: {
-                    status: "Gagal",
-                  },
-                });
-              for await (const dataKP of manyDataKP) {
-                await DaftarKPRepository.createLOGPendaftaranKPById(
-                  dataKP.id,
-                  "[Gagal] Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
-                  new Date(),
-                  2
-                );
+      const recurse = (time: number) => {
+        if (time > 2147483640) {
+          setTimeout(function () {
+            recurse(time - 2147483640);
+          }, 2147483640);
+        } else {
+          setTimeout(async function () {
+            const tanggalDaftarKP =
+              await DaftarKPRepository.getTanggalDaftarKP();
+            if (
+              tanggalDaftarKP &&
+              tanggalDaftarKP.tanggal_akhir_pendaftaran_kp_lanjut
+            ) {
+              const checkTime =
+                tanggalDaftarKP.tanggal_akhir_pendaftaran_kp_lanjut.getTime() -
+                new Date().getTime();
+              if (checkTime >= 0) {
+                recurse(checkTime);
+              } else {
+                const manyDataKP =
+                  await prisma.pendaftaran_kp.updateManyAndReturn({
+                    where: {
+                      status: "Lanjut",
+                    },
+                    data: {
+                      status: "Gagal",
+                    },
+                  });
+                for await (const dataKP of manyDataKP) {
+                  await DaftarKPRepository.createLOGPendaftaranKPById(
+                    dataKP.id,
+                    "[Gagal] Pendaftaran kerja praktik gagal karena sudah melewati batas waktu",
+                    new Date(),
+                    2
+                  );
+                }
               }
             }
-          }
-        }, time);
-      }
-    };
+          }, time);
+        }
+      };
 
-    const recurseByDay = (time: number) => {
-      if (time > 86400000) {
-        setTimeout(function () {
-          recurse(time - 86400000);
-        }, 86400000);
-      } else {
-        const pointer = setTimeout(async function () {
-          // kalau tanggal pendaftaran diubah 10 kali, berarti ada 10 fungsi yang berjalan [1]
-          const tanggalDaftarKP = await DaftarKPRepository.getTanggalDaftarKP();
-          if (
-            tanggalDaftarKP &&
-            tanggalDaftarKP.tanggal_mulai_pendaftaran_kp_lanjut
-          ) {
-            const checkTime =
-              tanggalDaftarKP.tanggal_mulai_pendaftaran_kp_lanjut.getTime() -
-              new Date().getTime();
-            if (checkTime > 0) {
-              clearTimeout(pointer); // solusi masalah [1] ?
-              // recurse(checkTime);
-            } else {
-              const tenggatWaktu =
-                new Date(tanggalTerakhirDaftarKP).getTime() + 15778800000;
+      const recurseByDay = (time: number) => {
+        if (time > 86400000) {
+          setTimeout(function () {
+            recurse(time - 86400000);
+          }, 86400000);
+        } else {
+          const pointer = setTimeout(async function () {
+            // kalau tanggal pendaftaran diubah 10 kali, berarti ada 10 fungsi yang berjalan [1]
+            const tanggalDaftarKP =
+              await DaftarKPRepository.getTanggalDaftarKP();
+            if (
+              tanggalDaftarKP &&
+              tanggalDaftarKP.tanggal_mulai_pendaftaran_kp_lanjut
+            ) {
+              const checkTime =
+                tanggalDaftarKP.tanggal_mulai_pendaftaran_kp_lanjut.getTime() -
+                new Date().getTime();
+              if (checkTime > 0) {
+                clearTimeout(pointer); // solusi masalah [1] ?
+                // recurse(checkTime);
+              } else {
+                const tenggatWaktu =
+                  new Date(tanggalTerakhirDaftarKP).getTime() + 15778800000;
 
-              recurse(tenggatWaktu);
+                recurse(tenggatWaktu);
+              }
             }
-          }
-        }, time);
-      }
-    };
+          }, time);
+        }
+      };
 
-    const tanggalSaatIni = new Date().getTime();
-    const tanggalMulai = new Date(tanggalMulaiDaftarKP).getTime();
+      const tanggalSaatIni = new Date().getTime();
+      const tanggalMulai = new Date(tanggalMulaiDaftarKP).getTime();
 
-    recurseByDay(tanggalMulai - tanggalSaatIni);
-
-    // let time =
-    //   new Date(tanggalTerakhirDaftarKP).getTime() - new Date().getTime();
-
-    // if (time < 0) {
-    //   time = 0;
-    // }
-
-    // const pointer = setTimeout(async function () {
-    //   const manyDataKP = await prisma.pendaftaran_kp.updateManyAndReturn({
-    //     where: {
-    //       status: "Baru",
-    //       level_akses: {
-    //         equals: 9,
-    //       },
-    //     },
-    //     data: {
-    //       status: "Gagal",
-    //     },
-    //   });
-
-    //   for await (const dataKP of manyDataKP) {
-    //     await DaftarKPRepository.createLOGPendaftaranKPById(
-    //       dataKP.id,
-    //       "Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
-    //       new Date(),
-    //       2
-    //     );
-    //   }
-
-    //   clearTimeout(pointer);
-    // }, time);
+      recurseByDay(tanggalMulai - tanggalSaatIni);
+    }
   }
 
   public static async getTanggalDaftarKP(): Promise<option | null> {
@@ -606,6 +458,23 @@ export default class DaftarKPRepository {
     });
   }
 
+  public static async getDataKPMahasiswaBagianUmum(): Promise<
+    RepositoryPendaftaranKPMahasiswaInterface[]
+  > {
+    return await prisma.pendaftaran_kp.findMany({
+      where: {
+        log: {
+          none: {
+            status: 999,
+          },
+        },
+      },
+      include: {
+        mahasiswa: true,
+      },
+    });
+  }
+
   public static async getDataKPMahasiswa(): Promise<
     RepositoryPendaftaranKPMahasiswaInterface[]
   > {
@@ -615,6 +484,7 @@ export default class DaftarKPRepository {
         tanggal_mulai: true,
         status: true,
         id_tahun_ajaran: true,
+        level_akses: true,
         mahasiswa: {
           select: {
             nama: true,
@@ -649,19 +519,314 @@ export default class DaftarKPRepository {
     });
   }
 
-  public static async postTolakBerkasMahasiswa(
-    id: string,
-    levelAkses: number,
-    message: string
-  ): Promise<void> {
-    const documents = await DaftarKPRepository.getDocumentsKPById(id);
+  public static async patchBerkasMahasiswa(
+    dataKP: pendaftaran_kp & { document: Document[] },
+    nomorBerkas: number,
+    status: "Divalidasi" | "Ditolak",
+    catatan?: string
+  ) {
+    if (status === "Divalidasi") {
+      if (dataKP.document[0].status === "Terkirim") {
+        const dataLOG = await prisma.lOG.findFirst({
+          where: {
+            pendaftaran_kp_id: dataKP.id,
+            status: 999,
+          },
+        });
+        if (dataLOG) {
+          await prisma.lOG.update({
+            where: {
+              id: dataLOG.id,
+            },
+            data: {
+              status: 1,
+            },
+          });
+        }
+        await prisma.pendaftaran_kp.update({
+          where: {
+            id: dataKP.id,
+          },
+          data: {
+            level_akses: 0,
+            document: {
+              update: [
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 0,
+                      idPendaftaranKP: dataKP.id,
+                    },
+                  },
+                  data: {
+                    status: "Divalidasi",
+                    catatan,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 1,
+                      idPendaftaranKP: dataKP.id,
+                    },
+                  },
+                  data: {
+                    data: undefined,
+                    status: null,
+                    catatan: null,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 2,
+                      idPendaftaranKP: dataKP.id,
+                    },
+                  },
+                  data: {
+                    data: undefined,
+                    status: null,
+                    catatan: null,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 3,
+                      idPendaftaranKP: dataKP.id,
+                    },
+                  },
+                  data: {
+                    data: undefined,
+                    status: null,
+                    catatan: null,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 4,
+                      idPendaftaranKP: dataKP.id,
+                    },
+                  },
+                  data: {
+                    data: undefined,
+                    status: null,
+                    catatan: null,
+                  },
+                },
+                {
+                  where: {
+                    idKriteria_idPendaftaranKP: {
+                      idKriteria: 5,
+                      idPendaftaranKP: dataKP.id,
+                    },
+                  },
+                  data: {
+                    data: undefined,
+                    status: null,
+                    catatan: null,
+                  },
+                },
+              ],
+            },
+          },
+        });
+        return;
+      }
 
-    if (levelAkses > 0 && levelAkses < 10) {
+      let namaBerkas = "Surat Penolakan Instansi";
+      let final_level_akses = dataKP.level_akses;
+      if (dataKP.level_akses / 2 === 1 && nomorBerkas === 1) {
+        namaBerkas = "Surat Pengantar Kerja Praktik";
+        final_level_akses = final_level_akses + 1;
+        if (dataKP.document[2].status === "Divalidasi") {
+          final_level_akses = 5;
+        } else if (dataKP.document[2].status === "Terkirim") {
+          final_level_akses = 4;
+        }
+        if (dataKP.document[3].status === "Divalidasi") {
+          final_level_akses = 7;
+        } else if (dataKP.document[3].status === "Terkirim") {
+          final_level_akses = 6;
+        }
+
+        if (dataKP.document[4].status === "Divalidasi") {
+          final_level_akses = 9;
+        } else if (dataKP.document[4].status === "Terkirim") {
+          final_level_akses = 8;
+        }
+
+        if (dataKP.document[5].status === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataKP.document[5].status === "Terkirim") {
+          final_level_akses = 10;
+        }
+      } else if (dataKP.level_akses / 2 === 2 && nomorBerkas === 2) {
+        namaBerkas = "Surat Balasan Kerja Praktik";
+        final_level_akses = final_level_akses + 1;
+        if (dataKP.document[3].status === "Divalidasi") {
+          final_level_akses = 7;
+        } else if (dataKP.document[3].status === "Terkirim") {
+          final_level_akses = 6;
+        }
+
+        if (dataKP.document[4].status === "Divalidasi") {
+          final_level_akses = 9;
+        } else if (dataKP.document[4].status === "Terkirim") {
+          final_level_akses = 8;
+        }
+
+        if (dataKP.document[5].status === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataKP.document[5].status === "Terkirim") {
+          final_level_akses = 10;
+        }
+      } else if (dataKP.level_akses / 2 === 3 && nomorBerkas === 3) {
+        namaBerkas = "ID Pengajuan Dosen Pembimbing";
+        final_level_akses = final_level_akses + 1;
+        if (dataKP.document[4].status === "Divalidasi") {
+          final_level_akses = 9;
+        } else if (dataKP.document[4].status === "Terkirim") {
+          final_level_akses = 8;
+        }
+
+        if (dataKP.document[5].status === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataKP.document[5].status === "Terkirim") {
+          final_level_akses = 10;
+        }
+      } else if (dataKP.level_akses / 2 === 4 && nomorBerkas === 4) {
+        namaBerkas = "Surat Penunjukkan Dosen Pembimbing";
+        final_level_akses = final_level_akses + 1;
+        if (dataKP.document[5].status === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataKP.document[5].status === "Terkirim") {
+          final_level_akses = 10;
+        }
+      } else if (dataKP.level_akses / 2 === 5 && nomorBerkas === 5) {
+        namaBerkas = "Surat Perpanjangan Kerja Praktik";
+        final_level_akses = final_level_akses + 1;
+      }
+
+      await prisma.pendaftaran_kp.update({
+        where: {
+          id: dataKP.id,
+        },
+        data: {
+          tanggal_mulai:
+            dataKP.level_akses === 8 &&
+            new Date().getTime() > new Date(dataKP.tanggal_mulai).getTime()
+              ? new Date()
+              : dataKP.tanggal_mulai,
+          document: {
+            update: {
+              where: {
+                idKriteria_idPendaftaranKP: {
+                  idKriteria: nomorBerkas,
+                  idPendaftaranKP: dataKP.id,
+                },
+              },
+              data: {
+                status: "Divalidasi",
+                catatan,
+              },
+            },
+          },
+          level_akses:
+            dataKP.level_akses % 2 === 0
+              ? final_level_akses
+              : dataKP.level_akses,
+        },
+      });
+
+      await DaftarKPRepository.createLOGPendaftaranKPById(
+        dataKP.id,
+        `[SUKSES] ${namaBerkas} dengan link ${dataKP.document[nomorBerkas].data} mahasiswa telah divalidasi oleh Koordinator Kerja Praktik`,
+        new Date(),
+        1
+      );
+    } else if (status === "Ditolak") {
+      let final_level_akses = dataKP.level_akses;
+      if (dataKP.level_akses / 2 === 1 && nomorBerkas === 1) {
+        final_level_akses = final_level_akses - 1;
+      } else if (dataKP.level_akses / 2 === 2 && nomorBerkas === 2) {
+        final_level_akses = final_level_akses - 1;
+      } else if (dataKP.level_akses / 2 === 3 && nomorBerkas === 3) {
+        final_level_akses = final_level_akses - 1;
+      } else if (dataKP.level_akses / 2 === 4 && nomorBerkas === 4) {
+        final_level_akses = final_level_akses - 1;
+      } else if (dataKP.level_akses / 2 === 5 && nomorBerkas === 5) {
+        final_level_akses = final_level_akses - 1;
+      }
       const isClosed = await IsPendaftaranKPClosed();
+      const isPendaftaranKPLanjutClosed = await IsPendaftaranKPLanjutClosed();
       if (isClosed) {
         await prisma.pendaftaran_kp.update({
           where: {
-            id,
+            id: dataKP.id,
+          },
+          data: {
+            nip_pembimbing:
+              nomorBerkas === 4 ? undefined : dataKP.nip_pembimbing,
+            tanggal_mulai: nomorBerkas === 2 ? undefined : dataKP.tanggal_mulai,
+            tanggal_selesai:
+              nomorBerkas === 2 ? undefined : dataKP.tanggal_selesai,
+            document: {
+              update: {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria:
+                      dataKP.document[0].status === "Terkirim"
+                        ? 0
+                        : nomorBerkas,
+                    idPendaftaranKP: dataKP.id,
+                  },
+                },
+                data: {
+                  catatan: catatan || "Link mungkin tidak valid",
+                  status: "Ditolak",
+                },
+              },
+            },
+            status: "Gagal",
+            level_akses: final_level_akses,
+            catatan_penolakan: catatan,
+          },
+        });
+      } else if (
+        dataKP.level_akses / 2 === 5 &&
+        nomorBerkas === 5 &&
+        isPendaftaranKPLanjutClosed
+      ) {
+        await prisma.pendaftaran_kp.update({
+          where: {
+            id: dataKP.id,
+          },
+          data: {
+            document: {
+              update: {
+                where: {
+                  idKriteria_idPendaftaranKP: {
+                    idKriteria: 5,
+                    idPendaftaranKP: dataKP.id,
+                  },
+                },
+                data: {
+                  catatan: catatan || "Link mungkin tidak valid",
+                  status: "Ditolak",
+                },
+              },
+            },
+            status: "Gagal",
+            level_akses: final_level_akses,
+            catatan_penolakan: catatan,
+          },
+        });
+      } else {
+        await prisma.pendaftaran_kp.update({
+          where: {
+            id: dataKP.id,
           },
           data: {
             document: {
@@ -669,115 +834,115 @@ export default class DaftarKPRepository {
                 where: {
                   idKriteria_idPendaftaranKP: {
                     idKriteria:
-                      documents[0].status === "Terkirim" ? 0 : levelAkses / 2,
-                    idPendaftaranKP: id,
+                      dataKP.document[0].status === "Terkirim"
+                        ? 0
+                        : nomorBerkas,
+                    idPendaftaranKP: dataKP.id,
                   },
                 },
                 data: {
-                  catatan: message,
+                  catatan: catatan || "Link mungkin tidak valid",
                   status: "Ditolak",
                 },
               },
             },
-            status: "Gagal",
-            level_akses: {
-              decrement: documents[0].status === "Terkirim" ? 0 : 1,
-            },
-            catatan_penolakan: message,
-          },
-        });
-      } else {
-        await prisma.pendaftaran_kp.update({
-          where: {
-            id,
-          },
-          data: {
-            document: {
-              update: {
-                where: {
-                  idKriteria_idPendaftaranKP: {
-                    idKriteria:
-                      documents[0].status === "Terkirim" ? 0 : levelAkses / 2,
-                    idPendaftaranKP: id,
-                  },
-                },
-                data: {
-                  catatan: message,
-                  status: "Ditolak",
-                },
-              },
-            },
-            level_akses: {
-              decrement: 1,
-            },
-            catatan_penolakan: message,
+            level_akses: final_level_akses,
+            catatan_penolakan: catatan,
           },
         });
       }
 
       await DaftarKPRepository.createLOGPendaftaranKPById(
-        id,
-        `[BERKAS DITOLAK] Berkas ${
-          documents[levelAkses / 2].data
-        } mahasiswa ditolak. ${message}`,
+        dataKP.id,
+        `[BERKAS DITOLAK] Berkas dengan link ${dataKP.document[nomorBerkas].data} mahasiswa ditolak. ${catatan}`,
         new Date(),
         2
       );
 
       if (isClosed) {
         await DaftarKPRepository.createLOGPendaftaranKPById(
-          id,
-          "[GAGAL] Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
+          dataKP.id,
+          "[GAGAL] Pendaftaran kerja praktik gagal karena sudah melewati batas waktu",
           new Date(),
           2
         );
       }
-    } else if (levelAkses === 10) {
-      const isClosed = await IsPendaftaranKPLanjutClosed();
-      if (isClosed) {
-        await prisma.pendaftaran_kp.update({
-          where: {
-            id,
-          },
-          data: {
-            status: "Gagal",
-            // bagaimana kalau status kp tetap "baru", di front end kita cuma melihat catatan_penolakan saja, setelah diperbarui oleh mahasiswa, catatan_penolakan dikosongkan lagi
-            level_akses: {
-              decrement: 1,
-            },
-            catatan_penolakan: message,
-          },
-        });
-      } else {
-        await prisma.pendaftaran_kp.update({
-          where: {
-            id,
-          },
-          data: {
-            // bagaimana kalau status kp tetap "baru", di front end kita cuma melihat catatan_penolakan saja, setelah diperbarui oleh mahasiswa, catatan_penolakan dikosongkan lagi
-            level_akses: {
-              decrement: 1,
-            },
-            catatan_penolakan: message,
-          },
-        });
-      }
 
-      await DaftarKPRepository.createLOGPendaftaranKPById(
-        id,
-        `[BERKAS DITOLAK] ${message}`,
-        new Date(),
-        2
-      );
+      // else if (dataKP.level_akses === 10) {
+      //   const isClosed = await IsPendaftaranKPLanjutClosed();
+      //   if (isClosed) {
+      //     await prisma.pendaftaran_kp.update({
+      //       where: {
+      //         id: dataKP.id,
+      //       },
+      //       data: {
+      //         document: {
+      //           update: {
+      //             where: {
+      //               idKriteria_idPendaftaranKP: {
+      //                 idKriteria: 5,
+      //                 idPendaftaranKP: dataKP.id,
+      //               },
+      //             },
+      //             data: {
+      //               status,
+      //               catatan: catatan || "Link mungkin tidak valid",
+      //             },
+      //           },
+      //         },
+      //         status: "Gagal",
+      //         // bagaimana kalau status kp tetap "baru", di front end kita cuma melihat catatan_penolakan saja, setelah diperbarui oleh mahasiswa, catatan_penolakan dikosongkan lagi
+      //         level_akses: {
+      //           decrement: 1,
+      //         },
+      //         catatan_penolakan: catatan,
+      //       },
+      //     });
+      //   } else {
+      //     await prisma.pendaftaran_kp.update({
+      //       where: {
+      //         id: dataKP.id,
+      //       },
+      //       data: {
+      //         document: {
+      //           update: {
+      //             where: {
+      //               idKriteria_idPendaftaranKP: {
+      //                 idKriteria: 5,
+      //                 idPendaftaranKP: dataKP.id,
+      //               },
+      //             },
+      //             data: {
+      //               status,
+      //               catatan: catatan || "Link mungkin tidak valid",
+      //             },
+      //           },
+      //         },
+      //         // bagaimana kalau status kp tetap "baru", di front end kita cuma melihat catatan_penolakan saja, setelah diperbarui oleh mahasiswa, catatan_penolakan dikosongkan lagi
+      //         level_akses: {
+      //           decrement: 1,
+      //         },
+      //         catatan_penolakan: catatan,
+      //       },
+      //     });
+      //   }
 
-      if (isClosed) {
-        await DaftarKPRepository.createLOGPendaftaranKPById(
-          id,
-          "[GAGAL] Pendaftaran kerja praktek gagal karena sudah melewati batas waktu",
-          new Date(),
-          2
-        );
-      }
+      //   await DaftarKPRepository.createLOGPendaftaranKPById(
+      //     dataKP.id,
+      //     `[BERKAS DITOLAK] ${catatan}`,
+      //     new Date(),
+      //     2
+      //   );
+
+      //   if (isClosed) {
+      //     await DaftarKPRepository.createLOGPendaftaranKPById(
+      //       dataKP.id,
+      //       "[GAGAL] Pendaftaran kerja praktik gagal karena sudah melewati batas waktu",
+      //       new Date(),
+      //       2
+      //     );
+      //   }
+      // }
     }
   }
 
@@ -790,16 +955,82 @@ export default class DaftarKPRepository {
       },
     });
   }
-  //   id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  //   nama                String                @db.VarChar(255)
-  //   alamat              String                @db.VarChar(255)
-  //   longitude           Float?
-  //   latitude            Float?
-  //   jenis               jenis_instansi
-  //   profil_singkat      String?               @db.VarChar(255)
-  //   status              status_instansi?      @default(Pending)
-  //   nama_pj             String                @db.VarChar(255)
-  //   no_hp_pj            String                @db.VarChar(14)
+
+  public static async patchDataInstansi(
+    id: string,
+    status?: string
+  ): Promise<instansi> {
+    const data = await prisma.instansi.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!data) {
+      throw new APIError("Data instansi tidak ditemukan", 404);
+    }
+
+    if (
+      status &&
+      status !== "Aktif" &&
+      status !== "Pending" &&
+      status !== "Tidak_Aktif"
+    ) {
+      throw new APIError("Harus memasukkan status yang valid");
+    }
+
+    const result = await prisma.instansi.update({
+      where: {
+        id,
+      },
+      data: {
+        status: (status === "" || status === undefined || status === null
+          ? data.status
+          : status) as "Aktif" | "Pending" | "Tidak_Aktif",
+      },
+    });
+
+    return result;
+  }
+
+  public static async createInstansi({
+    longitude,
+    latitude,
+    radius,
+    status,
+    profil_singkat,
+    nama,
+    alamat,
+    jenis,
+    nama_pj,
+    no_hp_pj,
+  }: {
+    longitude: number;
+    latitude: number;
+    radius: number;
+    status: string;
+    profil_singkat?: string;
+    nama: string;
+    alamat: string;
+    jenis: string;
+    nama_pj: string;
+    no_hp_pj: string;
+  }): Promise<void> {
+    await prisma.instansi.create({
+      data: {
+        longitude,
+        latitude,
+        radius,
+        status: status as status_instansi,
+        profil_singkat,
+        nama,
+        alamat,
+        jenis: jenis as jenis_instansi,
+        nama_pj,
+        no_hp_pj,
+      },
+    });
+  }
 
   public static async editDataInstansi(
     id: string,
@@ -945,41 +1176,13 @@ export default class DaftarKPRepository {
   }
 
   public static async createPermomohonanKP({
-    dataKPMahasiswa,
     nim,
     idInstansi,
     tujuanSuratInstansi,
     tanggalMulai,
     judul_kp,
     kelas_kp,
-  }: RepositoryPendaftaranKPInterface): Promise<void> {
-    if (dataKPMahasiswa) {
-      await prisma.pendaftaran_kp.update({
-        where: {
-          id: dataKPMahasiswa.id,
-        },
-        data: {
-          nim,
-          tanggal_pengajuan: new Date(),
-          tanggal_mulai: tanggalMulai,
-          id_instansi: idInstansi,
-          tujuan_surat_instansi: tujuanSuratInstansi,
-          id_tahun_ajaran: await MahasiswaHelper.getTahunAjaran(),
-          judul_kp,
-          level_akses: 1,
-          kelas_kp,
-        },
-      });
-
-      await DaftarKPRepository.createLOGPendaftaranKPById(
-        dataKPMahasiswa.id,
-        "[SUKSES] Berhasil mengubah instansi kerja praktek",
-        new Date(),
-        1
-      );
-      return;
-    }
-
+  }: RepositoryCreatePendaftaranKPInterface): Promise<void> {
     const data = await prisma.pendaftaran_kp.create({
       data: {
         nim,
@@ -1008,7 +1211,7 @@ export default class DaftarKPRepository {
 
     await DaftarKPRepository.createLOGPendaftaranKPById(
       data.id,
-      "[SUKSES] Berhasil melakukan Pendaftaran Kerja Praktek",
+      "[SUKSES] Berhasil melakukan Pendaftaran Kerja praktik",
       new Date(),
       1
     );
@@ -1064,230 +1267,17 @@ export default class DaftarKPRepository {
     return data;
   }
 
-  public static async postSuratPengantarKP(
-    nim: string,
-    linkSuratPengantarKP: string
-  ): Promise<void> {
-    const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim);
+  public static async getDataInstansi(nim: string) {
+    const blacklist = await blackListInstansi(nim);
 
-    // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
-
-    // if (!dataKPTerbaru || !(dataKPTerbaru.level_akses === 1)) {
-    //   throw new APIError(
-    //     "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-    //   );
-    // }
-
-    if (!dataKPTerbaru) {
-      throw new APIError(
-        "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-      );
-    }
-
-    await prisma.pendaftaran_kp.update({
-      where: {
-        id: dataKPTerbaru.id,
-      },
-      data: {
-        catatan_penolakan: null,
-        level_akses:
-          dataKPTerbaru.level_akses === 1
-            ? dataKPTerbaru.level_akses + 1
-            : dataKPTerbaru.level_akses,
-        document: {
-          update: {
-            where: {
-              idKriteria_idPendaftaranKP: {
-                idKriteria: 1,
-                idPendaftaranKP: dataKPTerbaru.id,
-              },
-            },
-            data: {
-              data: linkSuratPengantarKP,
-              status: "Terkirim",
-            },
-          },
-        },
-      },
-    });
-
-    await DaftarKPRepository.createLOGPendaftaranKPById(
-      dataKPTerbaru.id,
-      "[SUKSES] Berhasil mengajukan link surat pengantar kerja praktek",
-      new Date(),
-      1
-    );
-  }
-
-  public static async postSuratBalasanKP(
-    nim: string,
-    linkSuratBalasanKP: string
-  ): Promise<void> {
-    const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim);
-
-    // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
-
-    // if (!dataKPTerbaru || !(dataKPTerbaru.level_akses === 3)) {
-    //   throw new APIError(
-    //     "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-    //   );
-    // }
-
-    if (!dataKPTerbaru) {
-      throw new APIError(
-        "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-      );
-    }
-
-    await prisma.pendaftaran_kp.update({
-      where: {
-        id: dataKPTerbaru.id,
-      },
-      data: {
-        catatan_penolakan: null,
-        document: {
-          update: {
-            where: {
-              idKriteria_idPendaftaranKP: {
-                idKriteria: 2,
-                idPendaftaranKP: dataKPTerbaru.id,
-              },
-            },
-            data: {
-              data: linkSuratBalasanKP,
-              status: "Terkirim",
-            },
-          },
-        },
-        level_akses:
-          dataKPTerbaru.level_akses === 3
-            ? dataKPTerbaru.level_akses + 1
-            : dataKPTerbaru.level_akses,
-      },
-    });
-
-    await DaftarKPRepository.createLOGPendaftaranKPById(
-      dataKPTerbaru.id,
-      "[SUKSES] Berhasil mengajukan link surat balasan instansi",
-      new Date(),
-      1
-    );
-  }
-
-  public static async postIdPengajuanDosenPembimbingKP(
-    nim: string,
-    idPengajuanDosenPembimbingKP: string
-  ): Promise<void> {
-    const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim);
-
-    // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
-
-    // if (!dataKPTerbaru || !(dataKPTerbaru.level_akses === 5)) {
-    //   throw new APIError(
-    //     "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-    //   );
-    // }
-
-    if (!dataKPTerbaru) {
-      throw new APIError(
-        "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-      );
-    }
-
-    await prisma.pendaftaran_kp.update({
-      where: {
-        id: dataKPTerbaru.id,
-      },
-      data: {
-        catatan_penolakan: null,
-
-        document: {
-          update: {
-            where: {
-              idKriteria_idPendaftaranKP: {
-                idKriteria: 3,
-                idPendaftaranKP: dataKPTerbaru.id,
-              },
-            },
-            data: {
-              data: idPengajuanDosenPembimbingKP,
-              status: "Terkirim",
-            },
-          },
-        },
-        level_akses:
-          dataKPTerbaru.level_akses === 5
-            ? dataKPTerbaru.level_akses + 1
-            : dataKPTerbaru.level_akses,
-      },
-    });
-    await DaftarKPRepository.createLOGPendaftaranKPById(
-      dataKPTerbaru.id,
-      "[SUKSES] Berhasil mengajukan ID dosen pembimbing",
-      new Date(),
-      1
-    );
-  }
-
-  public static async postSuratPenunjukkanDosenPembimbing(
-    nim: string,
-    linkSuratPenunjukkanDosenPembimbingKP: string
-  ): Promise<void> {
-    const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim);
-
-    // jika 0 berarti gagal, 9 berarti udh lulus pendaftaran dan punya akses utk lanjut kp (jika perpanjangan sudah dibuka oleh Koordinator KP)
-
-    // if (!dataKPTerbaru || !(dataKPTerbaru.level_akses === 7)) {
-    //   throw new APIError(
-    //     "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-    //   );
-    // }
-
-    if (!dataKPTerbaru) {
-      throw new APIError(
-        "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-      );
-    }
-
-    await prisma.pendaftaran_kp.update({
-      where: {
-        id: dataKPTerbaru.id,
-      },
-      data: {
-        catatan_penolakan: null,
-        document: {
-          update: {
-            where: {
-              idKriteria_idPendaftaranKP: {
-                idKriteria: 4,
-                idPendaftaranKP: dataKPTerbaru.id,
-              },
-            },
-            data: {
-              data: linkSuratPenunjukkanDosenPembimbingKP,
-              status: "Terkirim",
-            },
-          },
-        },
-        level_akses:
-          dataKPTerbaru.level_akses === 7
-            ? dataKPTerbaru.level_akses + 1
-            : dataKPTerbaru.level_akses,
-      },
-    });
-
-    await DaftarKPRepository.createLOGPendaftaranKPById(
-      dataKPTerbaru.id,
-      "[SUKSES] Berhasil mengajukan link surat penunjukkan dosen pembimbing",
-      new Date(),
-      1
-    );
-  }
-
-  public static async getDataInstansi() {
     const data = await prisma.instansi.findMany({
       where: {
         status: "Aktif",
+        AND: {
+          id: {
+            notIn: blacklist,
+          },
+        },
       },
     });
 
@@ -1295,62 +1285,6 @@ export default class DaftarKPRepository {
   }
 
   // sementara pake surat + link dulu
-  public static async postSuratPerpanjanganKP(
-    nim: string,
-    linkSuratPerpanjanganKP: string,
-    alasan_lanjut_kp?: string
-  ): Promise<void> {
-    const dataKPTerbaru = await DaftarKPRepository.getKPTerbaruMahasiswa(nim);
-
-    // jika 0 berarti gagal, 11 berarti sudah melakukan perpanjangan KP
-
-    // if (!dataKPTerbaru || !(dataKPTerbaru.level_akses === 9)) {
-    //   throw new APIError(
-    //     "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-    //   );
-    // }
-
-    if (!dataKPTerbaru) {
-      throw new APIError(
-        "Anda mungkin tidak punya hak akses atau sudah mengunggah berkas yang terkait"
-      );
-    }
-
-    await prisma.pendaftaran_kp.update({
-      where: {
-        id: dataKPTerbaru.id,
-      },
-      data: {
-        catatan_penolakan: null,
-        document: {
-          update: {
-            where: {
-              idKriteria_idPendaftaranKP: {
-                idKriteria: 5,
-                idPendaftaranKP: dataKPTerbaru.id,
-              },
-            },
-            data: {
-              data: linkSuratPerpanjanganKP,
-              status: "Terkirim",
-            },
-          },
-        },
-        level_akses:
-          dataKPTerbaru.level_akses === 9
-            ? dataKPTerbaru.level_akses + 1
-            : dataKPTerbaru.level_akses,
-        alasan_lanjut_kp,
-      },
-    });
-
-    await DaftarKPRepository.createLOGPendaftaranKPById(
-      dataKPTerbaru.id,
-      "[SUKSES] mengajukan link surat perpanjangan kerja praktek",
-      new Date(),
-      1
-    );
-  }
 
   public static async getPendaftaranKPById(
     id: string
@@ -1375,7 +1309,6 @@ export default class DaftarKPRepository {
     dataBaru: PutMahasiswaParamsInterface,
     dataLama: dataLamaPutBerkasMahasiswa
   ) {
-    console.log(dataBaru);
     if (
       (dataLama.document[0].status !== "Divalidasi" &&
         dataBaru.status_link_surat_penolakan_instansi === "Divalidasi") ||
@@ -1481,46 +1414,95 @@ export default class DaftarKPRepository {
       let final_level_akses = dataLama.level_akses;
       if (dataLama.level_akses === 0) final_level_akses = dataBaru.level_akses;
       if (dataLama.level_akses / 2 === 1) {
-        if (dataBaru.status_link_surat_pengantar === "Ditolak") {
-          final_level_akses = final_level_akses - 1;
-        } else if (dataBaru.status_link_surat_pengantar === "Divalidasi") {
-          final_level_akses = final_level_akses + 1;
+        final_level_akses = final_level_akses + 1;
+        if (dataBaru.status_link_surat_balasan === "Divalidasi") {
+          final_level_akses = 5;
+        } else if (dataBaru.status_link_surat_balasan === "Terkirim") {
+          final_level_akses = 4;
+        }
+        if (dataBaru.status_id_surat_pengajuan_dospem === "Divalidasi") {
+          final_level_akses = 7;
+        } else if (dataBaru.status_id_surat_pengajuan_dospem === "Terkirim") {
+          final_level_akses = 6;
+        }
+
+        if (dataBaru.status_link_surat_penunjukkan_dospem === "Divalidasi") {
+          final_level_akses = 9;
+        } else if (
+          dataBaru.status_link_surat_penunjukkan_dospem === "Terkirim"
+        ) {
+          final_level_akses = 8;
+        }
+
+        if (dataBaru.status_link_surat_perpanjangan_kp === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataBaru.status_link_surat_perpanjangan_kp === "Terkirim") {
+          final_level_akses = 10;
         }
       } else if (dataLama.level_akses / 2 === 2) {
-        if (dataBaru.status_link_surat_balasan === "Ditolak") {
-          final_level_akses = final_level_akses - 1;
-        } else if (dataBaru.status_link_surat_balasan === "Divalidasi") {
-          final_level_akses = final_level_akses + 1;
+        final_level_akses = final_level_akses + 1;
+        if (dataBaru.status_id_surat_pengajuan_dospem === "Divalidasi") {
+          final_level_akses = 7;
+        } else if (dataBaru.status_id_surat_pengajuan_dospem === "Terkirim") {
+          final_level_akses = 6;
+        }
+
+        if (dataBaru.status_link_surat_penunjukkan_dospem === "Divalidasi") {
+          final_level_akses = 9;
+        } else if (
+          dataBaru.status_link_surat_penunjukkan_dospem === "Terkirim"
+        ) {
+          final_level_akses = 8;
+        }
+
+        if (dataBaru.status_link_surat_perpanjangan_kp === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataBaru.status_link_surat_perpanjangan_kp === "Terkirim") {
+          final_level_akses = 10;
         }
       } else if (dataLama.level_akses / 2 === 3) {
-        if (dataBaru.status_id_surat_pengajuan_dospem === "Ditolak") {
-          final_level_akses = final_level_akses - 1;
-        } else if (dataBaru.status_id_surat_pengajuan_dospem === "Divalidasi") {
-          final_level_akses = final_level_akses + 1;
+        final_level_akses = final_level_akses + 1;
+        if (dataBaru.status_link_surat_penunjukkan_dospem === "Divalidasi") {
+          final_level_akses = 9;
+        } else if (
+          dataBaru.status_link_surat_penunjukkan_dospem === "Terkirim"
+        ) {
+          final_level_akses = 8;
+        }
+
+        if (dataBaru.status_link_surat_perpanjangan_kp === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataBaru.status_link_surat_perpanjangan_kp === "Terkirim") {
+          final_level_akses = 10;
         }
       } else if (dataLama.level_akses / 2 === 4) {
-        if (dataBaru.status_link_surat_penunjukkan_dospem === "Ditolak") {
-          final_level_akses = final_level_akses - 1;
-        } else if (
-          dataBaru.status_link_surat_penunjukkan_dospem === "Divalidasi"
-        ) {
-          final_level_akses = final_level_akses + 1;
+        final_level_akses = final_level_akses + 1;
+        if (dataBaru.status_link_surat_perpanjangan_kp === "Divalidasi") {
+          final_level_akses = 11;
+        } else if (dataBaru.status_link_surat_perpanjangan_kp === "Terkirim") {
+          final_level_akses = 10;
         }
       } else if (dataLama.level_akses / 2 === 5) {
-        if (dataBaru.status_link_surat_perpanjangan_kp === "Ditolak") {
-          final_level_akses = final_level_akses - 1;
-        } else if (
-          dataBaru.status_link_surat_perpanjangan_kp === "Divalidasi"
-        ) {
-          final_level_akses = final_level_akses + 1;
-        }
+        final_level_akses = final_level_akses + 1;
       }
       await prisma.pendaftaran_kp.update({
         where: {
           id: dataLama.id,
         },
         data: {
-          status: dataBaru.status || dataLama.status,
+          nip_pembimbing: dataBaru.nip_pembimbing || dataLama.nip_pembimbing,
+          tanggal_mulai: dataBaru.tanggal_mulai
+            ? dataBaru.tanggal_mulai
+            : dataLama.level_akses === 8 &&
+              dataBaru.status_link_surat_penunjukkan_dospem === "Divalidasi" &&
+              new Date().getTime() > new Date(dataLama.tanggal_mulai).getTime()
+            ? new Date()
+            : dataLama.tanggal_mulai,
+          tanggal_selesai: dataBaru.tanggal_selesai || dataLama.tanggal_selesai,
+          status:
+            final_level_akses === 11 || dataBaru.level_akses === 11
+              ? "Lanjut"
+              : dataBaru.status || dataLama.status,
           alasan_lanjut_kp:
             dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
           id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
@@ -1648,156 +1630,44 @@ export default class DaftarKPRepository {
         },
       });
     } else {
-      if (dataLama.level_akses === 10) {
-        // yg ini perlu?
-        await prisma.pendaftaran_kp.update({
-          where: {
-            id: dataLama.id,
-          },
-          data: {
-            tanggal_selesai:
-              dataBaru.tanggal_selesai || dataLama.tanggal_selesai,
-            level_akses:
-              dataBaru.level_akses % 2 === 1
-                ? dataBaru.level_akses
-                : dataLama.level_akses,
-            alasan_lanjut_kp:
-              dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
-            id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
-            tujuan_surat_instansi:
-              dataBaru.tujuan_surat_instansi || dataLama.tujuan_surat_instansi,
-            judul_kp: dataBaru.judul_kp || dataLama.judul_kp,
-            kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
-            document: {
-              update: [
-                {
-                  where: {
-                    idKriteria_idPendaftaranKP: {
-                      idKriteria: 0,
-                      idPendaftaranKP: dataLama.id,
-                    },
-                  },
-                  data: {
-                    data:
-                      dataBaru.link_surat_penolakan_instansi ||
-                      dataLama.document[0].data,
-                    status:
-                      dataBaru.level_akses === -1
-                        ? "Ditolak"
-                        : dataBaru.status_link_surat_penolakan_instansi ||
-                          dataLama.document[0].status,
-                    catatan: dataBaru.catatan_link_surat_penolakan_instansi,
-                  },
-                },
-                {
-                  where: {
-                    idKriteria_idPendaftaranKP: {
-                      idKriteria: 1,
-                      idPendaftaranKP: dataLama.id,
-                    },
-                  },
-                  data: {
-                    data:
-                      dataBaru.link_surat_pengantar ||
-                      dataLama.document[1].data,
-                    status:
-                      dataBaru.level_akses === 1
-                        ? "Ditolak"
-                        : dataBaru.status_link_surat_pengantar ||
-                          dataLama.document[1].status,
-                    catatan: dataBaru.catatan_link_surat_pengantar,
-                  },
-                },
-                {
-                  where: {
-                    idKriteria_idPendaftaranKP: {
-                      idKriteria: 2,
-                      idPendaftaranKP: dataLama.id,
-                    },
-                  },
-                  data: {
-                    data:
-                      dataBaru.link_surat_balasan || dataLama.document[2].data,
-                    status:
-                      dataBaru.level_akses === 3
-                        ? "Ditolak"
-                        : dataBaru.status_link_surat_balasan ||
-                          dataLama.document[2].status,
-                    catatan: dataBaru.catatan_link_surat_balasan,
-                  },
-                },
-                {
-                  where: {
-                    idKriteria_idPendaftaranKP: {
-                      idKriteria: 3,
-                      idPendaftaranKP: dataLama.id,
-                    },
-                  },
-                  data: {
-                    data:
-                      dataBaru.id_surat_pengajuan_dospem ||
-                      dataLama.document[3].data,
-                    status:
-                      dataBaru.level_akses === 5
-                        ? "Ditolak"
-                        : dataBaru.status_id_surat_pengajuan_dospem ||
-                          dataLama.document[3].status,
-                    catatan: dataBaru.catatan_id_surat_pengajuan_dospem,
-                  },
-                },
-                {
-                  where: {
-                    idKriteria_idPendaftaranKP: {
-                      idKriteria: 4,
-                      idPendaftaranKP: dataLama.id,
-                    },
-                  },
-                  data: {
-                    data:
-                      dataBaru.link_surat_penunjukkan_dospem ||
-                      dataLama.document[4].data,
-                    status:
-                      dataBaru.level_akses === 7
-                        ? "Ditolak"
-                        : dataBaru.status_link_surat_penunjukkan_dospem ||
-                          dataLama.document[4].status,
-                    catatan: dataBaru.catatan_link_surat_penunjukkan_dospem,
-                  },
-                },
-                {
-                  where: {
-                    idKriteria_idPendaftaranKP: {
-                      idKriteria: 5,
-                      idPendaftaranKP: dataLama.id,
-                    },
-                  },
-                  data: {
-                    data:
-                      dataBaru.link_surat_perpanjangan_kp ||
-                      dataLama.document[5].data,
-                    status:
-                      dataBaru.level_akses === 9
-                        ? "Ditolak"
-                        : dataBaru.status_link_surat_perpanjangan_kp ||
-                          dataLama.document[5].status,
-                    catatan: dataBaru.catatan_link_surat_perpanjangan_kp,
-                  },
-                },
-              ],
-            },
-            status: dataBaru.status || "Lanjut",
-          },
-        });
+      let final_level_akses = dataLama.level_akses;
+      if (dataLama.level_akses === 0) final_level_akses = dataBaru.level_akses;
+      if (dataBaru.status_link_surat_pengantar === "Divalidasi") {
+        final_level_akses = 3;
+      } else if (dataBaru.status_link_surat_pengantar === "Ditolak") {
+        final_level_akses = 1;
+      } else if (dataBaru.status_link_surat_pengantar === "Terkirim") {
+        final_level_akses = 2;
+      }
+      if (dataBaru.status_link_surat_balasan === "Divalidasi") {
+        final_level_akses = 5;
+      } else if (dataBaru.status_link_surat_balasan === "Terkirim") {
+        final_level_akses = 4;
+      } else if (dataBaru.status_link_surat_balasan === "Ditolak") {
+        final_level_akses = 3;
+      }
+      if (dataBaru.status_id_surat_pengajuan_dospem === "Divalidasi") {
+        final_level_akses = 7;
+      } else if (dataBaru.status_id_surat_pengajuan_dospem === "Terkirim") {
+        final_level_akses = 6;
+      } else if (dataBaru.status_id_surat_pengajuan_dospem === "Ditolak") {
+        final_level_akses = 5;
+      }
 
-        // TIMEOUT UNTUK 6 BULAN
+      if (dataBaru.status_link_surat_penunjukkan_dospem === "Divalidasi") {
+        final_level_akses = 9;
+      } else if (dataBaru.status_link_surat_penunjukkan_dospem === "Terkirim") {
+        final_level_akses = 8;
+      } else if (dataBaru.status_link_surat_penunjukkan_dospem === "Ditolak") {
+        final_level_akses = 7;
+      }
 
-        await DaftarKPRepository.createLOGPendaftaranKPById(
-          dataLama.id,
-          `[BERKAS DITERIMA] Pengajuan link surat perpanjangan kerja praktek diterima`,
-          new Date(),
-          1
-        );
-        return;
+      if (dataBaru.status_link_surat_perpanjangan_kp === "Divalidasi") {
+        final_level_akses = 11;
+      } else if (dataBaru.status_link_surat_perpanjangan_kp === "Terkirim") {
+        final_level_akses = 10;
+      } else if (dataBaru.status_link_surat_perpanjangan_kp === "Ditolak") {
+        final_level_akses = 9;
       }
 
       if (dataLama.document.length === 0) {
@@ -1806,15 +1676,18 @@ export default class DaftarKPRepository {
         );
       }
 
-      // setting di FE aja utk bagian acc berkas yang di edit
-
-      // sistem akan rusak bila berkas merupakan bilangan genap dan mahasiswa belum mengirimkan berkas
       await prisma.pendaftaran_kp.update({
         where: {
           id: dataLama.id,
         },
         data: {
-          status: dataBaru.status || dataLama.status,
+          nip_pembimbing: dataBaru.nip_pembimbing || dataLama.nip_pembimbing,
+          tanggal_mulai: dataBaru.tanggal_mulai || dataLama.tanggal_mulai,
+          tanggal_selesai: dataBaru.tanggal_mulai || dataLama.tanggal_selesai,
+          status:
+            final_level_akses === 11 || dataBaru.level_akses === 11
+              ? "Lanjut"
+              : dataBaru.status || dataLama.status,
           alasan_lanjut_kp:
             dataBaru.alasan_lanjut_kp || dataLama.alasan_lanjut_kp,
           id_instansi: dataBaru.id_instansi || dataLama.id_instansi,
@@ -1824,7 +1697,7 @@ export default class DaftarKPRepository {
           kelas_kp: dataBaru.kelas_kp || dataLama.kelas_kp,
           level_akses:
             dataBaru.level_akses % 2 === 1
-              ? dataBaru.level_akses
+              ? dataBaru.level_akses || final_level_akses
               : dataLama.level_akses,
           document: {
             update: [
@@ -1948,28 +1821,36 @@ export default class DaftarKPRepository {
       if (dataLama.level_akses === 2) {
         await DaftarKPRepository.createLOGPendaftaranKPById(
           dataLama.id,
-          `[BERKAS DITERIMA] Pengajuan link surat pengantar kerja praktek diterima`,
+          `[BERKAS DITERIMA] Pengajuan link surat pengantar kerja praktik diterima dengan link ${
+            dataBaru?.link_surat_pengantar || ""
+          }`,
           new Date(),
           1
         );
       } else if (dataLama.level_akses === 4) {
         await DaftarKPRepository.createLOGPendaftaranKPById(
           dataLama.id,
-          `[BERKAS DITERIMA] Pengajuan link surat balasan instansi diterima`,
+          `[BERKAS DITERIMA] Pengajuan link surat balasan instansi diterima dengan link ${
+            dataBaru?.link_surat_balasan || ""
+          }`,
           new Date(),
           1
         );
       } else if (dataLama.level_akses === 6) {
         await DaftarKPRepository.createLOGPendaftaranKPById(
           dataLama.id,
-          `[BERKAS DITERIMA] Pengajuan ID penunjukkan dosen pembimbing diterima`,
+          `[BERKAS DITERIMA] Pengajuan ID penunjukkan dosen pembimbing diterima dengan link ${
+            dataBaru?.id_surat_pengajuan_dospem || ""
+          }`,
           new Date(),
           1
         );
       } else if (dataLama.level_akses === 8) {
         await DaftarKPRepository.createLOGPendaftaranKPById(
           dataLama.id,
-          `[BERKAS DITERIMA] Pengajuan link surat penunjukkan dosem pembimbing diterima`,
+          `[BERKAS DITERIMA] Pengajuan link surat penunjukkan dosem pembimbing diterima dengan link ${
+            dataBaru?.link_surat_penunjukkan_dospem || ""
+          }`,
           new Date(),
           1
         );
@@ -2221,7 +2102,7 @@ export default class DaftarKPRepository {
 
   //       await DaftarKPRepository.createLOGPendaftaranKPById(
   //         dataLama.id,
-  //         `[BERKAS DITERIMA] Pengajuan link surat perpanjangan kerja praktek diterima`,
+  //         `[BERKAS DITERIMA] Pengajuan link surat perpanjangan kerja praktik diterima`,
   //         new Date(),
   //         1
   //       );
@@ -2370,7 +2251,7 @@ export default class DaftarKPRepository {
   //     if (dataLama.level_akses === 2) {
   //       await DaftarKPRepository.createLOGPendaftaranKPById(
   //         dataLama.id,
-  //         `[BERKAS DITERIMA] Pengajuan link surat pengantar kerja praktek diterima`,
+  //         `[BERKAS DITERIMA] Pengajuan link surat pengantar kerja praktik diterima`,
   //         new Date(),
   //         1
   //       );
