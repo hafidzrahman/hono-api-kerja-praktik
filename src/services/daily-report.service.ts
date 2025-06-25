@@ -1,3 +1,4 @@
+import CryptoHelper from "../helpers/crypto.helper";
 import DailyReportRepository from "../repositories/daily-report.repository";
 import { APIError } from "../utils/api-error.util";
 import NilaiService from "./nilai.service";
@@ -225,8 +226,18 @@ export default class DailyReportService {
   }
 
   public static async getMahasiswaInstansiSaya(
-    email_pembimbing_instansi: string
+    id: string
   ) {
+
+		// decode uri dulu id nya, terus decrypt buat ambil nim-nya
+		const decodedID = decodeURIComponent(id);
+		let email_pembimbing_instansi;
+		try {
+			email_pembimbing_instansi = CryptoHelper.decryptIDToEmail(decodedID);
+		} catch (error) {
+			throw new APIError("Waduh, datanya gak ditemukan, mau nyari apa sih mas? 😭", 404);
+		}
+
     const pembimbing_instansi =
       await DailyReportRepository.findPembimbingInstansi(
         email_pembimbing_instansi

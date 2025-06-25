@@ -196,7 +196,7 @@ export default class JadwalHelper {
 
     // 1. Tentukan tanggal awal dan akhir (sebagai objek Date)
     const startDate = new Date(today);
-    startDate.setDate(today.getDate()); // Mundur 2 hari
+    startDate.setDate(today.getDate() - 4); // Mundur 4 hari
 
     const endDate = new Date(today);
     endDate.setDate(today.getDate() + 4); // Maju 4 hari
