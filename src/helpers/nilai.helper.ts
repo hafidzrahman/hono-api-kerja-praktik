@@ -7,21 +7,20 @@ export default class NilaiHelper {
     if (nilai < 0 || nilai > 100) {
       throw new APIError(`Waduh, ${fieldName} harus bernilai antara 0 dan 100! 😭`, 400);
     }
-    return true;
   }
 
   public static async calculateNilaiPenguji(penguasaanKeilmuan: number, kemampuanPresentasi: number, kesesuaianUrgensi: number) {
-    this.validateNilaiInput(penguasaanKeilmuan, "Penguasaan Keilmuan");
-    this.validateNilaiInput(kemampuanPresentasi, "Kemampuan Presentasi");
-    this.validateNilaiInput(kesesuaianUrgensi, "Kesesuaian Urgensi");
+    await this.validateNilaiInput(penguasaanKeilmuan, "Penguasaan Keilmuan");
+    await this.validateNilaiInput(kemampuanPresentasi, "Kemampuan Presentasi");
+    await this.validateNilaiInput(kesesuaianUrgensi, "Kesesuaian Urgensi");
 
     return parseFloat((penguasaanKeilmuan * 0.4 + kemampuanPresentasi * 0.2 + kesesuaianUrgensi * 0.4).toFixed(2));
   }
 
   public static async calculateNilaiPembimbing(penyelesaianMasalah: number, bimbinganSikap: number, kualitasLaporan: number) {
-    this.validateNilaiInput(penyelesaianMasalah, "Penyelesaian Masalah");
-    this.validateNilaiInput(bimbinganSikap, "Bimbingan Sikap");
-    this.validateNilaiInput(kualitasLaporan, "Kualitas Laporan");
+    await this.validateNilaiInput(penyelesaianMasalah, "Penyelesaian Masalah");
+    await this.validateNilaiInput(bimbinganSikap, "Bimbingan Sikap");
+    await this.validateNilaiInput(kualitasLaporan, "Kualitas Laporan");
 
     return penyelesaianMasalah * 0.4 + bimbinganSikap * 0.35 + kualitasLaporan * 0.25;
   }
@@ -30,7 +29,7 @@ export default class NilaiHelper {
     if (nilaiPenguji === null || nilaiPembimbing === null || nilaiInstansi === null) {
       return null;
     }
-
+    
     return parseFloat((nilaiPenguji * 0.2 + nilaiPembimbing * 0.4 + nilaiInstansi * 0.4).toFixed(2));
   }
 
