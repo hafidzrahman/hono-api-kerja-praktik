@@ -94,10 +94,10 @@ export default class MahasiswaService {
     const nilai = await MahasiswaRepository.getNilaiByNIM(nim);
     const sudahNilaiInstansi = nilai && nilai.nilai_instansi !== null;
 
-    const semuaSyaratTerpenuhi = masihTerdaftarKP && cukupBimbingan && semuaDailyReportDisetujui && sudahNilaiInstansi;
+    const semuaSyaratTerpenuhi = selesaiMurojaah && masihTerdaftarKP && cukupBimbingan && semuaDailyReportDisetujui && sudahNilaiInstansi;
 
     return {
-      sudah_selesai_murojaah: true,
+      sudah_selesai_murojaah: selesaiMurojaah,
       masih_terdaftar_kp: masihTerdaftarKP,
       minimal_lima_bimbingan: cukupBimbingan,
       daily_report_sudah_approve: semuaDailyReportDisetujui,
