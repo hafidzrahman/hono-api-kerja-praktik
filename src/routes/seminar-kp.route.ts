@@ -24,19 +24,21 @@ seminarKpRoute.get("/dokumen-saya", AuthMiddleware.JWTBearerTokenExtraction, Sem
 seminarKpRoute.post("/dokumen/validasi", AuthMiddleware.JWTBearerTokenExtraction, SeminarKpHandler.postTerimaDokumenSeminarKP);
 seminarKpRoute.post("/dokumen/ditolak", AuthMiddleware.JWTBearerTokenExtraction, SeminarKpHandler.postTolakDokumenSeminarKP);
 
-seminarKpRoute.get("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllJadwalSeminar)
-seminarKpRoute.get("/jadwal-saya", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getJadwalMahasiswaSaya)
+seminarKpRoute.get("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllJadwalSeminar);
+seminarKpRoute.get("/jadwal-saya", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getJadwalMahasiswaSaya);
 seminarKpRoute.post("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.postJadwal);
 seminarKpRoute.put("/jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.putJadwal);
 seminarKpRoute.get("/jadwal/log-jadwal", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getLogJadwal);
 seminarKpRoute.get("/dosen", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllDosen);
-seminarKpRoute.get("/ruangan", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllRuangan)
+seminarKpRoute.get("/ruangan", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.getAllRuangan);
+seminarKpRoute.post("/ruangan", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.postRuangan);
+seminarKpRoute.delete("/ruangan", AuthMiddleware.JWTBearerTokenExtraction, JadwalSeminarKpHandler.deleteRuangan);
 
-seminarKpRoute.post("/nilai/penguji", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createUpdateNilaiPenguji)
-seminarKpRoute.post("/nilai/pembimbing", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createUpdateNilaiPembimbing)
-seminarKpRoute.get("/nilai", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.getAllNilai)
-seminarKpRoute.post("/nilai/validasi", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createValidasiNilai)
+seminarKpRoute.post("/nilai/penguji", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createUpdateNilaiPenguji);
+seminarKpRoute.post("/nilai/pembimbing", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createUpdateNilaiPembimbing);
+seminarKpRoute.get("/nilai", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.getAllNilai);
+seminarKpRoute.post("/nilai/validasi", AuthMiddleware.JWTBearerTokenExtraction, NilaiHandler.createValidasiNilai);
 
-seminarKpRoute.get("/tahun-ajaran", AuthMiddleware.JWTBearerTokenExtraction, JadwalHandler.getAllTahunAjaran)
+seminarKpRoute.get("/tahun-ajaran", AuthMiddleware.JWTBearerTokenExtraction, JadwalHandler.getAllTahunAjaran);
 
 export default seminarKpRoute;
