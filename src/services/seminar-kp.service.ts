@@ -55,38 +55,54 @@ export default class SeminarKpService {
     }
 
     const dokumen = await SeminarKpRepository.getDataSeminarKPSaya(nim);
-
-    if (!dokumen) {
-      throw new APIError(`Waduh, Dokumen tidak ditemukan! 😭`, 404);
-    }
-
     const validasiPersyaratan = await MahasiswaService.validasiPersyaratanSeminarKp(nim);
 
-    let id_pendaftaran_kp = "";
-    if (dokumen.pendaftaran_kp && dokumen.pendaftaran_kp.length > 0) {
-      id_pendaftaran_kp = dokumen.pendaftaran_kp[0].id;
-    } else if (dokumen.dokumen_seminar_kp.length > 0) {
-      id_pendaftaran_kp = dokumen.dokumen_seminar_kp[0].id_pendaftaran_kp ?? "";
-    }
-
-    const stepInfo = {
-      step1_accessible: await StepHelper.stepAkses(1, id_pendaftaran_kp),
-      step2_accessible: await StepHelper.stepAkses(2, id_pendaftaran_kp),
-      step3_accessible: await StepHelper.stepAkses(3, id_pendaftaran_kp),
-      step4_accessible: await StepHelper.stepAkses(4, id_pendaftaran_kp),
-      step5_accessible: await StepHelper.stepAkses(5, id_pendaftaran_kp),
-      step6_accessible: await StepHelper.stepAkses(6, id_pendaftaran_kp),
+    const defaultDokumen = {
+      pendaftaran_kp: [],
+      dokumen_seminar_kp: [],
+      jadwal: [],
+      nilai: [],
+      nim,
+      nama: (await MahasiswaRepository.getNamaByNIM(nim))?.nama || "",
+      email,
     };
 
+    const dokumenData = dokumen || defaultDokumen;
+
+    let id_pendaftaran_kp = "";
+    if (dokumenData.pendaftaran_kp && dokumenData.pendaftaran_kp.length > 0) {
+      id_pendaftaran_kp = dokumenData.pendaftaran_kp[0].id;
+    } else if (dokumenData.dokumen_seminar_kp.length > 0) {
+      id_pendaftaran_kp = dokumenData.dokumen_seminar_kp[0].id_pendaftaran_kp ?? "";
+    }
+
+    const stepInfo = id_pendaftaran_kp
+      ? {
+          step1_accessible: await StepHelper.stepAkses(1, id_pendaftaran_kp),
+          step2_accessible: await StepHelper.stepAkses(2, id_pendaftaran_kp),
+          step3_accessible: await StepHelper.stepAkses(3, id_pendaftaran_kp),
+          step4_accessible: await StepHelper.stepAkses(4, id_pendaftaran_kp),
+          step5_accessible: await StepHelper.stepAkses(5, id_pendaftaran_kp),
+          step6_accessible: await StepHelper.stepAkses(6, id_pendaftaran_kp),
+        }
+      : {
+          step1_accessible: false,
+          step2_accessible: false,
+          step3_accessible: false,
+          step4_accessible: false,
+          step5_accessible: false,
+          step6_accessible: false,
+        };
+
     const dokumensByStep = {
-      step1: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
-      step2: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
-      step3: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
-      step5: dokumen.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
+      step1: dokumenData.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 1),
+      step2: dokumenData.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 2),
+      step3: dokumenData.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 3),
+      step5: dokumenData.dokumen_seminar_kp.filter((doc) => StepHelper.getStepForDokumen(doc.jenis_dokumen as jenis_dokumen) === 5),
     };
 
     const dokumenDenganHitungMundur = {
-      jadwal: JadwalHelper.tambahHitungMundurJadwal(dokumen.jadwal),
+      jadwal: JadwalHelper.tambahHitungMundurJadwal(dokumenData.jadwal),
     };
 
     return {
@@ -94,10 +110,10 @@ export default class SeminarKpService {
       message: "Berhasil mendapatkan data seminar KP!, 😁",
       data: {
         persyaratan_seminar_kp: validasiPersyaratan,
-        ...dokumen,
-        nilai: dokumen.nilai.map((n) => ({
+        ...dokumenData,
+        nilai: dokumenData.nilai.map((n) => ({
           ...n,
-          nilai_huruf: NilaiHelper.getNilaiHuruf(n.nilai_akhir)
+          nilai_huruf: NilaiHelper.getNilaiHuruf(n.nilai_akhir),
         })),
         ...dokumenDenganHitungMundur,
         dokumen_seminar_kp: dokumensByStep,
