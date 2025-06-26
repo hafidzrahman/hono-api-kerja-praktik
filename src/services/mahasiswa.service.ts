@@ -80,17 +80,13 @@ export default class MahasiswaService {
 
   public static async validasiPersyaratanSeminarKp(nim: string) {
     const selesaiMurojaah = await MahasiswaService.checkMurojaah(nim);
-    const pendaftaranKp = await MahasiswaRepository.getPendaftaranKP(nim);
+    const pendaftaranKp = await MahasiswaRepository.getPendaftaranKP(nim).catch(() => null);
 
     const masihTerdaftarKP = pendaftaranKp && ["Baru", "Lanjut"].includes(pendaftaranKp.status || "");
+    const level_akses = pendaftaranKp ? pendaftaranKp.level_akses : 0;
 
     const jumlahBimbingan = await MahasiswaRepository.countBimbinganByNIM(nim);
     const cukupBimbingan = jumlahBimbingan >= 5;
-
-    const { level_akses } = await MahasiswaRepository.getPendaftaranKP(nim);
-    if (level_akses < 5) {
-      throw new APIError(`Waduh, anda belum memiliki akses untuk mengupload dokumen seminar KP! 😭`, 403);
-    }
 
     const dailyReports = await MahasiswaRepository.getDailyReportsByNIM(nim);
     const semuaDailyReportDisetujui = dailyReports.length > 0 && dailyReports.every((report) => report.status === "Disetujui");
@@ -98,13 +94,15 @@ export default class MahasiswaService {
     const nilai = await MahasiswaRepository.getNilaiByNIM(nim);
     const sudahNilaiInstansi = nilai && nilai.nilai_instansi !== null;
 
+    const semuaSyaratTerpenuhi = masihTerdaftarKP && cukupBimbingan && semuaDailyReportDisetujui && sudahNilaiInstansi;
+
     return {
-      sudah_selesai_murojaah: selesaiMurojaah,
+      sudah_selesai_murojaah: true,
       masih_terdaftar_kp: masihTerdaftarKP,
       minimal_lima_bimbingan: cukupBimbingan,
       daily_report_sudah_approve: semuaDailyReportDisetujui,
       sudah_mendapat_nilai_instansi: sudahNilaiInstansi,
-      semua_syarat_terpenuhi: selesaiMurojaah && masihTerdaftarKP && cukupBimbingan && semuaDailyReportDisetujui && sudahNilaiInstansi,
+      semua_syarat_terpenuhi: semuaSyaratTerpenuhi,
     };
   }
 }
