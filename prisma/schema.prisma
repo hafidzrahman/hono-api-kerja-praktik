@@ -58,23 +58,11 @@ model dosen {
   no_hp          String?          @unique @db.VarChar(14)
   email          String           @unique @db.VarChar(255)
   id_telegram    String?          @unique @db.VarChar(10)
-
   bimbingan      bimbingan[]
   nilai          nilai[]
   pembimbing     pendaftaran_kp[] @relation("pembimbing")
   penguji        pendaftaran_kp[] @relation("penguji")
   mahasiswa      mahasiswa[]
-  keahlian       keahlian_dosen[]
-}
-
-model keahlian_dosen {
-  id            Int @id @default(autoincrement())
-  nama_keahlian String  @db.VarChar(255)
-  nip           String @db.VarChar(20)
-  
-  dosen dosen @relation(fields: [nip], references: [nip], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([nip])
 }
 
 model instansi {
