@@ -87,4 +87,20 @@ export default class JadwalHandler {
 
     return c.json(logJadwal);
   }
+
+  public static async postRuangan(c: Context) {
+    const data = await c.req.json();
+    const ruangan = await JadwalService.postRuangan(data);
+
+    return c.json(ruangan);
+  }
+
+  public static async deleteRuangan(c: Context) {
+    const data = await c.req.json();
+    if (!data.nama) throw new APIError("Waduh, butuh nama ruangan cuy! 😭", 400);
+
+    const ruangan = await JadwalService.deleteRuangan(data.nama);
+
+    return c.json(ruangan);
+  }
 }
