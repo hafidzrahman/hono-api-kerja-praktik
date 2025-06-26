@@ -5,7 +5,7 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import DateHelper from "../helpers/date.helper";
-import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput, DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput, DataJadwalSeminar, CreateRuanganInput } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
 import NilaiRepository from "../repositories/nilai.repository";
 import DosenRepository from "../repositories/dosen.repository";
@@ -374,6 +374,31 @@ export default class JadwalService {
     return {
       logJadwal: logJadwalWithNames,
       tahunAjaran: result.tahunAjaran,
+    };
+  }
+
+  public static async postRuangan(data: CreateRuanganInput) {
+    const ruangan = await JadwalRepository.findRuanganByName(data.nama);
+    if (ruangan) {
+      throw new APIError(`Waduh, Ruangan sudah ada! 😭`, 400);
+    }
+
+    await JadwalRepository.postRuangan(data);
+    return {
+      message: `Ruangan '${data.nama}' berhasil ditambahkan! 😁`
+    }
+  }
+
+  public static async deleteRuangan(nama: string) {
+    const ruangan = await JadwalRepository.findRuanganByName(nama);
+    if (!ruangan) {
+      throw new APIError(`Waduh, Ruangan tidak ditemukan! 😭`, 404);
+    }
+
+    await JadwalRepository.deleteRuangan(nama);
+    
+    return {
+      message: `Ruangan '${nama}' berhasil dihapus! 😁`,
     };
   }
 }
