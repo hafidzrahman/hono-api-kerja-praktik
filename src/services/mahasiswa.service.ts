@@ -111,8 +111,7 @@ export default class MahasiswaService {
     const jumlahBimbingan = await MahasiswaRepository.countBimbinganByNIM(nim);
     const cukupBimbingan = jumlahBimbingan >= 5;
 
-    const { level_akses } = await MahasiswaRepository.getPendaftaranKP(nim);
-    if (level_akses < 5) {
+    if (pendaftaranKp && pendaftaranKp.level_akses < 5) {
       throw new APIError(
         `Waduh, anda belum memiliki akses untuk mengupload dokumen seminar KP! 😭`,
         403
