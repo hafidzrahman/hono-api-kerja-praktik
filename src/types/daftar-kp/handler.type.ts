@@ -66,4 +66,5 @@ export interface PatchBerkasMahasiswaInterface {
   nomorBerkas: number;
   status: "Divalidasi" | "Ditolak";
   catatan?: string;
+  nipDospem? : string;
 }
