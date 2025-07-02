@@ -31,8 +31,7 @@ export default class DaftarKPHandler {
 
   public static async patchBerkasDaftarKP(c: Context) {
     const { email } = c.get("user");
-    // const email = "a@gmail.com";
-    const { data, nomorBerkas, tanggalMulai, tanggalSelesai, nipDospem } =
+        const { data, nomorBerkas, tanggalMulai, tanggalSelesai, nipDospem } =
       await c.req.json();
 
     if (!email) {
@@ -276,8 +275,7 @@ export default class DaftarKPHandler {
 
   public static async getKPTerbaruMahasiswa(c: Context) {
     const { email } = c.get("user");
-    // const email = "a@gmail.com";
-
+    
     if (!email) {
       throw new APIError("Email tidak ditemukan");
     }
@@ -287,8 +285,7 @@ export default class DaftarKPHandler {
 
   public static async updatePermohonanPendaftaranKP(c: Context) {
     const { email } = c.get("user");
-    // const email = "a@gmail.com";
-
+    
     const {
       tanggalMulai = new Date(),
       tujuanSuratInstansi,
@@ -297,20 +294,9 @@ export default class DaftarKPHandler {
       kelas_kp,
     } = await c.req.json();
 
-    try {
       if (!email) {
         throw new APIError("Email tidak ditemukan");
-      } else if (
-        !tanggalMulai ||
-        !Date.parse(tanggalMulai) ||
-        !tujuanSuratInstansi ||
-        !idInstansi
-      ) {
-        throw new APIError("Data yang anda masukkan kurang lengkap!");
-      }
-    } catch (e) {
-      throw new APIError("Terdapat sebuah kesalahan pada input");
-    }
+      } 
 
     return c.json(
       await DaftarKPService.updatePermohonanPendaftaranKP({
@@ -326,9 +312,7 @@ export default class DaftarKPHandler {
 
   public static async createPermohonanPendaftaranKP(c: Context) {
     const { email } = c.get("user");
-    // const email = "a@gmail.com";
-
-    const {
+        const {
       tanggalMulai = new Date(),
       tujuanSuratInstansi,
       idInstansi,
@@ -370,8 +354,7 @@ export default class DaftarKPHandler {
 
   public static async getDataInstansi(c: Context) {
     const { email } = c.get("user");
-    // const email = "a@gmail.com";
-    if (!email) {
+        if (!email) {
       throw new APIError("Email mahasiswa tidak ditemukan");
     }
     return c.json(await DaftarKPService.getDataInstansi(email));
@@ -379,8 +362,7 @@ export default class DaftarKPHandler {
 
   public static async createPermohonanPendaftaranInstansi(c: Context) {
     const { email } = c.get("user");
-    // const email = "a@gmail.com";
-
+    
     const {
       namaInstansi,
       alamatInstansi,
@@ -540,8 +522,7 @@ export default class DaftarKPHandler {
 
   public static async getRiwayatPendaftaranKP(c: Context) {
     const { email } = c.get("user");
-    // const email = "a@gmail.com";
-
+    
     if (!email) {
       throw new APIError("Data email kosong", 400);
     }
