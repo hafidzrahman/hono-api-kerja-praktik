@@ -80,6 +80,10 @@ export default class JadwalService {
       throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
     }
 
+    if (waktu_selesai && waktu_selesai < new Date()){
+      throw new APIError(`Waduh, Waktu tidak boleh kurang dari waktu sekarang nih! 😭`, 400);
+    }
+
     const jadwalInput: CreateJadwalInput = {
       tanggal,
       waktu_mulai,
@@ -160,6 +164,10 @@ export default class JadwalService {
 
     if (data.nama_ruangan) {
       nama_ruangan = data.nama_ruangan;
+    }
+
+    if (waktu_selesai && waktu_selesai < new Date()){
+      throw new APIError(`Waduh, Waktu tidak boleh kurang dari waktu sekarang nih! 😭`, 400);
     }
 
     if (data.nip_penguji) {
