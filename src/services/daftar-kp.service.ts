@@ -63,7 +63,6 @@ export default class DaftarKPService {
     nomorBerkas: number,
     tanggalMulai?: string,
     tanggalSelesai?: string,
-    nipDospem?: string
   ): Promise<CommonResponse> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
 
@@ -93,17 +92,12 @@ export default class DaftarKPService {
       );
     }
 
-    if (dataKP.level_akses === 7 && !nipDospem) {
-      throw new APIError("NIP dosen pembimbing kerja praktik kosong");
-    }
-
     await DaftarKPRepository.patchBerkasDaftarKP(
       dataKP,
       data,
       nomorBerkas,
       tanggalMulai,
       tanggalSelesai,
-      nipDospem
     );
 
     return {
@@ -236,7 +230,7 @@ export default class DaftarKPService {
       throw new APIError("Data pendaftaran KP mahasiswa tidak ditemukan");
     }
 
-    const dataKP = await DaftarKPRepository.getDataKPDetailMahasiswa(data.id);
+    const dataKP = await DaftarKPRepository.getDataKPDetailMahasiswa(data);
 
     return {
       response: true,
@@ -284,7 +278,8 @@ export default class DaftarKPService {
     id: string,
     nomorBerkas: number,
     status: "Divalidasi" | "Ditolak",
-    catatan?: string
+    catatan?: string,
+    nipDospem?: string
   ): Promise<CommonResponse> {
     const dataKP = await DaftarKPRepository.getPendaftaranKPById(id);
 
@@ -300,7 +295,8 @@ export default class DaftarKPService {
       dataKP,
       nomorBerkas,
       status,
-      catatan
+      catatan,
+      nipDospem
     );
 
     return {
