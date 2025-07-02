@@ -1,9 +1,8 @@
 import { CommonResponse } from "../global.type";
 import {
-  $Enums,
   instansi,
   jenis_instansi,
-  LOG,
+  log_pendaftaran_kp,
   option,
   pendaftaran_kp,
 } from "../../generated/prisma";
@@ -99,7 +98,7 @@ export interface ServiceUpdateInstansiKP extends CommonResponse {
 }
 
 export interface ServiceLOGPendaftaranKPById extends CommonResponse {
-  data: LOG[];
+  data: log_pendaftaran_kp[];
 }
 
 export interface PutMahasiswaParamsInterface {
