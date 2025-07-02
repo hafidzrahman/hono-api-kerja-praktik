@@ -134,7 +134,7 @@ export interface PutMahasiswaParamsInterface {
 }
 
 export interface dataLamaPutBerkasMahasiswa extends pendaftaran_kp {
-  document: {
+  dokumen_pendaftaran_kp: {
     idPendaftaranKP: string;
     idKriteria: number;
     data: string;
