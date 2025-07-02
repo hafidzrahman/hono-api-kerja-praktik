@@ -69,7 +69,6 @@ export default class DaftarKPRepository {
     nomorBerkas: number,
     tanggalMulai?: string,
     tanggalSelesai?: string,
-    nipDospem?: string
   ) {
     let namaBerkas = "Surat Penolakan Instansi";
     let final_level_akses = dataKPTerbaru.level_akses;
@@ -102,10 +101,6 @@ export default class DaftarKPRepository {
           dataKPTerbaru.level_akses === 3
             ? tanggalSelesai
             : dataKPTerbaru.tanggal_selesai,
-        nip_pembimbing:
-          dataKPTerbaru.level_akses === 7
-            ? nipDospem
-            : dataKPTerbaru.nip_pembimbing,
         catatan_penolakan: null,
         level_akses: final_level_akses,
         dokumen_pendaftaran_kp: {
@@ -435,11 +430,11 @@ export default class DaftarKPRepository {
   }
 
   public static async getDataKPDetailMahasiswa(
-    idKP: string
+    data : pendaftaran_kp
   ): Promise<RepositoryDetailPendaftaranKPMahasiswa | null> {
     return await prisma.pendaftaran_kp.findUnique({
       where: {
-        id: idKP,
+        id: data.id,
       },
       include: {
         dokumen_pendaftaran_kp: {
@@ -451,7 +446,11 @@ export default class DaftarKPRepository {
         dosen_pembimbing: true,
         instansi: {
           include: {
-            pembimbing_instansi: true,
+            pembimbing_instansi: {
+              where : {
+                email : data.email_pembimbing_instansi || ""
+              }
+            },
           },
         },
       },
@@ -524,7 +523,8 @@ export default class DaftarKPRepository {
     dataKP: pendaftaran_kp & { dokumen_pendaftaran_kp: dokumen_pendaftaran_kp[] },
     nomorBerkas: number,
     status: "Divalidasi" | "Ditolak",
-    catatan?: string
+    catatan?: string,
+    nipDospem? : string
   ) {
     if (status === "Divalidasi") {
       if (dataKP.dokumen_pendaftaran_kp[0].status === "Terkirim") {
@@ -550,6 +550,7 @@ export default class DaftarKPRepository {
           },
           data: {
             level_akses: 0,
+            nip_pembimbing : nomorBerkas === 4 ? nipDospem : "",
             dokumen_pendaftaran_kp: {
               update: [
                 {
