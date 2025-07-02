@@ -112,7 +112,7 @@ model log_jadwal {
   nip_penguji_lama  String?   @db.VarChar(20)
   nip_penguji_baru  String?   @db.VarChar(20)
 }
-model LOG {
+model log_pendaftaran_kp {
   id Int @id @default(autoincrement())
   message String
   tanggal DateTime
@@ -216,19 +216,19 @@ model pendaftaran_kp {
   dosen_penguji       dosen?               @relation("penguji", fields: [nip_penguji], references: [nip], onDelete: NoAction, onUpdate: NoAction)
   pembimbing_instansi pembimbing_instansi? @relation(fields: [email_pembimbing_instansi], references: [email], onDelete: NoAction, onUpdate: NoAction)
   
-  log LOG[]
+  log_pendaftaran_kp log_pendaftaran_kp[]
 
-  document Document[]
+  dokumen_pendaftaran_kp dokumen_pendaftaran_kp[]
 }
 
-model Kriteria {
+model kriteria_pendaftaran_kp {
   id Int @id
   nama String
 
-  document Document[]
+  dokumen_pendaftaran_kp dokumen_pendaftaran_kp[]
 }
 
-model Document {
+model dokumen_pendaftaran_kp {
   idKriteria Int 
   idPendaftaranKP String @db.Uuid
   data String @db.VarChar(255) @default("")
@@ -236,7 +236,7 @@ model Document {
   catatan String? @db.VarChar(255)
   tanggal_upload DateTime @default(now())
 
-  kriteria Kriteria @relation(fields: [idKriteria], references: [id])
+  kriteria_pendaftaran_kp kriteria_pendaftaran_kp @relation(fields: [idKriteria], references: [id])
   pendaftaran_kp pendaftaran_kp @relation(fields: [idPendaftaranKP], references: [id])
   
 
