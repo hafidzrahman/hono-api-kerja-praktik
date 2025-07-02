@@ -31,7 +31,7 @@ export default class DaftarKPHandler {
 
   public static async patchBerkasDaftarKP(c: Context) {
     const { email } = c.get("user");
-        const { data, nomorBerkas, tanggalMulai, tanggalSelesai, nipDospem } =
+        const { data, nomorBerkas, tanggalMulai, tanggalSelesai } =
       await c.req.json();
 
     if (!email) {
@@ -48,14 +48,13 @@ export default class DaftarKPHandler {
         nomorBerkas,
         tanggalMulai,
         tanggalSelesai,
-        nipDospem
       )
     );
   }
 
   public static async patchBerkasMahasiswa(c: Context) {
     const { id } = c.req.param();
-    const { nomorBerkas, status, catatan } =
+    const { nomorBerkas, status, catatan, nipDospem } =
       (await c.req.json()) as PatchBerkasMahasiswaInterface;
 
     if (!id) {
@@ -77,7 +76,8 @@ export default class DaftarKPHandler {
         id,
         nomorBerkas,
         status,
-        catatan
+        catatan,
+        nipDospem
       )
     );
   }
