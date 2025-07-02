@@ -17,29 +17,5 @@ export default class MahasiswaHelper {
     return semester;
   }
 
-  public static async getTahunAjaran(): Promise<number> {
-    const date = new Date();
-    let id = ((date.getFullYear() - 1) * 10000 + date.getFullYear()) * 10 + 1;
 
-    if (date.getMonth() >= 7) {
-      return date.getFullYear() * 10000 + (date.getFullYear() + 1) * 10 + 1;
-    }
-    const dataTahunAjaran = await prisma.tahun_ajaran.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!dataTahunAjaran) {
-      await prisma.tahun_ajaran.create({
-        data: {
-          id,
-        },
-      });
-    }
-
-    // kalau memang masih pakai table, berarti harus query find data pada tahun table ajaran, jika tidak ada maka prisma.create
-
-    return id;
-  }
 }
