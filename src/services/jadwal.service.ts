@@ -80,7 +80,18 @@ export default class JadwalService {
       throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
     }
 
-    if (waktu_selesai && waktu_selesai < new Date()){
+    const timeZone = "Asia/Jakarta";
+    const today = new Date();
+
+    // 1. Buat "Mesin Konversi" yang berpikir dalam timezone Asia/Jakarta
+    const dateFormatter = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: timeZone,
+    });
+
+    // 2. Dapatkan string tanggal untuk awal rentang (hari ini)
+    const currentDate = new Date(dateFormatter.format(today)); // -> "2025-06-16"
+
+    if (waktu_selesai && waktu_selesai < currentDate){
       throw new APIError(`Waduh, Waktu tidak boleh kurang dari waktu sekarang nih! 😭`, 400);
     }
 
@@ -166,7 +177,18 @@ export default class JadwalService {
       nama_ruangan = data.nama_ruangan;
     }
 
-    if (waktu_selesai && waktu_selesai < new Date()){
+    const timeZone = "Asia/Jakarta";
+    const today = new Date();
+
+    // 1. Buat "Mesin Konversi" yang berpikir dalam timezone Asia/Jakarta
+    const dateFormatter = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: timeZone,
+    });
+
+    // 2. Dapatkan string tanggal untuk awal rentang (hari ini)
+    const currentDate = new Date(dateFormatter.format(today)); // -> "2025-06-16"
+
+    if (waktu_selesai && waktu_selesai < currentDate){
       throw new APIError(`Waduh, Waktu tidak boleh kurang dari waktu sekarang nih! 😭`, 400);
     }
 
