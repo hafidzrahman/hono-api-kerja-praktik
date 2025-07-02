@@ -18,6 +18,7 @@ import {
   PutMahasiswaParamsInterface,
   getTahunAjaranService,
   ServiceStatistikPendaftaran,
+  PembimbingInstansiInterface,
 } from "../types/daftar-kp/service.type";
 import { CommonResponse } from "../types/global.type";
 import { APIError } from "../utils/api-error.util";
@@ -25,9 +26,69 @@ import { IsPendaftaranKPClosed } from "../validators/batas-waktu-pendaftaran..va
 import { cekKPTerbaruMahasiswa } from "../validators/cek-kp-terbaru-mahasiswa";
 import { cekTerdaftarTahunAjaran } from "../validators/cek-terdaftar-tahun-ajaran.validator";
 import { blackListInstansi } from "../validators/instansi-blacklist.validator";
-import MahasiswaService from "./mahasiswa.service";
 
 export default class DaftarKPService {
+  public static async createPembimbingInstansi(dataInput: {
+    nama: string;
+    no_hp: string;
+    email: string;
+    email_pembimbing_instansi: string;
+    jabatan: string;
+  }): Promise<CommonResponse> {
+    const dataMhs = await MahasiswaRepository.findByEmail({
+      email: dataInput.email,
+    });
+
+    if (!dataMhs) {
+      throw new APIError("Data mahasiswa tidak ditemukan", 404);
+    }
+
+    const dataKP = await DaftarKPRepository.getKPTerbaruMahasiswa(dataMhs.nim);
+
+    if (!dataKP) {
+      throw new APIError("Data kerja praktik mahasiswa tidak ditemukan", 404);
+    }
+
+    if (!dataKP.id_instansi) {
+      throw new APIError("ID Instansi kosong");
+    }
+
+    await DaftarKPRepository.createPembimbingInstansi(
+      dataKP.id_instansi,
+      dataInput
+    );
+
+    return {
+      response: true,
+      message: "Berhasil menambahkan data pembimbing instansi",
+    };
+  }
+
+  public static async getPembimbingInstansi(
+    email: string
+  ): Promise<PembimbingInstansiInterface> {
+    const dataMhs = await MahasiswaRepository.findByEmail({ email });
+
+    if (!dataMhs) {
+      throw new APIError("Data mahasiswa tidak ditemukan");
+    }
+
+    const dataKP = await DaftarKPRepository.getKPTerbaruMahasiswa(dataMhs.nim);
+
+    if (!dataKP?.id_instansi) {
+      throw new APIError("id instansi tidak ditemukan");
+    }
+
+    const data = await DaftarKPRepository.getPembimbingInstansi(
+      dataKP.id_instansi
+    );
+    return {
+      response: true,
+      message: "Berhasil mendapatkan data pembimbing instansi",
+      data,
+    };
+  }
+
   public static async postLOGPPencetakanSuratPengantar(
     id: string
   ): Promise<CommonResponse> {
@@ -63,6 +124,7 @@ export default class DaftarKPService {
     nomorBerkas: number,
     tanggalMulai?: string,
     tanggalSelesai?: string,
+    email_pembimbing_instansi?: string
   ): Promise<CommonResponse> {
     const dataMhs = await MahasiswaRepository.findByEmail({ email });
 
@@ -98,6 +160,7 @@ export default class DaftarKPService {
       nomorBerkas,
       tanggalMulai,
       tanggalSelesai,
+      email_pembimbing_instansi
     );
 
     return {

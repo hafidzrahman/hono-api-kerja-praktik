@@ -42,6 +42,18 @@ daftarKPRoute.get(
 );
 
 daftarKPRoute.get(
+  "/mahasiswa/daftar-kp/pembimbing-instansi",
+  AuthMiddleware.JWTBearerTokenExtraction,
+  DaftarKPHandler.getPembimbingInstansi
+);
+
+daftarKPRoute.post(
+  "/mahasiswa/daftar-kp/pembimbing-instansi",
+  AuthMiddleware.JWTBearerTokenExtraction,
+  DaftarKPHandler.createPembimbingInstansi
+);
+
+daftarKPRoute.get(
   "/mahasiswa/daftar-kp/data-instansi",
   AuthMiddleware.JWTBearerTokenExtraction,
 

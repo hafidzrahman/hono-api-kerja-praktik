@@ -4,6 +4,7 @@ import {
   jenis_instansi,
   log_pendaftaran_kp,
   option,
+  pembimbing_instansi,
   pendaftaran_kp,
 } from "../../generated/prisma";
 import {
@@ -24,6 +25,10 @@ export interface ServiceStatistikPendaftaran extends CommonResponse {
       [key: string]: number;
     };
   };
+}
+
+export interface PembimbingInstansiInterface extends CommonResponse {
+  data: pembimbing_instansi[];
 }
 
 export interface CreatePermohonanPendaftaranKPInterface {

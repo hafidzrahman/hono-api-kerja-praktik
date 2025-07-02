@@ -168,7 +168,7 @@ model nilai {
 
 model pembimbing_instansi {
   email          String           @id @db.VarChar(255)
-  id             String           @unique @db.VarChar(255)
+  id             String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   nama           String           @db.VarChar(255)
   no_hp          String?          @db.VarChar(16)
   jabatan        String?          @db.VarChar(40)
@@ -348,6 +348,12 @@ enum status_dokumen {
 }
 
 enum status_instansi {
+  Pending
+  Aktif
+  Tidak_Aktif
+}
+
+enum status_pembimbing_instansi {
   Pending
   Aktif
   Tidak_Aktif

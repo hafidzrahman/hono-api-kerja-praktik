@@ -27,9 +27,61 @@ import {
 } from "../validators/batas-waktu-pendaftaran..validator";
 import { blackListInstansi } from "../validators/instansi-blacklist.validator";
 import NilaiRepository from "./nilai.repository";
+import CryptoHelper from "../helpers/crypto.helper";
 
 export default class DaftarKPRepository {
-  public static postLOGPPencetakanSuratPengantar(id: string) {
+  public static async createPembimbingInstansi(
+    id_instansi: string,
+    dataInput: {
+      nama: string;
+      no_hp: string;
+      email_pembimbing_instansi: string;
+      jabatan: string;
+    }
+  ) {
+    const nodemailer = require("nodemailer");
+
+    const transporter = nodemailer.createTransport({
+      name: "live",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: "darkdescent559@gmail.com",
+        pass: "difn xelf agxz zfdt",
+      },
+    });
+    await transporter.sendMail({
+      from: `"Dashboard TIF UIN SUSKA" <darkdescent559@gmail.com>`,
+      to: dataInput.email_pembimbing_instansi,
+      subject: "Verification Code",
+      text: `localhost:5173/pembimbing-instansi/kerja-praktik/${CryptoHelper.generateEncryptedIDByPayload(
+        JSON.stringify({
+          email_pembimbing_instansi: dataInput.email_pembimbing_instansi,
+        })
+      )}`,
+    });
+
+    return await prisma.pembimbing_instansi.create({
+      data: {
+        nama: dataInput.nama,
+        email: dataInput.email_pembimbing_instansi,
+        no_hp: dataInput.no_hp,
+        jabatan: dataInput.jabatan,
+        id_instansi,
+      },
+    });
+  }
+
+  public static async getPembimbingInstansi(id_instansi: string) {
+    return await prisma.pembimbing_instansi.findMany({
+      where: {
+        id_instansi,
+      },
+    });
+  }
+
+  public static async postLOGPPencetakanSuratPengantar(id: string) {
     DaftarKPRepository.createLOGPendaftaranKPById(
       id,
       "Berkas surat pengantar telah dicetak oleh bagian umum",
@@ -69,6 +121,7 @@ export default class DaftarKPRepository {
     nomorBerkas: number,
     tanggalMulai?: string,
     tanggalSelesai?: string,
+    email_pembimbing_instansi?: string
   ) {
     let namaBerkas = "Surat Penolakan Instansi";
     let final_level_akses = dataKPTerbaru.level_akses;
@@ -93,6 +146,7 @@ export default class DaftarKPRepository {
         id: dataKPTerbaru.id,
       },
       data: {
+        email_pembimbing_instansi,
         tanggal_mulai:
           dataKPTerbaru.level_akses === 3
             ? tanggalMulai
@@ -430,7 +484,7 @@ export default class DaftarKPRepository {
   }
 
   public static async getDataKPDetailMahasiswa(
-    data : pendaftaran_kp
+    data: pendaftaran_kp
   ): Promise<RepositoryDetailPendaftaranKPMahasiswa | null> {
     return await prisma.pendaftaran_kp.findUnique({
       where: {
@@ -447,9 +501,9 @@ export default class DaftarKPRepository {
         instansi: {
           include: {
             pembimbing_instansi: {
-              where : {
-                email : data.email_pembimbing_instansi || ""
-              }
+              where: {
+                email: data.email_pembimbing_instansi || "",
+              },
             },
           },
         },
@@ -470,7 +524,7 @@ export default class DaftarKPRepository {
       },
       include: {
         mahasiswa: true,
-        instansi : true
+        instansi: true,
       },
     });
   }
@@ -495,7 +549,9 @@ export default class DaftarKPRepository {
     });
   }
 
-  public static async getLOGByIdPendaftaranKP(idKP: string): Promise<log_pendaftaran_kp[]> {
+  public static async getLOGByIdPendaftaranKP(
+    idKP: string
+  ): Promise<log_pendaftaran_kp[]> {
     return await prisma.log_pendaftaran_kp.findMany({
       where: {
         pendaftaran_kp_id: idKP,
@@ -520,11 +576,13 @@ export default class DaftarKPRepository {
   }
 
   public static async patchBerkasMahasiswa(
-    dataKP: pendaftaran_kp & { dokumen_pendaftaran_kp: dokumen_pendaftaran_kp[] },
+    dataKP: pendaftaran_kp & {
+      dokumen_pendaftaran_kp: dokumen_pendaftaran_kp[];
+    },
     nomorBerkas: number,
     status: "Divalidasi" | "Ditolak",
     catatan?: string,
-    nipDospem? : string
+    nipDospem?: string
   ) {
     if (status === "Divalidasi") {
       if (dataKP.dokumen_pendaftaran_kp[0].status === "Terkirim") {
@@ -550,7 +608,7 @@ export default class DaftarKPRepository {
           },
           data: {
             level_akses: 0,
-            nip_pembimbing : nomorBerkas === 4 ? nipDospem : "",
+            nip_pembimbing: nomorBerkas === 4 ? nipDospem : "",
             dokumen_pendaftaran_kp: {
               update: [
                 {
@@ -716,6 +774,7 @@ export default class DaftarKPRepository {
           id: dataKP.id,
         },
         data: {
+          nip_pembimbing: nipDospem,
           tanggal_mulai:
             dataKP.level_akses === 8 &&
             new Date().getTime() > new Date(dataKP.tanggal_mulai).getTime()
@@ -869,7 +928,6 @@ export default class DaftarKPRepository {
           2
         );
       }
-
     }
   }
 
@@ -1215,7 +1273,10 @@ export default class DaftarKPRepository {
 
   public static async getPendaftaranKPById(
     id: string
-  ): Promise<(pendaftaran_kp & { dokumen_pendaftaran_kp: dokumen_pendaftaran_kp[] }) | null> {
+  ): Promise<
+    | (pendaftaran_kp & { dokumen_pendaftaran_kp: dokumen_pendaftaran_kp[] })
+    | null
+  > {
     const dataKP = await prisma.pendaftaran_kp.findUnique({
       where: {
         id,
@@ -1468,7 +1529,8 @@ export default class DaftarKPRepository {
                 },
                 data: {
                   data:
-                    dataBaru.link_surat_pengantar || dataLama.dokumen_pendaftaran_kp[1].data,
+                    dataBaru.link_surat_pengantar ||
+                    dataLama.dokumen_pendaftaran_kp[1].data,
                   status:
                     dataBaru.level_akses === 1
                       ? "Ditolak"
@@ -1486,7 +1548,8 @@ export default class DaftarKPRepository {
                 },
                 data: {
                   data:
-                    dataBaru.link_surat_balasan || dataLama.dokumen_pendaftaran_kp[2].data,
+                    dataBaru.link_surat_balasan ||
+                    dataLama.dokumen_pendaftaran_kp[2].data,
                   status:
                     dataBaru.level_akses === 3
                       ? "Ditolak"
@@ -1656,7 +1719,8 @@ export default class DaftarKPRepository {
                 },
                 data: {
                   data:
-                    dataBaru.link_surat_pengantar || dataLama.dokumen_pendaftaran_kp[1].data,
+                    dataBaru.link_surat_pengantar ||
+                    dataLama.dokumen_pendaftaran_kp[1].data,
                   status:
                     dataBaru.level_akses === 1
                       ? "Ditolak"
@@ -1674,7 +1738,8 @@ export default class DaftarKPRepository {
                 },
                 data: {
                   data:
-                    dataBaru.link_surat_balasan || dataLama.dokumen_pendaftaran_kp[2].data,
+                    dataBaru.link_surat_balasan ||
+                    dataLama.dokumen_pendaftaran_kp[2].data,
                   status:
                     dataBaru.level_akses === 3
                       ? "Ditolak"
