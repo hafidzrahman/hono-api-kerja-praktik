@@ -231,9 +231,11 @@ export default class DailyReportService {
 
 		// decode uri dulu id nya, terus decrypt buat ambil nim-nya
 		const decodedID = decodeURIComponent(id);
+    let payload;
 		let email_pembimbing_instansi;
 		try {
-			email_pembimbing_instansi = CryptoHelper.decryptIDToEmail(decodedID);
+      payload = CryptoHelper.decryptIDToPayload(decodedID);
+			email_pembimbing_instansi = payload.email_pembimbing_instansi;
 		} catch (error) {
 			throw new APIError("Waduh, datanya gak ditemukan, mau nyari apa sih mas? 😭", 404);
 		}
