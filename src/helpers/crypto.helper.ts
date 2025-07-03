@@ -38,6 +38,3 @@ export default class CryptoHelper {
         return this.crypto.decrypt(originalEncryptedData);
     }
 }
-
-const ch = CryptoHelper.generateEncryptedIDByPayload(JSON.stringify({ email_pembimbing_instansi: "iwan.iskandar@uin-suska.ac.id" }));
-console.log(ch);
