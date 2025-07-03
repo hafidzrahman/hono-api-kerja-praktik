@@ -13,6 +13,7 @@ dailyReportRoute.post("/mahasiswa/detail-daily-report/:id", AuthMiddleware.JWTBe
 dailyReportRoute.put("/mahasiswa/detail-daily-report/:id", AuthMiddleware.JWTBearerTokenExtraction, DailyReportHandler.putDetailDailyReport);
 
 // for Pembimbing Instansi
+dailyReportRoute.put("/pembimbing-instansi/aktivasi-akun/:id", DailyReportHandler.putAktivasiAkun);
 dailyReportRoute.get("/pembimbing-instansi/mahasiswa-saya/:id", DailyReportHandler.getMahasiswaInstansiSaya);
 dailyReportRoute.get("/pembimbing-instansi/mahasiswa/:id", DailyReportHandler.getDetailMahasiswaInstansiSaya);
 dailyReportRoute.get("/pembimbing-instansi/detail-daily-report-mahasiswa/:id", DailyReportHandler.getDetailDailyReportMahasiswaInstansiSaya);
