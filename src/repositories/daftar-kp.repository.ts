@@ -216,13 +216,12 @@ export default class DaftarKPRepository {
 			data: {
 				email_pembimbing_instansi,
 				tanggal_mulai:
-					dataKPTerbaru.level_akses === 3
-						? tanggalMulai
-						: dataKPTerbaru.tanggal_mulai,
+					nomorBerkas === 2 && tanggalMulai
+						|| dataKPTerbaru.tanggal_mulai,
 				tanggal_selesai:
-					dataKPTerbaru.level_akses === 3
-						? tanggalSelesai
-						: dataKPTerbaru.tanggal_selesai,
+					nomorBerkas === 2
+						&& tanggalSelesai
+						|| dataKPTerbaru.tanggal_selesai,
 				catatan_penolakan: null,
 				level_akses: final_level_akses,
 				dokumen_pendaftaran_kp: {
@@ -843,11 +842,6 @@ export default class DaftarKPRepository {
 				},
 				data: {
 					nip_pembimbing: nipDospem,
-					tanggal_mulai:
-						dataKP.level_akses === 8 &&
-						new Date().getTime() > new Date(dataKP.tanggal_mulai).getTime()
-							? new Date()
-							: dataKP.tanggal_mulai,
 					dokumen_pendaftaran_kp: {
 						update: {
 							where: {
@@ -898,9 +892,6 @@ export default class DaftarKPRepository {
 					data: {
 						nip_pembimbing:
 							nomorBerkas === 4 ? undefined : dataKP.nip_pembimbing,
-						tanggal_mulai: nomorBerkas === 2 ? undefined : dataKP.tanggal_mulai,
-						tanggal_selesai:
-							nomorBerkas === 2 ? undefined : dataKP.tanggal_selesai,
 						dokumen_pendaftaran_kp: {
 							update: {
 								where: {
