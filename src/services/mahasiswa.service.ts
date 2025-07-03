@@ -120,7 +120,7 @@ export default class MahasiswaService {
 
     const dailyReports = await MahasiswaRepository.getDailyReportsByNIM(nim);
     const semuaDailyReportDisetujui =
-      dailyReports.length > 0 &&
+      dailyReports.length >= 22 &&
       dailyReports.every((report) => report.status === "Disetujui");
 
     const nilai = await MahasiswaRepository.getNilaiByNIM(nim);
