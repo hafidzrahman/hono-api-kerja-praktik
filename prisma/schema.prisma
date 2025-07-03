@@ -172,6 +172,7 @@ model pembimbing_instansi {
   nama           String           @db.VarChar(255)
   no_hp          String?          @db.VarChar(16)
   jabatan        String?          @db.VarChar(40)
+  status         status_pembimbing_instansi @default(Pending)
 
   nilai          nilai[]
   pendaftaran_kp pendaftaran_kp[]
