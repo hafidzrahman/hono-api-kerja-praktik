@@ -4,6 +4,13 @@ import { APIError } from "../utils/api-error.util";
 import { haversineDistance } from "../utils/geo.util";
 
 export default class DailyReportHandler {
+  public static async putAktivasiAkun(c: Context) {
+    const id = c.req.param("id");
+    if (!id) throw new APIError("Waduh, butuh param id cuy! 😭", 400);
+
+    return c.json(await DailyReportService.putAktivasiAkun(id));
+  }
+
   public static async getDailyReportSaya(c: Context) {
     const { email } = c.get("user");
     if (!email) throw new APIError("Waduh, email kamu kosong cuy! 😭", 404);
