@@ -5,7 +5,7 @@ import DosenService from "./dosen.service";
 import { CreateJadwalDto, UpdateJadwalDto } from "../validators/jadwal.validator";
 import { APIError } from "../utils/api-error.util";
 import DateHelper from "../helpers/date.helper";
-import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput, DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
+import { CreateJadwalInput, JadwalSeminarResponse, UpdateJadwalInput, DataJadwalSeminar, CreateRuanganInput } from "../types/seminar-kp/jadwal.type";
 import JadwalHelper from "../helpers/jadwal.helper";
 import NilaiRepository from "../repositories/nilai.repository";
 import DosenRepository from "../repositories/dosen.repository";
@@ -78,6 +78,21 @@ export default class JadwalService {
 
     if (!isRoomAvailable) {
       throw new APIError("Ruangan tidak tersedia pada waktu yang dipilih", 400);
+    }
+
+    const timeZone = "Asia/Jakarta";
+    const today = new Date();
+
+    // 1. Buat "Mesin Konversi" yang berpikir dalam timezone Asia/Jakarta
+    const dateFormatter = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: timeZone,
+    });
+
+    // 2. Dapatkan string tanggal untuk awal rentang (hari ini)
+    const currentDate = new Date(dateFormatter.format(today)); // -> "2025-06-16"
+
+    if (waktu_selesai && waktu_selesai < currentDate){
+      throw new APIError(`Waduh, Waktu tidak boleh kurang dari waktu sekarang nih! 😭`, 400);
     }
 
     const jadwalInput: CreateJadwalInput = {
@@ -160,6 +175,21 @@ export default class JadwalService {
 
     if (data.nama_ruangan) {
       nama_ruangan = data.nama_ruangan;
+    }
+
+    const timeZone = "Asia/Jakarta";
+    const today = new Date();
+
+    // 1. Buat "Mesin Konversi" yang berpikir dalam timezone Asia/Jakarta
+    const dateFormatter = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: timeZone,
+    });
+
+    // 2. Dapatkan string tanggal untuk awal rentang (hari ini)
+    const currentDate = new Date(dateFormatter.format(today)); // -> "2025-06-16"
+
+    if (waktu_selesai && waktu_selesai < currentDate){
+      throw new APIError(`Waduh, Waktu tidak boleh kurang dari waktu sekarang nih! 😭`, 400);
     }
 
     if (data.nip_penguji) {
@@ -374,6 +404,31 @@ export default class JadwalService {
     return {
       logJadwal: logJadwalWithNames,
       tahunAjaran: result.tahunAjaran,
+    };
+  }
+
+  public static async postRuangan(data: CreateRuanganInput) {
+    const ruangan = await JadwalRepository.findRuanganByName(data.nama);
+    if (ruangan) {
+      throw new APIError(`Waduh, Ruangan sudah ada! 😭`, 400);
+    }
+
+    await JadwalRepository.postRuangan(data);
+    return {
+      message: `Ruangan '${data.nama}' berhasil ditambahkan! 😁`
+    }
+  }
+
+  public static async deleteRuangan(nama: string) {
+    const ruangan = await JadwalRepository.findRuanganByName(nama);
+    if (!ruangan) {
+      throw new APIError(`Waduh, Ruangan tidak ditemukan! 😭`, 404);
+    }
+
+    await JadwalRepository.deleteRuangan(nama);
+    
+    return {
+      message: `Ruangan '${nama}' berhasil dihapus! 😁`,
     };
   }
 }

@@ -1,6 +1,6 @@
 import prisma from "../infrastructures/db.infrastructure";
-import { jadwal, log_jadwal, status_jadwal } from "../generated/prisma";
-import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelations, JadwalSayaParams, DataJadwalSeminar } from "../types/seminar-kp/jadwal.type";
+import { jadwal, log_jadwal, status_jadwal, ruangan } from "../generated/prisma";
+import { CreateJadwalInput, UpdateJadwalInput, LogJadwalInput, JadwalWithRelations, JadwalSayaParams, DataJadwalSeminar, CreateRuanganInput } from "../types/seminar-kp/jadwal.type";
 import { APIError } from "../utils/api-error.util";
 import MahasiswaHelper from "../helpers/mahasiswa.helper";
 import JadwalHelper from "../helpers/jadwal.helper";
@@ -198,12 +198,11 @@ export default class JadwalRepository {
   }
 
   public static async getJadwalMahasiswaSaya(nip: string, tahunAjaranId: number) {
-
-    const timeZone = 'Asia/Jakarta';
+    const timeZone = "Asia/Jakarta";
     const today = new Date();
 
     // 1. Buat "Mesin Konversi" yang berpikir dalam timezone Asia/Jakarta
-    const dateFormatter = new Intl.DateTimeFormat('sv-SE', {
+    const dateFormatter = new Intl.DateTimeFormat("sv-SE", {
       timeZone: timeZone,
     });
 
@@ -407,7 +406,7 @@ export default class JadwalRepository {
       },
     });
 
-    const totalJadwalUlang = await this.totalJadwalUlang(tahunAjaranId)
+    const totalJadwalUlang = await this.totalJadwalUlang(tahunAjaranId);
 
     const formattedJadwalList: DataJadwalSeminar[] = dataJadwal.map((jadwal) => {
       const waktuMulai = jadwal.waktu_mulai;
@@ -608,5 +607,30 @@ export default class JadwalRepository {
     }, 0);
 
     return totalPerubahan;
+  }
+
+  public static async postRuangan(data: CreateRuanganInput): Promise<ruangan> {
+    const ruangan = await prisma.ruangan.create({
+      data: {
+        nama: data.nama,
+      },
+    });
+    return ruangan;
+  }
+
+  public static async deleteRuangan(nama: string) {
+    await prisma.ruangan.delete({
+      where: {
+        nama,
+      },
+    });
+  }
+
+  public static async findRuanganByName(nama: string) {
+    return await prisma.ruangan.findUnique({
+      where: {
+        nama: nama,
+      }
+    })
   }
 }

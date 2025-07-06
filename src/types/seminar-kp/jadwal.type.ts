@@ -10,6 +10,10 @@ export interface CreateJadwalInput {
   nip_penguji: string;
 }
 
+export interface CreateRuanganInput {
+  nama: string;
+}
+
 export interface UpdateJadwalInput {
   id: string;
   tanggal?: Date;

@@ -276,7 +276,7 @@ export default class NilaiService {
 
           if (hasAllNilai) {
             const semuaDokumenTervalidasi = await this.cekValidasiDokumen(pendaftaranKp.id);
-            if (semuaDokumenTervalidasi) {
+            if (semuaDokumenTervalidasi && nilaiData?.validasi_nilai?.is_approve) {
               statusNilai = StatusNilai.NILAI_APPROVE;
             } else {
               statusNilai = StatusNilai.NILAI_VALID;
