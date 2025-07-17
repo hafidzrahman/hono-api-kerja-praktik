@@ -26,9 +26,9 @@ import {
   IsPendaftaranKPLanjutClosed,
 } from "../validators/batas-waktu-pendaftaran..validator";
 import { blackListInstansi } from "../validators/instansi-blacklist.validator";
-import NilaiRepository from "./nilai.repository";
 import CryptoHelper from "../helpers/crypto.helper";
 import transporter from "../infrastructures/mail.infrastructure";
+import TahunAjaranHelper from "../helpers/tahun-ajaran.helper";
 
 export default class DaftarKPRepository {
   public static async createPembimbingInstansi(
@@ -269,7 +269,7 @@ export default class DaftarKPRepository {
           tanggal_mulai: tanggalMulai,
           id_instansi: idInstansi,
           tujuan_surat_instansi: tujuanSuratInstansi,
-          id_tahun_ajaran: (await NilaiRepository.getTahunAjaranSekarang())!.id,
+          id_tahun_ajaran: TahunAjaranHelper.findSekarang(),
           judul_kp,
           level_akses: 1,
           kelas_kp,
@@ -1211,10 +1211,21 @@ export default class DaftarKPRepository {
     return data;
   }
 
-  public static async getTahunAjaran(): Promise<getTahunAjaran[]> {
-    const dataTahunAjaran = await prisma.tahun_ajaran.findMany({});
+  public static async getTahunAjaran() {
+    const list_kode_tahun_ajaran = await prisma.pendaftaran_kp.findMany({
+      select: {
+        id_tahun_ajaran: true,
+      },
+      orderBy: {
+        id_tahun_ajaran: "desc",
+      },
+      distinct: ["id_tahun_ajaran"],
+    });
 
-    return dataTahunAjaran;
+    return list_kode_tahun_ajaran.map((item) => ({
+      kode: item.id_tahun_ajaran,
+      nama: TahunAjaranHelper.parseStringNameByCode(item.id_tahun_ajaran),
+    }));
   }
 
   public static async createPermohonanKP({
@@ -1232,7 +1243,7 @@ export default class DaftarKPRepository {
         tanggal_mulai: tanggalMulai,
         id_instansi: idInstansi,
         tujuan_surat_instansi: tujuanSuratInstansi,
-        id_tahun_ajaran: (await NilaiRepository.getTahunAjaranSekarang())!.id,
+        id_tahun_ajaran: TahunAjaranHelper.findSekarang(),
         judul_kp,
         level_akses: 1,
         kelas_kp,
