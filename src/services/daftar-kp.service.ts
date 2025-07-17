@@ -354,6 +354,10 @@ export default class DaftarKPService {
       throw new APIError("Nomor berkas tidak valid");
     }
 
+    if (!nipDospem && nomorBerkas === 2) {
+      throw new APIError("Dosen pembimbing wajib dipilih");
+    }
+
     await DaftarKPRepository.patchBerkasMahasiswa(
       dataKP,
       nomorBerkas,

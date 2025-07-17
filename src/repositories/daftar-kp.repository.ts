@@ -28,6 +28,7 @@ import {
 import { blackListInstansi } from "../validators/instansi-blacklist.validator";
 import NilaiRepository from "./nilai.repository";
 import CryptoHelper from "../helpers/crypto.helper";
+import transporter from "../infrastructures/mail.infrastructure";
 
 export default class DaftarKPRepository {
   public static async createPembimbingInstansi(
@@ -39,27 +40,93 @@ export default class DaftarKPRepository {
       jabatan: string;
     }
   ) {
-    const nodemailer = require("nodemailer");
-
-    const transporter = nodemailer.createTransport({
-      name: "live",
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "darkdescent559@gmail.com",
-        pass: "difn xelf agxz zfdt",
-      },
-    });
+    const verificationLink = `${
+      process.env.PEMBIMBING_INSTANSI_URL
+    }${CryptoHelper.generateEncryptedIDByPayload(
+      JSON.stringify({
+        email_pembimbing_instansi: dataInput.email_pembimbing_instansi,
+      })
+    )}`;
     await transporter.sendMail({
-      from: `"Dashboard TIF UIN SUSKA" <darkdescent559@gmail.com>`,
+      from: `"Dashboard TIF UIN SUSKA" <cert.alisi@gmail.com>`,
       to: dataInput.email_pembimbing_instansi,
       subject: "Verification Code",
-      text: `localhost:5173/pembimbing-instansi/kerja-praktik/${CryptoHelper.generateEncryptedIDByPayload(
-        JSON.stringify({
-          email_pembimbing_instansi: dataInput.email_pembimbing_instansi,
-        })
-      )}`,
+      html: `
+        <html>
+            <head>
+                <style>
+                    .email-container {
+                        width: 100%;
+                        padding: 20px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background-color: #f9f9f9;
+                    }
+                    .email-card {
+                        width: 100%;
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                        font-family: Arial, sans-serif;
+                    }
+                    .email-header {
+                        font-size: 20px;
+                        font-weight: bold;
+                        margin-bottom: 20px;
+                        text-align: center;
+                    }
+                    .email-body {
+                        font-size: 16px;
+                        line-height: 1.5;
+                        margin-bottom: 30px;
+                    }
+                    .email-button {
+                        display: inline-block;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        color: #ffffff;
+                        background-color: #4CAF50;
+                        text-align: center;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        transition: background-color 0.3s ease;
+                    }
+                    .email-button:hover {
+                        background-color: #298040;
+                    }
+                    .email-footer {
+                        font-size: 14px;
+                        color: #555;
+                        text-align: center;
+                        margin-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="email-container">
+                    <div class="email-card">
+                        <div class="email-header">
+                            📧 Link Pembimbing Instansi 📧
+                        </div>
+
+                        <div class="email-body">
+                            <h4><i>Halo Sobat TIF UIN Suska Riau,</i><span> 😁😉</span></h4>
+                            <p>Terima kasih sebelumnya telah menggunakan layanan Dashboard TIF. Silakan klik tombol di bawah ini ya untuk mereset password akun anda: 👇</p>
+                            <p style="text-align: center;">
+                                <a style="color: #ffffff; text-decoration: none" href="${verificationLink}" class="email-button">Login ke Dashboard TIF</a>
+                            </p>
+                            <p>Jika Anda tidak meminta email ini, abaikan saja. 😊</p>
+                        </div>
+                        <div class="email-footer">
+                            Hormat kami,<br/>Tim Riau-DevOps, Aliansi Siber USR, & Inristek 2025
+                        </div>
+                    </div>
+                </div>
+            </body>
+        </html>
+        `,
     });
 
     return await prisma.pembimbing_instansi.create({
@@ -77,6 +144,7 @@ export default class DaftarKPRepository {
     return await prisma.pembimbing_instansi.findMany({
       where: {
         id_instansi,
+        status: "Aktif",
       },
     });
   }
@@ -148,13 +216,10 @@ export default class DaftarKPRepository {
       data: {
         email_pembimbing_instansi,
         tanggal_mulai:
-          dataKPTerbaru.level_akses === 3
-            ? tanggalMulai
-            : dataKPTerbaru.tanggal_mulai,
+          (nomorBerkas === 2 && tanggalMulai) || dataKPTerbaru.tanggal_mulai,
         tanggal_selesai:
-          dataKPTerbaru.level_akses === 3
-            ? tanggalSelesai
-            : dataKPTerbaru.tanggal_selesai,
+          (nomorBerkas === 2 && tanggalSelesai) ||
+          dataKPTerbaru.tanggal_selesai,
         catatan_penolakan: null,
         level_akses: final_level_akses,
         dokumen_pendaftaran_kp: {
@@ -775,11 +840,6 @@ export default class DaftarKPRepository {
         },
         data: {
           nip_pembimbing: nipDospem,
-          tanggal_mulai:
-            dataKP.level_akses === 8 &&
-            new Date().getTime() > new Date(dataKP.tanggal_mulai).getTime()
-              ? new Date()
-              : dataKP.tanggal_mulai,
           dokumen_pendaftaran_kp: {
             update: {
               where: {
@@ -830,9 +890,6 @@ export default class DaftarKPRepository {
           data: {
             nip_pembimbing:
               nomorBerkas === 4 ? undefined : dataKP.nip_pembimbing,
-            tanggal_mulai: nomorBerkas === 2 ? undefined : dataKP.tanggal_mulai,
-            tanggal_selesai:
-              nomorBerkas === 2 ? undefined : dataKP.tanggal_selesai,
             dokumen_pendaftaran_kp: {
               update: {
                 where: {
