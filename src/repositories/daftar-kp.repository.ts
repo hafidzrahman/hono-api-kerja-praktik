@@ -1203,7 +1203,6 @@ export default class DaftarKPRepository {
   }
 
   public static async createPermohonanInstansi({
-    nim,
     namaInstansi,
     alamatInstansi,
     namaPenanggungJawabInstansi,
